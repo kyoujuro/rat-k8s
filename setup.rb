@@ -329,7 +329,7 @@ def output_ansible_inventory0(input,sw)
           w.write sprintf("mlb[1:%d]\n",counter_mlb)
 
         elsif line =~ /^elb\[1:/
-          w.write sprintf("mlb[1:%d]\n",counter_elb)
+          w.write sprintf("elb[1:%d]\n",counter_elb)
           
         elsif line =~ /__KUBERNETES_VERSION__/
           w.write sprintf("kubernetes_version=\"v%s\"\n", $conf['kubernetes_version'])
