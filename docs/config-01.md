@@ -2,7 +2,7 @@
 
 ### 構成図
 
-![full]("images/full_config.png")
+![full](images/full_config.png)
 
 * テンプレートファイル: cluster-config/full.yaml
 * クラスタ／ポッド・ネットワーク: ブリッジ
