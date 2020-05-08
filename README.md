@@ -17,6 +17,12 @@ Rat-K8sは、学習と設計のための実験環境を目的とした、マル�
 * K8sクラスタの構築は、vagrantをフロントエンドとして、virtualboxの仮想サーバーを起動する。そして、bootnodeを介してansibleを各ノードで実行する。
 * K8sクラスタの構成は、テンプレートとなるYAMLファイルから選択して、編集する事で、構成を変更する事ができる。
 
+## 構成パターン
+
+* [docs](docs/config-01.md)
+* [docs](docs/config-02.md)
+* [docs](docs/config-03.md)
+
 
 ## 起動方法
 
