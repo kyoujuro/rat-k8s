@@ -286,6 +286,7 @@ end
 def output_ansible_inventory0(input,sw)
   counter_node = 0
   counter_mlb = 0
+  counter_elb = 0
   counter_master = 0
 
   tfn = "templates/hosts_vagrant.template"
@@ -304,6 +305,8 @@ def output_ansible_inventory0(input,sw)
             counter_node = counter_node + 1
           elsif x['name'] =~ /^mlb*/
             counter_mlb = counter_mlb + 1
+          elsif x['name'] =~ /^elb*/
+            counter_elb = counter_elb + 1
           elsif x['name'] =~ /^master*/
             counter_master = counter_master + 1
           end
@@ -325,6 +328,9 @@ def output_ansible_inventory0(input,sw)
         elsif line =~ /^mlb\[1:/
           w.write sprintf("mlb[1:%d]\n",counter_mlb)
 
+        elsif line =~ /^elb\[1:/
+          w.write sprintf("mlb[1:%d]\n",counter_elb)
+          
         elsif line =~ /__KUBERNETES_VERSION__/
           w.write sprintf("kubernetes_version=\"v%s\"\n", $conf['kubernetes_version'])
           w.write sprintf("kubernetes_version_ubuntu=\"=%s-00\"\n", $conf['kubernetes_version'])
@@ -346,7 +352,14 @@ def output_ansible_inventory0(input,sw)
           w.write line.gsub(/__MLB_IP_BACKUP__/, priv_ip.to_s)
 
         elsif line =~ /__FRONTEND_IPADDR__/
-          w.write line.gsub(/__FRONTEND_IPADDR__/, $conf['front_proxy_vip'])
+          # elbを検索して存在しなければパスする
+          $vm_config_array.each do |val|
+            x = eval(val)
+            if x['name'] =~ /elb*/
+              w.write line.gsub(/__FRONTEND_IPADDR__/, $conf['front_proxy_vip'])
+            end
+          end
+
         elsif line =~ /__ELB_IP_PRIMALY__/
           pub_ip,priv_ip = get_ip_by_host($conf['ka_primary_frontend_host'])
           w.write line.gsub(/__ELB_IP_PRIMALY__/, pub_ip.to_s)
