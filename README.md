@@ -19,9 +19,9 @@ Rat-K8sは、学習と設計のための実験環境を目的とした、マル�
 
 ## 構成パターン
 
-* [docs](docs/config-01.md)
-* [docs](docs/config-02.md)
-* [docs](docs/config-03.md)
+* [最小構成](docs/config-02.md) マスターx1, ワーカーx1
+* [デフォルト構成](docs/config-03.md) マスターx1, ワーカーx2
+* [フル構成](docs/config-01.md) フロントLB act-stby,マスタ用LB act-stby,マスターx3,アプリ用ワーカーx3,ストレージ用ワーカーx3
 
 
 ## 起動方法

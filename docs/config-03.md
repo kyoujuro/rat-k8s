@@ -15,11 +15,11 @@ $ ansible-playbook -i hosts_k8s playbook/install_k8s.yml
 
 ...
 
-PLAY RECAP ********************************************************************************************************
-bootnode                   : ok=117  changed=82   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
-master1                    : ok=136  changed=88   unreachable=0    failed=0    skipped=4    rescued=0    ignored=7   
-node1                      : ok=75   changed=42   unreachable=0    failed=0    skipped=4    rescued=0    ignored=4   
-node2                      : ok=75   changed=42   unreachable=0    failed=0    skipped=4    rescued=0    ignored=4   
+PLAY RECAP ****************************************************************************************
+bootnode    : ok=117  changed=82   unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+master1     : ok=136  changed=88   unreachable=0    failed=0    skipped=4    rescued=0    ignored=7   
+node1       : ok=75   changed=42   unreachable=0    failed=0    skipped=4    rescued=0    ignored=4   
+node2       : ok=75   changed=42   unreachable=0    failed=0    skipped=4    rescued=0    ignored=4   
 ~~~
 
 
