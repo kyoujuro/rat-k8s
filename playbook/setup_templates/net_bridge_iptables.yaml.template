@@ -1,0 +1,4 @@
+- name: Set iptables for nat
+__SET_IPTABLES__
+
+- shell: iptables-save

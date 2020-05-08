@@ -1,0 +1,8 @@
+# ca_home:       /mnt/ca
+# etcd_ca_home:  /mnt/ca-etcd
+# proxy_ca_home: /mnt/ca-front-proxy
+# kubeconfig: /mnt/kubeconfig
+# KUBERNETES_PUBLIC_ADDRESS: __API_SERVER_IPADDR__
+
+nodes:
+__AUTO_CONFIG__

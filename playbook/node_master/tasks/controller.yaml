@@ -1,0 +1,26 @@
+##
+## Configure the Kubernetes Controller Manager
+##
+
+- name: copy kube-controller-manager bin
+  copy:
+    src: /mnt/download/kubernetes/server/bin/kube-controller-manager
+    dest: /usr/local/bin
+    owner: root
+    group: root
+    mode: '0755'
+    remote_src: yes
+
+- name: Configure the Kubernetes Controller Manager
+  copy:
+    src: /mnt/kubeconfig/kube-controller-manager.kubeconfig
+    dest: /etc/kubernetes/controller-manager.conf
+    owner: root
+    group: root
+    mode: '0644'
+- template:
+    src: kube-controller-manager.service.j2
+    dest: /etc/systemd/system/kube-controller-manager.service
+    owner: root
+    group: root
+    mode: '0644'

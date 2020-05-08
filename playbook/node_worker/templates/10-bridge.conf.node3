@@ -1,0 +1,24 @@
+{
+    "cniVersion": "0.3.1",
+    "name": "bridge",
+    "type": "bridge",
+    "bridge": "cnio0",
+    "isGateway": true,
+    "ipam": {
+        "type": "host-local",
+        "ranges": [
+           [ {
+               "subnet": "10.244.3.0/24",
+               "rangeStart": "10.244.3.2",
+               "rangeEnd": "10.244.3.253",
+               "gateway": "10.244.3.254" 
+             }
+	   ]
+        ],
+        "routes": [
+	  {
+	    "dst": "0.0.0.0/0"
+          }
+	]
+    }
+}

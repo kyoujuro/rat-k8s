@@ -1,0 +1,45 @@
+- name: Clean up kubernets directory
+  file:
+    path: /var/lib/kubernetes
+    state: absent
+- file:
+    path: /etc/kubernetes
+    state: absent
+
+- name: Create kubernetes directorys
+  file:
+    path: /var/lib/kubernetes
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /etc/kubernetes
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /etc/kubernetes/config
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /etc/kubernetes/pki
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /etc/kubernetes/pki/etcd
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /etc/kubernetes/pki/manifests
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'

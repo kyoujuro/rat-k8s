@@ -1,0 +1,11 @@
+- name: Set node role
+  shell: |
+    kubectl label node {{ item.name }} --overwrite=true node-role.kubernetes.io/master=""
+    kubectl taint node {{ item.name }} --overwrite=true node-role.kubernetes.io/master="":NoSchedule
+  args:
+    chdir: /home/vagrant
+  when: item.name is match("master*")
+  loop: "{{ nodes }}"    
+  become: true
+  become_user: vagrant
+

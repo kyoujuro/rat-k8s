@@ -1,0 +1,124 @@
+#
+# mlb1 と mlb2 の間で代表アドレスを設定する
+#
+- name: Install Ubuntu package
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - libssl-dev
+    - build-essential
+    
+- name: deploy netplan config
+  template:
+    src: 51-heepalived.yaml.j2
+    dest: /etc/netplan/51-heepalived.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - lb_pos == "Internal"
+
+- name: deploy netplan config
+  template:
+    src: 52-heepalived.yaml.j2
+    dest: /etc/netplan/52-heepalived.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - lb_pos == "Frontend"
+
+
+- shell: netplan apply
+
+- copy:
+    src:  /mnt/download/keepalived-2.0.15.tar.gz
+    dest: /home/vagrant/keepalived-2.0.15.tar.gz
+    mode: '0644'
+
+- unarchive:
+    src:  /home/vagrant/keepalived-2.0.15.tar.gz
+    dest: /home/vagrant
+    remote_src: yes
+
+
+- shell: |
+      cd keepalived-2.0.15
+      ./configure
+      make && make install
+  args:
+    chdir: /home/vagrant
+
+- name: deploy keepalived service
+  template:
+    src: keepalived.service.j2
+    dest: /etc/systemd/system/keepalived.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: /etc/keepalived/keepalived.conf to master mlb
+  file:
+    path: /etc/keepalived
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: /etc/keepalived/keepalived.conf to primary mlb
+  template:
+    src: keepalived.conf.master.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - ansible_facts.hostname is match("mlb1")
+    - lb_pos == "Internal"
+
+- name: /etc/keepalived/keepalived.conf to backup mlb
+  template:
+    src: keepalived.conf.backup.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - ansible_facts.hostname is match("mlb2")
+    - lb_pos == "Internal"
+
+
+- name: /etc/keepalived/keepalived.conf to primary elb
+  template:
+    src: keepalived.conf.master_frontend.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - ansible_facts.hostname is match("elb1")
+    - lb_pos == "Frontend"
+
+- name: /etc/keepalived/keepalived.conf to backup elb
+  template:
+    src: keepalived.conf.backup_frontend.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - ansible_facts.hostname is match("elb2")
+    - lb_pos == "Frontend"
+
+
+- name: just force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+
+- name: enable and start a keepalived
+  systemd:
+    name: keepalived
+    state: started
+    enabled: yes

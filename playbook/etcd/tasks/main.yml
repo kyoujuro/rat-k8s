@@ -1,0 +1,91 @@
+###########
+#
+# リセット
+#
+###########
+- copy:
+    src:  /mnt/download/etcd-{{ etcd_version }}-linux-amd64/etcd
+    dest: /usr/local/bin
+    owner: root
+    group: root
+    mode: '0755'
+- copy:
+    src:  /mnt/download/etcd-{{ etcd_version }}-linux-amd64/etcdctl
+    dest: /usr/local/bin
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /etc/kubernetes/pki/etcd
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /var/lib/etcd
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- copy:
+    src: /mnt/ca/ca.pem
+    dest: /etc/kubernetes/pki/ca.crt
+    owner: root
+    group: root
+    mode: '0600'
+- copy:
+    src: /mnt/ca-etcd/etcd-ca.pem
+    dest: /etc/kubernetes/pki/etcd/ca.crt
+    owner: root
+    group: root
+    mode: '0600'
+- copy:
+    src: /mnt/ca-etcd/etcd-ca-key.pem
+    dest: /etc/kubernetes/pki/etcd/ca.key
+    owner: root
+    group: root
+    mode: '0600'
+- copy:
+    src: /mnt/ca-etcd/etcd-server.pem
+    dest: /etc/kubernetes/pki/etcd/server.crt
+    owner: root
+    group: root
+    mode: '0600'
+- copy:
+    src: /mnt/ca-etcd/etcd-server-key.pem
+    dest: /etc/kubernetes/pki/etcd/server.key
+    owner: root
+    group: root
+    mode: '0600'
+- copy:
+    src: /mnt/ca-etcd/etcd-peer.pem
+    dest: /etc/kubernetes/pki/etcd/peer.crt
+    owner: root
+    group: root
+    mode: '0600'
+- copy:
+    src: /mnt/ca-etcd/etcd-peer-key.pem
+    dest: /etc/kubernetes/pki/etcd/peer.key
+    owner: root
+    group: root
+    mode: '0600'
+
+- template:
+    src: etcd.service.j2
+    dest: /etc/systemd/system/etcd.service
+    owner: root
+    group: root
+    mode: '0644'
+
+- debug: msg="{{ ansible_facts.hostname }}"
+#- debug: msg="{{ ansible_facts }}"
+#- debug: msg="{{ ansible_facts.enp0s3.ipv4.address }}"
+#- debug: msg="{{ ansible_facts.enp0s8.ipv4.address }}"
+
+- name: Start etcd service
+  systemd:
+    name: etcd.service
+    state: started
+    daemon_reload: yes
+    enabled: yes
+    

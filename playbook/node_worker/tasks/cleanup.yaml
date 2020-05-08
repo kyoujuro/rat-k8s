@@ -1,0 +1,27 @@
+###############################
+- name: Configure worker node
+  file:
+    path: /var/lib/kubelet
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /var/lib/kube-proxy
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /var/lib/kubernetes 
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /var/run/kubernetes
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+

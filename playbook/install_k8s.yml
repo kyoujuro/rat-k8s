@@ -1,0 +1,169 @@
+#########################################
+- name: Clean up bootnode
+  hosts:
+  - bootnode
+  tasks:
+    - include_tasks: tasks/clean_up_bootnode.yml
+
+- name: Clean up masters
+  hosts: masters
+  become: true
+  tasks:
+    - include_tasks: tasks/clean_up_masters.yml
+
+- name: Clean up nodes
+  hosts: nodes
+  become: true
+  tasks:
+    - include_tasks: tasks/clean_up_nodes.yml
+
+- name: Setup Kubernetes Dirs
+  hosts:
+  - masters
+  - nodes
+  become: true
+  tasks:
+    - include_tasks: tasks/setup_k8s_dirs.yml
+    
+#
+# ソフトウェアのダウンロード
+# CAと証明書のセットアップ
+#
+- name: install cfssl,cfssjosn,kubectl command
+  hosts:
+  - bootnode
+  become: true
+  tasks:
+    - include_tasks: tasks/install-k8s-command.yaml
+
+- name: Download a containerd on NFS server
+  hosts:
+  - bootnode
+  tasks:
+    - include_tasks: tasks/download_on_bootnode.yml
+  roles:
+    - cert_setup
+
+
+#
+# 内部ロードバランサーの起動
+#
+
+- name: Internal HA-PROXY install
+  hosts:
+  - mlbs
+  vars:
+    lb_pos: "Internal"
+  gather_facts: true
+  become: true
+  become_user: root
+  become_method: sudo
+  roles:
+    - haproxy
+    - keepalived
+
+
+#
+# 外部ロードバランサーの起動
+#
+
+- name: External HA-PROXY install
+  hosts:
+  - elbs
+  vars:
+    lb_pos: "Frontend"
+  gather_facts: true
+  become: true
+  become_user: root
+  become_method: sudo
+  roles:
+    - haproxy
+    - keepalived
+
+#
+# etcd クラスタとマスターノードのセットアップ
+#
+- name: Configure etcd on masters
+  hosts:
+  - masters
+  gather_facts: true
+  become: true
+  roles:
+    - etcd
+    - node_master
+    - role: node_worker
+      when: pod_network == "flannel"
+    - role: net_flannel
+      when: pod_network == "flannel"      
+    - role: net_bridge
+      when: pod_network == "bridge"
+  #tasks:
+  #  - fail: msg="Abort"
+
+#
+#  RBAC for Kubelet Authorization
+#
+- name: Configure RBAC
+  hosts:
+  - bootnode
+  gather_facts: true
+  become: true
+  become_user: vagrant
+  tasks:
+    - include_tasks: tasks/config_rbac_kubelet.yml
+    
+#
+# ワーカーノードのセットアップ
+#
+- name: Configure work-nodes
+  hosts:
+  - nodes
+  gather_facts: true
+  become: true
+  roles:
+    - node_worker
+    - role: net_bridge
+      when: pod_network == "bridge"
+    - role: net_flannel
+      when: pod_network == "flannel"      
+
+#########################################
+#
+# ノードへロール設定
+#
+# flannel使用時にマスターノードへのtaint設定
+#
+- name: Configure work-nodes
+  hosts:
+  - bootnode
+  gather_facts: true
+  become: true
+  tasks:
+    - include_vars:
+        dir: vars
+    - include_tasks: tasks/role_master.yaml
+      when:
+      - pod_network == "flannel"
+    - wait_for:
+        timeout: 60
+    - include_tasks: tasks/role_worker.yaml
+
+#########################################
+
+#
+# モニタリングセットアップ
+# CoreDNSセットアップ
+#
+- name: K8s Monitoring setup
+  hosts: bootnode
+  gather_facts: true
+  become: true
+  roles:
+    - addon_coredns
+    - addon_metrics-server
+    - addon_dashboard
+
+
+
+
+

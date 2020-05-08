@@ -1,0 +1,21 @@
+{
+    "cniVersion": "0.3.1",
+    "name": "bridge",
+    "type": "bridge",
+    "bridge": "cnio0",
+    "isGateway": true,
+    "ipam": {
+        "type": "host-local",
+        "ranges": [
+           [ {
+__SET_CONFIG__
+             }
+	   ]
+        ],
+        "routes": [
+	  {
+	    "dst": "0.0.0.0/0"
+          }
+	]
+    }
+}

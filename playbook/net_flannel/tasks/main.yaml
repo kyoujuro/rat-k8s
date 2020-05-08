@@ -1,0 +1,95 @@
+- name: start configuration  
+  file:
+    path: /etc/cni/net.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /opt/cni/bin
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /etc/kubernetes
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- copy:
+    src: "/mnt/kubeconfig/{{ ansible_facts.hostname }}.kubeconfig"
+    #dest: /var/lib/kubernetes/kubeconfig
+    dest: /etc/kubernetes/node.conf
+    owner: root
+    group: root
+    mode: '0600'
+    remote_src: yes
+
+- unarchive:
+    src: /mnt/download/crictl-{{ crictl_version }}-linux-amd64.tar.gz
+    dest: /usr/local/bin
+    owner: root
+    group: root
+    mode: '0755'
+- name: Configure CNI Networking
+  unarchive:
+    src: /mnt/download/cni-plugins-linux-amd64-{{ cni_plugins }}.tgz
+    dest: /opt/cni/bin/
+    owner: root
+    group: root
+    mode: '0755'
+- template:
+    src: 10-flannel.conflist
+    dest: /etc/cni/net.d
+    owner: root
+    group: root
+    mode: '0644'
+#
+# Flanneld の設定
+#
+- file:
+    path: /opt/bin
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- copy:
+    src: /mnt/download/flanneld
+    dest: /opt/bin
+    owner: root
+    group: root
+    mode: '0755'
+
+- template:
+    src: flanneld.service
+    dest: /etc/systemd/system
+    owner: root
+    group: root
+    mode: '0644'
+
+- file:
+    path: /etc/kube-flannel
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- template:
+    src: cni-conf.json
+    dest: /etc/kube-flannel
+    owner: root
+    group: root
+    mode: '0644'
+- template:
+    src: net-conf.json
+    dest: /etc/kube-flannel
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Start the Flannel Services
+  systemd:
+    name: flanneld
+    state: started
+    daemon_reload: yes
+    enabled: yes

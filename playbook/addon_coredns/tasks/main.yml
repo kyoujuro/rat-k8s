@@ -1,0 +1,21 @@
+- name: Deploy CoreDNS
+  template:
+    src: coredns.yaml
+    dest: /srv/k8s/download
+    owner: vagrant
+    group: vagrant
+- template:
+    src: coredns-configmap.yaml
+    dest: /srv/k8s/download
+    owner: vagrant
+    group: vagrant
+
+- command: kubectl apply -f /srv/k8s/download/coredns-configmap.yaml
+  become_user: vagrant
+  args:
+    chdir: /home/vagrant
+
+- command: kubectl apply -f /srv/k8s/download/coredns.yaml
+  become_user: vagrant
+  args:
+    chdir: /home/vagrant

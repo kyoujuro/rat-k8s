@@ -1,0 +1,28 @@
+## Dashboard UI インストール
+#
+- name: Download Dashboard Manifest
+  get_url:
+    url: https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0-beta6/aio/deploy/recommended.yaml
+    dest: /home/vagrant/
+    mode: '0644'
+    owner: vagrant
+    group: vagrant
+
+- name: Change Dashboard RBAC
+  replace:
+    path: /home/vagrant/recommended.yaml
+    after: '  kind: ClusterRole'
+    regexp: '^  name: kubernetes-dashboard'
+    replace: '  name: cluster-admin'
+
+- name: Deploy Dashboard UI
+  become_user: vagrant
+  command: kubectl apply -f /home/vagrant/recommended.yaml
+
+- name: setup kubeconfig
+  become_user: vagrant    
+  shell: |
+        KUBECONFIG=/etc/kubernetes/admin.conf 
+        TOKEN=$(kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret |grep kubernetes-dashboard-token-* | awk '{print $1}') |awk '$1=="token:"{print $2}')
+        kubectl config set-credentials kubernetes-admin --token="${TOKEN}"
+

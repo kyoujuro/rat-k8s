@@ -1,0 +1,19 @@
+##
+## Start kubernetes deamons
+##
+- name: Start kubernetes deamons
+  systemd:
+    name: kube-apiserver
+    state: started
+    daemon_reload: yes
+    enabled: yes
+- systemd:
+    name: kube-controller-manager
+    state: started
+    daemon_reload: yes
+    enabled: yes
+- systemd:
+    name: kube-scheduler
+    state: started
+    daemon_reload: yes
+    enabled: yes

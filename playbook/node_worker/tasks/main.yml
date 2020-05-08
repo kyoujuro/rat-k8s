@@ -1,0 +1,32 @@
+#
+#
+#  ワーカーノードのセットアップ
+#
+#
+
+## クリーンナップ
+- name: Cleanup worker node
+  include_tasks: cleanup.yaml
+
+
+## Containerd のセットアップ
+- name: Install Containerd
+  include_tasks: containerd.yaml
+
+
+## kubectl インストール
+- name: Install kubectl
+  include_tasks: kubectl.yaml
+
+## kube-proxy インストール
+- name: Install kube-proxy
+  include_tasks: kube-proxy.yaml
+
+## kubelet インストール
+- name: Install kubelet
+  include_tasks: kubelet.yaml
+
+
+
+
+

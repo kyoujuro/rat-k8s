@@ -1,0 +1,48 @@
+#
+# K8sディレクトリ作成
+#
+
+##
+## 認証局証明書、サーバー証明書、クライアント証明などのコピー
+##
+- name: Copy CA Cert, Server Cert, Client Cert for K8s master
+  include_tasks: copy-certs-files.yaml
+
+##
+## カーネル設定変更
+##
+- name: Configure Kernel parameter
+  include_tasks: kernel-param.yaml
+
+##
+## Configure Kubernetes API Server
+##
+- name: Configure API Server
+  include_tasks: apiserver.yaml
+
+##
+## Configure Kubernetes Controller Manager
+##
+- name: Configure Controller Manager
+  include_tasks: controller.yaml
+
+##
+## Configure Kubernetes Scheduler
+##
+- name: Configure Scheduler
+  include_tasks: scheduler.yaml
+
+##
+## Start kubernetes deamons  これは、上記の３つへ分散したい
+##
+- name: Start Kubernetes dasemons apiserver, controller-manager, scheduler
+  include_tasks: start_deamons.yaml
+
+##
+## Enable HTTP Health Checks
+##
+- name: Enable HTTP Health Checks
+  include_tasks: start_health_check.yaml
+
+
+

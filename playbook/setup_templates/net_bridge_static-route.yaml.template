@@ -1,0 +1,13 @@
+- name: Insert/Update netplan
+  blockinfile:
+    dest: /etc/netplan/50-vagrant.yaml
+    insertafter: '172.16.2*'
+    regexp: '172.16.2*'
+    state: present
+    block: |2
+            routes:
+__SET_ROUTING__
+
+- shell: netplan apply
+
+

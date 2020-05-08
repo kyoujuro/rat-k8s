@@ -1,0 +1,119 @@
+- name: Downloading cri-containerd
+  stat:
+    path: /srv/k8s/download/cri-containerd-{{ containerd_version }}.linux-amd64.tar.gz
+  register: cri_containerd
+
+- debug: msg="{{ cri_containerd }}"
+
+- get_url:
+    url: https://storage.googleapis.com/cri-containerd-release/cri-containerd-{{ containerd_version }}.linux-amd64.tar.gz
+    dest: /srv/k8s/download
+    mode: '0644'
+  when: cri_containerd.stat.exists == false
+  
+- name: Downloading crictl
+  stat:
+    path: /srv/k8s/download/crictl-{{ crictl_version }}-linux-amd64.tar.gz
+  register: crictl
+- get_url:
+    url: https://github.com/kubernetes-sigs/cri-tools/releases/download/{{ crictl_version }}/crictl-{{ crictl_version }}-linux-amd64.tar.gz
+    dest: /srv/k8s/download
+    mode: '0644'
+  when: crictl.stat.exists == false
+
+- name: Downloading runc
+  stat:
+    path: /srv/k8s/download/runc.amd64
+  register: runc
+- get_url:
+    url: https://github.com/opencontainers/runc/releases/download/{{ runc_version }}/runc.amd64
+    dest: /srv/k8s/download
+    mode: '0644'
+  when: runc.stat.exists == false
+
+
+- name: Downloading cni-plugins
+  stat:
+    path: /srv/k8s/download/cni-plugins-linux-amd64-{{ cni_plugins }}.tgz
+  register: cni
+- get_url:
+    url: https://github.com/containernetworking/plugins/releases/download/{{ cni_plugins }}/cni-plugins-linux-amd64-{{ cni_plugins }}.tgz
+    dest: /srv/k8s/download
+    mode: '0644'
+  when: cni.stat.exists == false
+      
+
+- name: Downloading containerd
+  stat:
+    path: containerd-{{ containerd_version }}.linux-amd64.tar.gz
+  register: containerd
+- get_url:
+    url: https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}.linux-amd64.tar.gz
+    dest: /srv/k8s/download
+    mode: '0644'
+  when: containerd.stat.exists == false
+
+
+- name: Downloading etcd
+  stat:
+    path: /srv/k8s/download/etcd-{{ etcd_version }}-linux-amd64.tar.gz
+  register: etcd
+- get_url:
+    url: https://github.com/etcd-io/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz
+    dest: /srv/k8s/download
+    mode: '0644'
+  when: etcd.stat.exists == false
+- unarchive:
+    src:  /srv/k8s/download/etcd-{{ etcd_version }}-linux-amd64.tar.gz
+    dest: /srv/k8s/download
+
+
+- name: Downloading Kubernetes binary
+  stat:
+    path: /srv/k8s/download/kubernetes-server-linux-amd64.tar.gz
+  register: k8s_bin
+- get_url:
+    url: https://dl.k8s.io/{{ kubernetes_version }}/kubernetes-server-linux-amd64.tar.gz
+    dest: /srv/k8s/download
+    mode: '0644'
+  when: k8s_bin.stat.exists == false	
+- unarchive:
+    src:  /srv/k8s/download/kubernetes-server-linux-amd64.tar.gz
+    dest: /srv/k8s/download
+
+
+- name: Flannel Download 
+  stat:
+    path: /srv/k8s/download/flannel-{{ flannel_version }}-linux-amd64.tar.gz
+  register: flannel
+- get_url:
+    url: https://github.com/coreos/flannel/releases/download/{{ flannel_version }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz
+    dest: /srv/k8s/download
+    mode: '0644'
+  when: flannel.stat.exists == false	
+- unarchive:
+    src:  /srv/k8s/download/flannel-{{ flannel_version }}-linux-amd64.tar.gz
+    dest: /srv/k8s/download
+
+
+- name: Install coredns from git repo
+  git:
+    repo: https://github.com/coredns/deployment
+    dest: /srv/k8s/download/coredns
+    force: yes
+    update: yes
+  become_user: vagrant    
+
+- name: Downloading keepalived
+  stat:
+    path: /srv/k8s/download/keepalived-2.0.15.tar.gz
+  register: keepalived
+- get_url:
+    url: https://www.keepalived.org/software/keepalived-2.0.15.tar.gz
+    dest: /srv/k8s/download
+    mode: '0644'
+  when: flannel.stat.exists == false	
+- unarchive:
+    src:  /srv/k8s/download/keepalived-2.0.15.tar.gz
+    dest: /srv/k8s/download
+

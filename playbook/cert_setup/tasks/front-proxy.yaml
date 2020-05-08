@@ -1,0 +1,51 @@
+#
+# Front Proxy の設定
+#
+- name: Create Front-Proxy CA working directory
+  file:
+    path: "{{ proxy_ca_home }}"
+    state: directory
+    owner: vagrant
+    group: vagrant
+
+#
+# Front Proxy CAの作成
+#
+- name: Create Front-Proxy CA
+  template:  
+    src: front-proxy-ca-config.json
+    dest: "{{ proxy_ca_home }}"
+    owner: vagrant
+    group: vagrant
+    mode: '0644'
+- template:
+    src: front-proxy-ca-csr.json
+    dest: "{{ proxy_ca_home }}"
+    owner: vagrant
+    group: vagrant
+    mode: '0644'
+- shell: |
+    cfssl gencert -initca front-proxy-ca-csr.json | cfssljson -bare front-proxy-ca
+  args:
+    chdir: "{{ proxy_ca_home }}"
+
+- name: Front-proxy Client Certificate
+  template:
+    src: front-proxy-client-csr.json
+    dest: "{{ proxy_ca_home }}"
+    owner: vagrant
+    group: vagrant
+    mode: '0644'
+- shell: |
+    cfssl gencert \
+      -ca=front-proxy-ca.pem \
+      -ca-key=front-proxy-ca-key.pem \
+      -config=front-proxy-ca-config.json \
+      -profile=kubernetes \
+    front-proxy-client-csr.json | cfssljson -bare front-proxy-client
+  args:
+    chdir: "{{ proxy_ca_home }}"
+
+
+
+

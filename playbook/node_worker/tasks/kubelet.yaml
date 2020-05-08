@@ -1,0 +1,59 @@
+- copy:
+    src: /mnt/download/kubernetes/server/bin/kubelet
+    dest: /usr/local/bin
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Configure the Kubelet
+  copy:
+    src: "/mnt/ca/{{ ansible_facts.hostname }}-key.pem"
+    #dest: /var/lib/kubelet
+    dest: /etc/kubernetes/pki
+    owner: root
+    group: root
+    mode: '0600'
+    remote_src: yes
+- copy:
+    src: "/mnt/ca/{{ ansible_facts.hostname }}.pem"
+    #dest: /var/lib/kubelet
+    dest: /etc/kubernetes/pki    
+    owner: root
+    group: root
+    mode: '0600'
+    remote_src: yes
+- copy:
+    src: "/mnt/kubeconfig/{{ ansible_facts.hostname }}.kubeconfig"
+    #dest: /var/lib/kubelet/kubeconfig
+    dest: /etc/kubernetes/node.conf
+    owner: root
+    group: root
+    mode: '0600'
+    remote_src: yes
+- copy: 
+    src: /mnt/ca/ca.pem
+    #dest: /var/lib/kubernetes
+    dest: /etc/kubernetes/pki
+    owner: root
+    group: root
+    mode: '0600'
+    remote_src: yes
+- template:
+    src: kubelet-config.yaml
+    #dest: /var/lib/kubelet
+    dest: /etc/kubernetes/config
+    owner: root
+    group: root
+    mode: '0644'
+- template:
+    src: kubelet.service
+    dest: /etc/systemd/system
+    owner: root
+    group: root
+    mode: '0644'
+
+- systemd:
+    name: kubelet
+    state: started
+    daemon_reload: yes
+    enabled: yes

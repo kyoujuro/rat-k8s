@@ -1,0 +1,14 @@
+- include_vars: /vagrant/playbook/vars/main.yaml
+
+- name: static route masters
+  include_tasks: /vagrant/playbook/net_bridge/tasks/static-route.yaml
+  when: ansible_facts.hostname is match("master[123]")
+
+- name: static route for each node
+  include_tasks: "/vagrant/playbook/net_bridge/tasks/static-route-{{ ansible_facts.hostname }}.yaml"
+  when:
+  - ansible_facts.hostname == item.name
+  - ansible_facts.hostname is match("node*")
+  loop: "{{ nodes }}"
+
+

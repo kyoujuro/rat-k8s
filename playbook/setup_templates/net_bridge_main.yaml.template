@@ -1,0 +1,4 @@
+- name: 
+  include_tasks: static-route.yaml
+  when:
+    - ansible_facts.hostname is match("master[123]")

@@ -1,0 +1,67 @@
+## Metrics Server インストール
+#
+# リポジトリのソースコード変更により動作しなくなったので、コメント化
+#
+#- name: Install Metrics Server
+#  git:
+#    repo: 'https://github.com/kubernetes-sigs/metrics-server'
+#    dest: /home/vagrant/metrics-server
+#    force: yes
+#  become_user: vagrant    
+#
+#- name: add a new line
+#  blockinfile:
+#    path: /home/vagrant/metrics-server/deploy/kubernetes/metrics-server-deployment.yaml
+#    insertafter: '        args:'
+#    block: |
+#           # added lines
+#                     - --kubelet-insecure-tls
+#                     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+#  become_user: vagrant
+#
+#- name: Deploy Metrics Server
+#  command: kubectl apply -f metrics-server/deploy/kubernetes
+#  become_user: vagrant
+#  args:
+#    chdir: /home/vagrant
+#  become_user: vagrant
+
+
+#
+# 暫定処置として旧バージョンのコードを使用したが
+# flannel環境で動作せるためにコメント化
+#
+#- name: Deploy Metrics Server
+#  command: kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.6/components.yaml
+#  become_user: vagrant
+#  args:
+#    chdir: /home/vagrant
+#  become_user: vagrant
+
+
+#
+# 暫定版メトリックスサーバーのデプロイ用 (Brigde, Flannelで動作)
+#
+- name: Install Metrics Server
+  get_url:
+    url: https://github.com/kubernetes-sigs/metrics-server/releases/download/v0.3.6/components.yaml
+    dest: /srv/k8s/download
+    mode: '0644'
+  become_user: vagrant    
+
+- name: add a new line
+  blockinfile:
+    path: /srv/k8s/download/components.yaml
+    insertafter: '        args:'
+    block: |
+           # added lines
+                     - --kubelet-insecure-tls
+                     - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+  become_user: vagrant
+
+- name: Deploy Metrics Server
+  command: kubectl apply -f /srv/k8s/download/components.yaml
+  become_user: vagrant
+  args:
+    chdir: /home/vagrant
+  become_user: vagrant

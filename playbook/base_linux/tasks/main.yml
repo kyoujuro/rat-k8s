@@ -1,0 +1,76 @@
+#####
+- name: Install Ubuntu package
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - nfs-common
+    - ruby
+
+- name: Ensure /etc/hosts
+  template:
+    src: hosts.j2
+    dest: /etc/hosts
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Mount up
+  mount:
+    path: /mnt
+    src: bootnode:/srv/k8s
+    fstype: nfs
+    state: mounted
+    
+#############################
+
+- name: Ensure group 'admin' exists
+  group:
+    name:  "{{ cluster_admin }}"
+    state: present
+- name: Add the user 'admin' with a bash shell,
+  user:
+    name:  "{{ cluster_admin }}"
+    shell: /bin/bash
+    group: "{{ cluster_admin }}"
+- name: add sudoers
+  template:
+    src:  sudor.j2
+    dest: "/etc/sudoers.d/{{ cluster_admin }}"
+    owner: root
+    group: root
+    mode: '0440'
+- name: mkdir .ssh directory
+  file:
+    path: "/home/{{ cluster_admin }}/.ssh"
+    state: directory
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
+    mode: '0700'
+
+- name: Copy id_rsa to cluster_admin  home
+  command: cp {{ shared_fs }}/keys/id_rsa /home/{{ cluster_admin }}/.ssh/id_rsa
+- file:
+    path: /home/{{ cluster_admin }}/.ssh/id_rsa
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
+    mode: '0400'
+- name: Copy id_rsa.pub to  cluster_admin  home
+  command: cp {{ shared_fs }}/keys/id_rsa.pub /home/{{ cluster_admin }}/.ssh/id_rsa.pub
+- file:
+    path: "/home/{{ cluster_admin }}/.ssh/id_rsa.pub"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
+    mode: '0644'
+- file:
+    path: "/home/{{ cluster_admin }}/.ssh/authorized_keys"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
+    mode: '0400'
+- name: add authorized_keys
+  shell: |
+     cat {{ shared_fs }}/keys/id_rsa.pub >> /home/{{ cluster_admin }}/.ssh/authorized_keys
+
+
+

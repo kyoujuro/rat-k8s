@@ -1,0 +1,8 @@
+- copy:
+    src: /mnt/download/kubernetes/server/bin/kubectl
+    dest: /usr/local/bin
+    owner: root
+    group: root
+    mode: '0755'
+
+## これだけでは kubectlは使えないので追加が必要
