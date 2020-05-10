@@ -5,8 +5,8 @@
 #
 
 ## クリーンナップ
-- name: Cleanup worker node
-  include_tasks: cleanup.yaml
+#- name: Cleanup worker node
+#  include_tasks: cleanup.yaml
 
 
 ## Containerd のセットアップ

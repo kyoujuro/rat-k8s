@@ -1,5 +1,5 @@
 - copy:
-    src: /mnt/download/kubernetes/server/bin/kubectl
+    src: /mnt/bin/kubectl
     dest: /usr/local/bin
     owner: root
     group: root

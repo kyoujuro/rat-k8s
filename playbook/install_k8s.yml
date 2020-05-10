@@ -1,21 +1,21 @@
 #########################################
-- name: Clean up bootnode
-  hosts:
-  - bootnode
-  tasks:
-    - include_tasks: tasks/clean_up_bootnode.yml
-
-- name: Clean up masters
-  hosts: masters
-  become: true
-  tasks:
-    - include_tasks: tasks/clean_up_masters.yml
-
-- name: Clean up nodes
-  hosts: nodes
-  become: true
-  tasks:
-    - include_tasks: tasks/clean_up_nodes.yml
+#- name: Clean up bootnode
+#  hosts:
+#  - bootnode
+#  tasks:
+#    - include_tasks: tasks/clean_up_bootnode.yml
+#
+#- name: Clean up masters
+#  hosts: masters
+#  become: true
+#  tasks:
+#    - include_tasks: tasks/clean_up_masters.yml
+#
+#- name: Clean up nodes
+#  hosts: nodes
+#  become: true
+#  tasks:
+#    - include_tasks: tasks/clean_up_nodes.yml
 
 - name: Setup Kubernetes Dirs
   hosts:
@@ -29,18 +29,18 @@
 # ソフトウェアのダウンロード
 # CAと証明書のセットアップ
 #
-- name: install cfssl,cfssjosn,kubectl command
-  hosts:
-  - bootnode
-  become: true
-  tasks:
-    - include_tasks: tasks/install-k8s-command.yaml
+#- name: install cfssl,cfssjosn,kubectl command
+#  hosts:
+#  - bootnode
+#  become: true
+#  tasks:
+#    - include_tasks: tasks/install-k8s-command.yaml
 
 - name: Download a containerd on NFS server
   hosts:
   - bootnode
-  tasks:
-    - include_tasks: tasks/download_on_bootnode.yml
+#  tasks:
+#    - include_tasks: tasks/download_on_bootnode.yml  
   roles:
     - cert_setup
 

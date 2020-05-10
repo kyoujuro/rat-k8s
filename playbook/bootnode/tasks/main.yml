@@ -20,6 +20,14 @@
     group: vagrant
     mode: '0777'
 
+- name: mkdir for k8s bin
+  file:
+    path:  /srv/k8s/bin
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: '0755'
+
 - name: mkdir for ssh keys
   file:
     path:  /srv/k8s/keys
@@ -110,3 +118,12 @@
     mode: '0400'
 
 
+#############################
+# 必要なコードのダウンロード
+#############################
+
+- include_tasks: download_cri_container.yaml
+- include_tasks: download_etcd.yaml
+- include_tasks: download_addon.yaml
+- include_tasks: download_kubernetes_binary.yaml
+- include_tasks: install-k8s-command.yaml

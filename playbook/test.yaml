@@ -1,37 +1,19 @@
-#
-# 内部ロードバランサーの起動
-#
-
-- name: Internal HA-PROXY install
+- name: Download a containerd on NFS server
   hosts:
-  - mlbs
-  vars:
-    lb_pos: "Internal"
-  gather_facts: true
-  become: true
-  become_user: root
-  become_method: sudo
-  roles:
-    - haproxy
-    - keepalived
+  - bootnode
+  tasks:
+    - debug: msg="custom_kubernetes = {{ custom_kubernetes }}"
+    
+    - name: test true
+      command: ls
+      when: custom_kubernetes == 'true'
+      
+    - name: test false
+      command: ls
+      when: custom_kubernetes == "false"
 
+    - name: test no condition
+      command: ls
 
-#
-# 外部ロードバランサーの起動
-#
-
-- name: External HA-PROXY install
-  hosts:
-  - elbs
-  vars:
-    lb_pos: "Frontend"
-  gather_facts: true
-  become: true
-  become_user: root
-  become_method: sudo
-  roles:
-    - haproxy
-    - keepalived
-
-
-
+   
+    

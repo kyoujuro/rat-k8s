@@ -1,5 +1,5 @@
 - copy:
-    src: /mnt/download/kubernetes/server/bin/kube-proxy
+    src: /mnt/bin/kube-proxy
     dest: /usr/local/bin
     owner: root
     group: root

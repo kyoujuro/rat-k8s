@@ -4,9 +4,10 @@
     kubectl label node node1 --overwrite=true node-role.kubernetes.io/worker=worker
     kubectl label node node2 --overwrite=true node-role.kubernetes.io/worker=worker
     kubectl label node node3 --overwrite=true node-role.kubernetes.io/worker=worker
-    kubectl label node node4 --overwrite=true node-role.kubernetes.io/storage=storage
+    kubectl label node node4 --overwrite=true node-role.kubernetes.io/worker=worker
     kubectl label node node5 --overwrite=true node-role.kubernetes.io/storage=storage
     kubectl label node node6 --overwrite=true node-role.kubernetes.io/storage=storage
+    kubectl label node node7 --overwrite=true node-role.kubernetes.io/storage=storage
   args:
     chdir: /home/vagrant
   become: true
