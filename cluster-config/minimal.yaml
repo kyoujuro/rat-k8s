@@ -8,8 +8,8 @@ bridge_if: "eno1"
 
 ### Kubernetes version
 kubernetes_version: 1.18.2
-#kubernetes_custom: false
-kubernetes_custom: true
+kubernetes_custom: false
+#kubernetes_custom: true
 
 
 ### K8s cluster/pod network CNI plugin

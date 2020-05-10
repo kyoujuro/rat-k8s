@@ -7,6 +7,8 @@ bridge_if: "eno1"
 kubernetes_version: 1.18.2
 #kubernetes_version: 1.17.5
 #kubernetes_version: 1.16.8
+kubernetes_custom: false
+
 
 ### K8s cluster/pod network CNI plugin
 pod_network: bridge
