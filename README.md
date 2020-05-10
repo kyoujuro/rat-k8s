@@ -19,7 +19,7 @@ RatK8sには以下の特徴がある。
 * K8sクラスタの外部から内部へのリクエスト転送は、elb1/elb2 のクラスタ構成のVIPで受けて内部へ転送する。
 * K8sクラスタの構成は、テンプレートとなるYAMLファイルから選択して、編集する事で、構成を変更する事ができる。
 
-![RatK8sのシステム概要](images/ratk8s_overview.png)
+![RatK8sのシステム概要](docs/images/ratk8s_overview.png)
 
 
 
