@@ -26,15 +26,13 @@ RatK8sには以下の特徴がある。
 
 ## 構成パターン
 
-学習や設計のための検証実験など、目的に応じて構成を変更できるようにした。
-
-このRat-K8s
+学習や設計のための検証実験など、目的に応じて構成を変更できるようにした。 Ansibleのプレイブックの生成プログラム setup.rbがcluster-configの定義ファイルをプレイブックの生成プログラム setup.rbが読んで必要なプレイブックの要素を生成する事で実現する。
 
 
 * [最小構成](docs/config-02.md) マスターx1, ワーカーx1
 * [デフォルト構成](docs/config-03.md) マスターx1, ワーカーx2
 * [フル構成](docs/config-01.md) フロントLB act-stby,マスタ用LB act-stby,マスターx3,アプリ用ワーカーx3,ストレージ用ワーカーx3
-* [SDS構成](docs/config-01.md) フロントLB act-stby,マスタ用LB act-stby,マスターx3,アプリ用ワーカーx3,ストレージ用ワーカーx3
+* [フル構成+](docs/config-04.md) フロントLB act-stby,マスタ用LB act-stby,マスターx3,アプリ用ワーカーx3,ストレージ用ワーカーx3
 
 
 
