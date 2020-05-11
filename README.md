@@ -29,26 +29,42 @@ RatK8sには以下の特徴がある。
 学習や設計のための検証実験など、目的に応じて構成を変更できるようにした。 Ansibleのプレイブックの生成プログラム setup.rbがcluster-configの定義ファイルをプレイブックの生成プログラム setup.rbが読んで必要なプレイブックの要素を生成する事で実現する。
 
 
-* [最小構成](docs/config-02.md) マスターx1, ワーカーx1
-* [デフォルト構成](docs/config-03.md) マスターx1, ワーカーx2
-* [フル構成](docs/config-01.md) フロントLB act-stby,マスタ用LB act-stby,マスターx3,アプリ用ワーカーx3,ストレージ用ワーカーx3
-* [フル構成+](docs/config-04.md) フロントLB act-stby,マスタ用LB act-stby,マスターx3,アプリ用ワーカーx3,ストレージ用ワーカーx3
+* [最小構成](docs/config-02.md) マスターノード x1, ワーカーノード x1、ブートノード x1
+* [デフォルト構成](docs/config-03.md) マスターノード x1, ワーカーノード x1、ブートノード x1
+* [フル構成](docs/config-01.md) フロントLB アクティブ・スタンバイ構成,マスターノード用LB アクティブ・スタンバイ構成,マスターノード x3, アプリ用ワーカーノード x3, 永続ストレージ用ワーカーノード x3、ブートノード x1
+* [フル構成+](docs/config-04.md) フロントLB アクティブ・スタンバイ構成,マスターノード用LB アクティブ・スタンバイ構成,マスターノード x3, アプリ用ワーカーノード x3, 永続ストレージ用ワーカーノード x3、ブートノード x1
+
+※ ブートノードは、K8sクラスタを構成するノード群をAnsibleを使用して自動設定するためのノードで、AnsibleとNFSのサーバーとなっている。
 
 
 
 
+## 基本的な起動方法
 
-## 起動方法
+起動は次の３段階である。
+1. setup.rb コマンドで構成に合わせたAnsible プレイブックを完成させる。
+2. vagrant up で全ての仮想サーバーを起動する。
+3. bootnodeからansible playbookを実行してK8sクラスタを完成させる。
 
-起動は２段階で、最初に仮想サーバーを起動する。
-次のコマンドで、クラスタ構成ファイルを読み込んで、Ansibleのコードを生成する。
+ここから、具体的にコマンドラインで確認する。
+
+(1) 次のコマンドで、クラスタ構成ファイルを読み込んで、Ansibleのコードを生成する。
 
 ~~~
 git clone https://github.com/takara9/rat-k8s rat1
 cd rat1
-./setup.rb -f cluster-config/full.yaml -s auto
+./setup.rb -f cluster-config/full.yaml 
 ~~~
-次にbootnodeからansibleを実行する事で、Kubernetesクラスタの設定が完了する。
+上記のオプションで `-s auto` を追加すると`vagrant up`を省略できる。
+
+(2) 仮想サーバー群の起動
+
+~~~
+vagrant up
+~~~
+
+
+(3) bootnodeからansibleを実行する事で、Kubernetesクラスタの設定が完了する。
 
 ~~~
 vagrant ssh bootnode
@@ -69,6 +85,7 @@ kubectl get node
 cd rat1
 vagrant destroy -f
 ~~~
+
 
 
 ## 前提条件
