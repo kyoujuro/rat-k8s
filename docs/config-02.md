@@ -105,3 +105,57 @@ node1     Ready    worker   87s    v1.18.2
 ~~~
 
 ただし、マスターノードには、ポッドがスケジュールされないようにtaintを設定してある。
+
+
+## ポッドのコンテナへアクセスする方法
+
+この構成では、ロードバランサーやIngressコントローラーを設定できないので、パソコンのブラウザなどから、ポッド上のコンテナへアクセスする場合には、サービスのnodeportを使用する。
+
+~~~
+vagrant@bootnode:/vagrant$ cd manifests/webserver
+vagrant@bootnode:/vagrant/manifests/webserver$ kubectl apply -f webserver.yaml 
+service/webserver created
+deployment.apps/webserver created
+~~~
+
+マニフェストを適用してしばらくすると、ポッド（コンテナ）が起動する。そうしたらブラウザからアクセスできるようになる。
+
+~~~
+vagrant@bootnode:/vagrant$ kubectl get deployment
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+webserver   3/3     3            3           100s
+
+vagrant@bootnode:/vagrant$ kubectl get pods
+NAME                         READY   STATUS    RESTARTS   AGE
+webserver-756987f8f4-8gvs4   1/1     Running   0          105s
+webserver-756987f8f4-g8kvh   1/1     Running   0          105s
+webserver-756987f8f4-r2jjd   1/1     Running   0          105s
+
+vagrant@bootnode:/vagrant$ kubectl get service
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP   10.32.0.1    <none>        443/TCP        26m
+webserver    NodePort    10.32.0.72   <none>        80:30080/TCP   108s
+~~~
+
+
+`-o wide` を付加して、デプロイされたノードを確認しておく。すべてのポッドはnode1にデプロイされている事が確認できる。
+
+~~~
+vagrant@bootnode:/vagrant$ kubectl get pods -o wide
+NAME                         READY   STATUS    RESTARTS   AGE     IP           NODE
+webserver-756987f8f4-8gvs4   1/1     Running   0          5m41s   10.244.1.6   node1
+webserver-756987f8f4-g8kvh   1/1     Running   0          5m41s   10.244.1.5   node1
+webserver-756987f8f4-r2jjd   1/1     Running   0          5m41s   10.244.1.4   node1
+
+vagrant@bootnode:/vagrant$ kubectl get node -o wide
+NAME     ROLES    AGE   VERSION   INTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
+master1  master   31m   v1.18.2   172.16.2.4    Ubuntu 18.04.3 LTS   4.15.0-72-generic   containerd://1.2.13
+node1    worker   28m   v1.18.2   172.16.2.10   Ubuntu 18.04.3 LTS   4.15.0-72-generic   containerd://1.2.13
+~~~
+※ターミナルの表示は見やすいように、表示項目を編集してある。
+
+
+
+これで http://172.16.2.10:30080/ または http://192.168.1.40:30080/ をブラウザからアクセスする事ができる。
+
+![ブラウザスクリーンショット01](images/screenshot_01.png)
