@@ -1,4 +1,6 @@
-# default.yaml
+# デフォルト構成
+
+最小構成にワーカーノードを一つ追加して最小限の冗長機能を持たせた構成である。小規模なPoC(Proof of Concept)など検証用の構成を想定したもので、cluster-config/default.yaml を利用して構築する。この構成にもフロントエンドのロードバランサーが無いので、外部からのアクセスには、サービスのノードポート、または、Ingressコントローラーを使用する。
 
 ![minimal](images/default_config.png)
 
@@ -50,13 +52,7 @@ Metrics-server is running at https://172.16.2.4:6443/api/v1/namespaces/kube-syst
 
 
 
-~~~
-$ kubectl get node 
-NAME      STATUS   ROLES    AGE   VERSION
-master1   Ready    master   75m   v1.18.2
-node1     Ready    worker   73m   v1.18.2
-node2     Ready    worker   73m   v1.18.2
-~~~
+
 
 
 ~~~
@@ -65,4 +61,13 @@ NAME      CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
 master1   89m          9%     1014Mi          53%       
 node1     86m          3%     547Mi           61%       
 node2     86m          4%     445Mi           50%    
+~~~
+
+
+~~~
+vagrant@bootnode:/vagrant$ kubectl get node -o wide
+NAME      STATUS  VERSION   INTERNAL-IP   EXTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
+master1   Ready   v1.18.2   172.16.1.4    <none>        Ubuntu 18.04.3 LTS   4.15.0-72-generic   containerd://1.2.13
+node1     Ready   v1.18.2   172.16.1.10   <none>        Ubuntu 18.04.3 LTS   4.15.0-72-generic   containerd://1.2.13
+node2     Ready   v1.18.2   172.16.1.11   <none>        Ubuntu 18.04.3 LTS   4.15.0-72-generic   containerd://1.2.13
 ~~~

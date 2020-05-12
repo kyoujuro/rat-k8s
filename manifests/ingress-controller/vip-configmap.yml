@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vip-configmap
+  namespace: rat-system
+data:
+  172.16.1.30: rat-system/nginx-ingress-svc
