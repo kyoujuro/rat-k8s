@@ -73,11 +73,35 @@ node1   39m          3%     388Mi           43%
 ~~~
 
 
-## IPアドレスのリスト
+## 仮想マシンのスペック
 
-| Hostname   | IP address  | CPU | RAM |
-|:-----------|:------------|:---:|:---:|
-| bootnode   | 172.16.2.3  | 1   | 1G  |
-| master1    | 172.16.2.4  | 2   | 2G  |
-| node1      | 172.16.2.10 | 1   | 1G  |
+この表の値はcluster-config/minimal.yaml のサンプル定義である。
+IPアドレス、CPU、メモリの値は自由に変更する事ができる。
 
+| Hostname   | Private IP  | Public IP    | CPU | RAM | HDD |
+|:-----------|:------------|:------------:|:---:|:---:|:---:|
+| bootnode   | 172.16.2.3  | NA           |  1  | 1GB | 8GB |
+| master1    | 172.16.2.4  | NA           |  2  | 2GB | 8GB |
+| node1      | 172.16.2.10 | 192.168.1.40 |  1  | 1GB | 8GB |
+
+
+## Flannel を有効にした場合
+
+cluster-config/minimal.yamlのpod_networkの値を、以下のようにflannelにすると、
+ノード間でオーバーレイネットワークが有効化される。
+
+~~~
+#pod_network: bridge
+pod_network: flannel
+~~~
+
+マスターノードもポッドネットワークに組み込まれ、ノードのリストに表示されるようになる。
+
+~~~
+vagrant@bootnode:/vagrant$ kubectl get node
+NAME      STATUS   ROLES    AGE    VERSION
+master1   Ready    master   4m4s   v1.18.2
+node1     Ready    worker   87s    v1.18.2
+~~~
+
+ただし、マスターノードには、ポッドがスケジュールされないようにtaintを設定してある。
