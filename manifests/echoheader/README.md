@@ -14,15 +14,15 @@ copy from https://github.com/kubernetes-retired/contrib/tree/master/ingress/echo
 はじめにdockerhubにログインしておく。
 
 ~~~
-maho:echoserver maho$ docker login
+maho:echoheader maho$ docker login
 ...
 ~~~
 
 コンテナをビルドしてプッシュする。
 
 ~~~
-maho:echoserver maho$ make
-docker build --pull -t maho/echoserver:1.4 .
+maho:echoheader maho$ make
+docker build --pull -t maho/echoheader:1.4 .
 Sending build context to Docker daemon  9.216kB
 Step 1/4 : FROM k8s.gcr.io/nginx-slim:0.6
 0.6: Pulling from nginx-slim
@@ -44,9 +44,9 @@ Step 3/4 : ADD nginx.conf /etc/nginx/nginx.conf
 Step 4/4 : ADD README.md README.md
  ---> 2b6ea2fedff2
 Successfully built 2b6ea2fedff2
-Successfully tagged maho/echoserver:1.4
-docker push maho/echoserver:1.4
-The push refers to repository [docker.io/maho/echoserver]
+Successfully tagged maho/echoheader:1.4
+docker push maho/echoheader:1.4
+The push refers to repository [docker.io/maho/echoheader]
 0fe088cea5fb: Pushed 
 9693ec16fd7f: Pushed 
 5f70bf18a086: Pushed 
@@ -58,31 +58,31 @@ e105cd217163: Pushed
 1.4: digest: sha256:d5b12dcb72c1053de0b2ad02070338979e685a12a5ff16d5a7121861d2467bfe size: 2396
 ~~~
 
-これで Docker Hub https://hub.docker.com/r/maho/echoserver にプッシュされた。
+これで Docker Hub https://hub.docker.com/r/maho/echoheader にプッシュされた。
 
 ローカルにもイメージが存在する。
 
 ~~~
-maho:echoserver maho$ docker images
+maho:echoheader maho$ docker images
 REPOSITORY                  TAG                 IMAGE ID            CREATED             SIZE
-maho/echoserver             1.4                 2b6ea2fedff2        54 seconds ago      140MB
+maho/echoheader             1.4                 2b6ea2fedff2        54 seconds ago      140MB
 ~~~
 
 ローカルでの起動方法
 
 ~~~
-maho:echoserver maho$ docker run -d -p 8080:8080 maho/echoserver:1.4
+maho:echoheader maho$ docker run -d -p 8080:8080 maho/echoheader:1.4
 119fbe2039c32874473a2a30dc29f5a564f3d8f5d9f98e5329e450b5a7b60985
 
-maho:echoserver maho$ docker ps
+maho:echoheader maho$ docker ps
 CONTAINER ID        IMAGE                 COMMAND                  CREATED             STATUS              PORTS                                     NAMES
-119fbe2039c3        maho/echoserver:1.4   "nginx -g 'daemon of…"   3 seconds ago       Up 2 seconds        80/tcp, 443/tcp, 0.0.0.0:8080->8080/tcp   suspicious_panini
+119fbe2039c3        maho/echoheader:1.4   "nginx -g 'daemon of…"   3 seconds ago       Up 2 seconds        80/tcp, 443/tcp, 0.0.0.0:8080->8080/tcp   suspicious_panini
 ~~~
 
 アクセステスト
 
 ~~~
-maho:echoserver maho$ curl http://localhost:8080
+maho:echoheader maho$ curl http://localhost:8080
 CLIENT VALUES:
 client_address=172.17.0.1
 command=GET
@@ -108,7 +108,7 @@ BODY:
 マニフェストの適用
 
 ~~~
-vagrant@bootnode:/vagrant/manifests/echoserver$ kubectl apply -f echo-app.yaml 
+vagrant@bootnode:/vagrant/manifests/echoheader$ kubectl apply -f echo-app.yaml 
 service/echoheaders configured
 deployment.apps/echoheaders configured
 ~~~
@@ -116,7 +116,7 @@ deployment.apps/echoheaders configured
 起動状態の確認
 
 ~~~
-vagrant@bootnode:/vagrant/manifests/echoserver$ kubectl get all -l app=echoheaders
+vagrant@bootnode:/vagrant/manifests/echoheader$ kubectl get all -l app=echoheaders
 NAME                               READY   STATUS    RESTARTS   AGE
 pod/echoheaders-6bbdb74cd5-d4bb2   1/1     Running   0          14s
 
@@ -130,7 +130,7 @@ replicaset.apps/echoheaders-6bbdb74cd5   1         1         1       14s
 ノードポートでのアクセスのため、ノードのアドレスを確認する。
 
 ~~~
-vagrant@bootnode:/vagrant/manifests/echoserver$ kubectl get node -o wide
+vagrant@bootnode:/vagrant/manifests/echoheader$ kubectl get node -o wide
 NAME      STATUS   ROLES    AGE     VERSION   INTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
 master1   Ready    master   5h55m   v1.18.2   172.16.1.4    Ubuntu 18.04.4 LTS   4.15.0-91-generic   containerd://1.2.13
 node1     Ready    worker   5h52m   v1.18.2   172.16.1.10   Ubuntu 18.04.4 LTS   4.15.0-91-generic   containerd://1.2.13
@@ -140,7 +140,7 @@ node2     Ready    worker   5h52m   v1.18.2   172.16.1.11   Ubuntu 18.04.4 LTS  
 ## アクセステスト ノードポート経由
 
 ~~~
-vagrant@bootnode:/vagrant/manifests/echoserver$ curl http://172.16.1.10:31217
+vagrant@bootnode:/vagrant/manifests/echoheader$ curl http://172.16.1.10:31217
 CLIENT VALUES:
 client_address=10.244.2.0
 command=GET
@@ -170,14 +170,14 @@ vagrant@bootnode:/vagrant/manifests$ kubectl apply -f kube-keepalived-vip
 コンフィグマップを設定して、サービスとVIPを対応
 
 ~~~
-vagrant@bootnode:/vagrant/manifests$ cd echoserver
+vagrant@bootnode:/vagrant/manifests$ cd echoheader
 vagrant@bootnode:/vagrant/manifests$ kubectl apply -f vip-configmap.yaml
 ~~~
 
 アクセステストの結果
 
 ~~~
-vagrant@bootnode:/vagrant/manifests/echoserver$ curl http://172.16.1.200
+vagrant@bootnode:/vagrant/manifests/echoheader$ curl http://172.16.1.200
 CLIENT VALUES:
 client_address=10.244.2.0
 command=GET
