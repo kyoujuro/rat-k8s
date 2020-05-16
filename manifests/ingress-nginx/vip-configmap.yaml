@@ -3,4 +3,4 @@ kind: ConfigMap
 metadata:
   name: vip-configmap
 data:
-  172.16.1.201: ingress-nginx/ingress-nginx-controller:PROXY
+  172.16.1.200: ingress-nginx/ingress-nginx-controller
