@@ -11,5 +11,5 @@ spec:
       paths:
       - path: /echo
         backend:
-          serviceName: web-service-np
+          serviceName: webserver
           servicePort: 80
