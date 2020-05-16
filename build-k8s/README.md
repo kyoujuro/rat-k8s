@@ -92,3 +92,44 @@ CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags '-s -w' \
 github.com/aledbf/kube-keepalived-vip/pkg/cmd
 ~~~
 
+
+### CoreDNSのビルド
+
+https://github.com/coredns/coredns からフォークして、ソースコードのダウンロード
+
+~~~
+curl -OL https://github.com/takara9/coredns/archive/v1.6.9.tar.gz
+~~~
+
+アーカイブを展開
+
+~~~
+tar xzvf v1.6.9.tar.gz 
+~~~
+
+バイナリのビルド
+
+~~~
+cd coredns-1.6.9/
+vagrant@ubuntu-bionic:~/coredns-1.6.9$ make
+~~~
+
+コンテナのビルド
+
+~~~
+vagrant@ubuntu-bionic:~/coredns-1.6.9$ docker build --tag maho/coredns:1.6.9 .
+~~~
+
+DockerHubへログイン
+
+~~~
+vagrant@ubuntu-bionic:~/coredns-1.6.9$ docker login
+~~~
+
+コンテナを登録
+
+~~~
+vagrant@ubuntu-bionic:~/coredns-1.6.9$ docker push maho/coredns:1.6.9
+~~~
+
+

@@ -11,7 +11,7 @@ Vagrant.configure("2") do |config|
   end
   config.vm.provision "shell", inline: <<-SHELL
      apt-get update
-     apt-get install -y build-essential docker.io
+     apt-get install -y build-essential docker.io emacs25-nox 
      usermod -aG docker vagrant
      export GO_VER="1.14.2"
      curl -s -O https://dl.google.com/go/go${GO_VER}.linux-amd64.tar.gz
