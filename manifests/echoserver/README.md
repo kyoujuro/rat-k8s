@@ -105,5 +105,94 @@ BODY:
 
 ## Kubernetesへのデプロイ
 
+マニフェストの適用
 
+~~~
+vagrant@bootnode:/vagrant/manifests/echoserver$ kubectl apply -f echo-app.yaml 
+service/echoheaders configured
+deployment.apps/echoheaders configured
+~~~
 
+起動状態の確認
+
+~~~
+vagrant@bootnode:/vagrant/manifests/echoserver$ kubectl get all -l app=echoheaders
+NAME                               READY   STATUS    RESTARTS   AGE
+pod/echoheaders-6bbdb74cd5-d4bb2   1/1     Running   0          14s
+
+NAME                  TYPE       CLUSTER-IP    EXTERNAL-IP   PORT(S)        AGE
+service/echoheaders   NodePort   10.32.0.221   <none>        80:31217/TCP   14s
+
+NAME                                     DESIRED   CURRENT   READY   AGE
+replicaset.apps/echoheaders-6bbdb74cd5   1         1         1       14s
+~~~
+
+ノードポートでのアクセスのため、ノードのアドレスを確認する。
+
+~~~
+vagrant@bootnode:/vagrant/manifests/echoserver$ kubectl get node -o wide
+NAME      STATUS   ROLES    AGE     VERSION   INTERNAL-IP   OS-IMAGE             KERNEL-VERSION      CONTAINER-RUNTIME
+master1   Ready    master   5h55m   v1.18.2   172.16.1.4    Ubuntu 18.04.4 LTS   4.15.0-91-generic   containerd://1.2.13
+node1     Ready    worker   5h52m   v1.18.2   172.16.1.10   Ubuntu 18.04.4 LTS   4.15.0-91-generic   containerd://1.2.13
+node2     Ready    worker   5h52m   v1.18.2   172.16.1.11   Ubuntu 18.04.4 LTS   4.15.0-91-generic   containerd://1.2.13
+~~~
+
+## アクセステスト ノードポート経由
+
+~~~
+vagrant@bootnode:/vagrant/manifests/echoserver$ curl http://172.16.1.10:31217
+CLIENT VALUES:
+client_address=10.244.2.0
+command=GET
+real path=/
+query=nil
+request_version=1.1
+request_uri=http://172.16.1.10:8080/
+
+SERVER VALUES:
+server_version=nginx: 1.10.0 - lua: 10001
+
+HEADERS RECEIVED:
+accept=*/*
+host=172.16.1.10:31217
+user-agent=curl/7.58.0
+BODY:
+~~~
+
+## アクセステスト kube-keepalived-vip 経由
+
+kube-keepalived-vipの起動
+
+~~~
+vagrant@bootnode:/vagrant/manifests$ kubectl apply -f kube-keepalived-vip
+~~~
+
+コンフィグマップを設定して、サービスとVIPを対応
+
+~~~
+vagrant@bootnode:/vagrant/manifests$ cd echoserver
+vagrant@bootnode:/vagrant/manifests$ kubectl apply -f vip-configmap.yaml
+~~~
+
+アクセステストの結果
+
+~~~
+vagrant@bootnode:/vagrant/manifests/echoserver$ curl http://172.16.1.200
+CLIENT VALUES:
+client_address=10.244.2.0
+command=GET
+real path=/
+query=nil
+request_version=1.1
+request_uri=http://172.16.1.200:8080/
+
+SERVER VALUES:
+server_version=nginx: 1.10.0 - lua: 10001
+
+HEADERS RECEIVED:
+accept=*/*
+host=172.16.1.200
+user-agent=curl/7.58.0
+BODY:
+-no body in request-
+~~~

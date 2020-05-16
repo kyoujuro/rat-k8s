@@ -29,6 +29,6 @@ spec:
         app: echoheaders
     spec:
       containers:
-      - name: nginx
-        image: nginx:latest
+      - name: echoheader 
+        image: maho/echoserver:1.4
 
