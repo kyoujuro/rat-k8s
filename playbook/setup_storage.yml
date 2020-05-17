@@ -41,4 +41,8 @@
         fstype: ext4
         state: mounted
 
-    
+- name: Setup Kubernetes Dirs
+  hosts:
+  - bootnode
+  tasks:
+  - include_tasks: tasks/role_storage.yaml

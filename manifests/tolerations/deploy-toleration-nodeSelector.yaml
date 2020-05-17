@@ -1,0 +1,41 @@
+#
+# $ kubectl describe node node5
+# Name:               node5
+# Roles:              storage
+# Labels:             beta.kubernetes.io/arch=amd64
+#                     beta.kubernetes.io/os=linux
+#                     kubernetes.io/arch=amd64
+#                     kubernetes.io/hostname=node5
+#                     kubernetes.io/os=linux
+#                     node-role.kubernetes.io/storage=storage
+#                     role=storage-node
+# Annotations:        node.alpha.kubernetes.io/ttl: 0
+#                     volumes.kubernetes.io/controller-managed-attach-detach: true
+# CreationTimestamp:  Sun, 17 May 2020 11:13:43 +0000
+# Taints:             role=storage-node:NoSchedule  <--- このtaintsが設定されるノードへデプロイされる
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: toler-node-selector
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: toler-node-selector
+  template:
+    metadata:
+      labels:
+        app: toler-node-selector
+    spec:
+      containers:
+      - name: main
+        image: alpine
+        command: ["sleep", "600"]
+      tolerations:
+      - key: "role"
+        operator: "Equal"
+        value: "storage-node"
+        effect: "NoSchedule"
+      nodeSelector:
+        role: storage-node
