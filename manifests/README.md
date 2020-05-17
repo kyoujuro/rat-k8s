@@ -51,9 +51,10 @@ Nginxのデプロイメントとサービスの組み合わせで、サービス
 NGINX Ingress のセッション・アフィニティ機能を確認するためのアプリケーションで、ポッドのホスト名とアクセス回数のカウンタ値をリプライする。
 curlでのテストにあたっては、curl のオプション -c と -b を適切に使い分ける。１回目は -c で保存用ファイルを作成 ２回目以降は -b で読み取りと書き込みを実施する。
 
-curl -c xxx -H 'Host:abc.sample.com' http://172.16.1.200/
-curl -b xxx -H 'Host:abc.sample.com' http://172.16.1.200/
-
+~~~
+curl -c xxx -H 'Host:abc.sample.com' http://172.16.1.200/  # １回目
+curl -b xxx -H 'Host:abc.sample.com' http://172.16.1.200/  # ２回目以降
+~~~
 
 
 
