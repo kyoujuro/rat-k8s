@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: DaemonSet
 metadata:
   name: kube-keepalived-vip
+  namespace: ingress-nginx  
 spec:
   selector:
     matchLabels:
@@ -42,7 +43,7 @@ spec:
                   fieldPath: metadata.namespace
           # to use unicast
           args:
-            - --services-configmap=default/vip-configmap
+            - --services-configmap=ingress-nginx/vip-configmap
             # unicast uses the ip of the nodes instead of multicast
             # this is useful if running in cloud providers (like AWS)
             #- --use-unicast=true

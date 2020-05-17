@@ -27,19 +27,34 @@ Red hat OpenShiftなどで利用されるIngressコントローラーで、NGINX
 * echoheader
 * webserver
 * webserver-ingress
+* webserver-session-affinity
 
 
 #### echoheader
 
 HTTPヘッダーのエコーを返すだけのシンプルなアプリケーション。サービスとデプロイメントのセットである。
 
+
 #### webserver
 
 Nginxのデプロイメントとサービスの組み合わせで、サービスのタイプはNodePortとしている。
 
+
 #### webserver-ingress
 
 前述のwebserverをIngressを使って、VIPと共にクラスタ外へサービスを公開する。
+
+
+
+#### webserver-session-affinity
+
+NGINX Ingress のセッション・アフィニティ機能を確認するためのアプリケーションで、ポッドのホスト名とアクセス回数のカウンタ値をリプライする。
+curlでのテストにあたっては、curl のオプション -c と -b を適切に使い分ける。１回目は -c で保存用ファイルを作成 ２回目以降は -b で読み取りと書き込みを実施する。
+
+curl -c xxx -H 'Host:abc.sample.com' http://172.16.1.200/
+curl -b xxx -H 'Host:abc.sample.com' http://172.16.1.200/
+
+
 
 
 ※今後、ポッド名を返すアプリ、それから、負荷をかけるアプリ(CPU負荷、メモリ消費)のタイプがあると良いな
