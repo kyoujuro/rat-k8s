@@ -1,0 +1,37 @@
+#
+# Taints:   role=storage-node:NoSchedule  <--- このtaintsが設定されるノードへデプロイされる
+#
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-affinity-tol
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: node-affinity-tol
+  template:
+    metadata:
+      labels:
+        app: node-affinity-tol
+    spec:
+      containers:
+      - name: main
+        image: alpine
+        command: ["sleep", "600"]
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: role
+                operator: In
+                values:
+                  - storage-node
+      tolerations:
+      - key: "role"
+        operator: "Equal"
+        value: "storage-node"
+        effect: "NoSchedule"
+

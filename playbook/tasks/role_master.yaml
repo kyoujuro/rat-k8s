@@ -1,5 +1,7 @@
 - name: Set node role
   shell: |
+    kubectl label node {{ item.name }} --overwrite=true node-role.kubernetes.io/controlplane=true
+    kubectl label node {{ item.name }} --overwrite=true node-role.kubernetes.io/etcd=true
     kubectl label node {{ item.name }} --overwrite=true node-role.kubernetes.io/master=""
     kubectl taint node {{ item.name }} --overwrite=true node-role.kubernetes.io/master="":NoSchedule
   args:
