@@ -8,7 +8,8 @@
   include_tasks: "/vagrant/playbook/net_bridge/tasks/static-route-{{ ansible_facts.hostname }}.yaml"
   when:
   - ansible_facts.hostname == item.name
-  - ansible_facts.hostname is match("node*")
+  - ansible_facts.hostname is not match("master[123]")  
+  #- ansible_facts.hostname is match("node*")
   loop: "{{ nodes }}"
 
 

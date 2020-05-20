@@ -246,6 +246,24 @@ end
 
 
 ##
+## ノードのロールでリストする
+##  
+##
+def list_by_role(role)
+  rst = ""
+  $vm_config_array.each do |val|
+    x = eval(val)
+    if x['role'] != nil
+      if role == x['role'] 
+        rst = rst + sprintf("%s- %s\n", "\s"*4, x['name'])
+      end
+    end
+  end
+  return rst
+end
+
+
+##
 ## Ansibleの変数設定
 ##   playbook/vars/main.yaml
 ##
@@ -284,11 +302,14 @@ end
 ## Ansibleインベントリ・テンプレート #1  hosts_vagrant
 ##
 def output_ansible_inventory0(input,sw)
-  counter_node = 0
-  counter_mlb = 0
-  counter_elb = 0
-  counter_master = 0
+  counter_master  = 0
+  counter_node    = 0
+  counter_proxy   = 0
+  counter_storage = 0
+  counter_mlb     = 0
+  counter_elb     = 0
 
+  
   tfn = "templates/ansible/hosts_vagrant.template"
   File.open(tfn, "r") do |f|    
     File.open(input, "w") do |w|
@@ -302,13 +323,17 @@ def output_ansible_inventory0(input,sw)
           w.write sprintf("%-20s %s\n", x['name'], "ansible_connection=local")
         else
           if x['name'] =~ /^node*/
-            counter_node = counter_node + 1
-          elsif x['name'] =~ /^mlb*/
-            counter_mlb = counter_mlb + 1
-          elsif x['name'] =~ /^elb*/
-            counter_elb = counter_elb + 1
+            counter_node += 1
           elsif x['name'] =~ /^master*/
-            counter_master = counter_master + 1
+            counter_master += 1
+          elsif x['name'] =~ /^proxy*/
+            counter_proxy += 1
+          elsif x['name'] =~ /^storage*/
+            counter_storage += 1
+          elsif x['name'] =~ /^mlb*/
+            counter_mlb += 1
+          elsif x['name'] =~ /^elb*/
+            counter_elb += 1
           end
           if sw == 0
             w.write sprintf("%-20s  %s\n", x['name'], "ansible_connection=local")
@@ -325,6 +350,12 @@ def output_ansible_inventory0(input,sw)
         elsif line =~ /^master\[1:/
           w.write sprintf("master[1:%d]\n",counter_master)
 
+        elsif line =~ /^proxy\[1:/
+          w.write sprintf("proxy[1:%d]\n",counter_proxy)
+          
+        elsif line =~ /^storage\[1:/
+          w.write sprintf("storage[1:%d]\n",counter_storage)
+          
         elsif line =~ /^mlb\[1:/
           w.write sprintf("mlb[1:%d]\n",counter_mlb)
 
@@ -427,7 +458,15 @@ EOF
     $vm_config_array.each do |val|
       x = eval(val)
       if x['role'] != nil
-        w.write sprintf("%skubectl label node %s --overwrite=true node-role.kubernetes.io/%s=%s\n","\s"*4,x['name'],x['role'],x['role'])
+        w.write sprintf("%skubectl label node %s --overwrite=true node-role.kubernetes.io/%s=\'\'\n",
+                        "\s"*4, x['name'], x['role'])
+        w.write sprintf("%skubectl label node %s --overwrite=true role=%s-node\n",
+                        "\s"*4, x['name'], x['role'])
+        if x['role'] =~ /^proxy*/
+          w.write sprintf("%skubectl taint node %s --overwrite=true node-role.kubernetes.io/%s=\'\':NoSchedule\n",
+                          "\s"*4, x['name'], x['role'])
+
+        end
       end
     end
     
@@ -690,6 +729,27 @@ def haproxy_front_cfg()
 
 end
 
+#
+# ストレージサーバーのリストを埋め込む
+#
+def create_storage_node_taint(server_list)
+  tfn = "templates/playbook/set_taint_label_for_storage.yaml.template"
+  File.open(tfn, "r") do |f|
+    File.open("playbook/tasks/role_storage.yaml", "w") do |w|
+      w.write $insert_msg
+      w.write sprintf("### Template file is %s\n",tfn)
+      f.each_line { |line|
+        if line =~ /^__SERVER_LIST__/
+          w.write server_list
+        else
+          w.write line
+        end
+      }
+    end
+  end
+end
+
+
 
 
 
@@ -720,6 +780,7 @@ if __FILE__ == $0
   ## 及び、メモリ編集に取り込み
   vm_config = read_yaml_config($config_yaml)
 
+
   ## テンプレートを読み込んで、Vagrantfileを生成
   linenum = 1
   tfn = "templates/vagrant/Vagrantfile.template"
@@ -740,7 +801,7 @@ if __FILE__ == $0
   ## inventory
   output_ansible_inventory()
 
-  ##
+  ## ansible変数としてノードのリスト作成、hostsファイル作成
   vars_nodelist()
   create_hosts_file()
 
@@ -752,7 +813,6 @@ if __FILE__ == $0
   k8s_cert()
   haproxy_cfg()
   haproxy_front_cfg()
-  #flanneld_service_master()
   coredns_config()
   
   ## ルーティング設定
@@ -762,6 +822,10 @@ if __FILE__ == $0
   
   ## Worker ノードへロールをセット
   set_node_role()
+
+  ## ストレージノードのリストセット
+  list_storage = list_by_role("storage")
+  create_storage_node_taint(list_storage)
   
   ## 自動起動
   if $auto_start

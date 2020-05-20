@@ -1,14 +1,20 @@
 [masters]
 master[1:3]
 
+[nodes]
+node[1:3]
+
+[proxys]
+proxy[1:3]
+
+[storages]
+storage[1:3]
+
 [mlbs]
 mlb[1:2]
 
 [elbs]
 elb[1:2]
-
-[nodes]
-node[1:3]
 
 
 [all:vars]

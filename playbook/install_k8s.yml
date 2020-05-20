@@ -1,54 +1,28 @@
-#########################################
-#- name: Clean up bootnode
-#  hosts:
-#  - bootnode
-#  tasks:
-#    - include_tasks: tasks/clean_up_bootnode.yml
 #
-#- name: Clean up masters
-#  hosts: masters
-#  become: true
-#  tasks:
-#    - include_tasks: tasks/clean_up_masters.yml
+# K8sコンポーネント配置に必要なディレクトリを作成
 #
-#- name: Clean up nodes
-#  hosts: nodes
-#  become: true
-#  tasks:
-#    - include_tasks: tasks/clean_up_nodes.yml
-
 - name: Setup Kubernetes Dirs
   hosts:
   - masters
   - nodes
+  - proxys
+  - storages
   become: true
   tasks:
     - include_tasks: tasks/setup_k8s_dirs.yml
-    
-#
-# ソフトウェアのダウンロード
-# CAと証明書のセットアップ
-#
-#- name: install cfssl,cfssjosn,kubectl command
-#  hosts:
-#  - bootnode
-#  become: true
-#  tasks:
-#    - include_tasks: tasks/install-k8s-command.yaml
 
+#
+# 証明書をbootnodeのNFSサーバー上に準備
+#
 - name: Download a containerd on NFS server
   hosts:
   - bootnode
-#  tasks:
-#    - include_tasks: tasks/download_on_bootnode.yml  
   roles:
     - cert_setup
 
-
 #
-# 内部ロードバランサーの起動
+# マスターノードのための内部ロードバランサーの起動
 #
-
 - name: Internal HA-PROXY install
   hosts:
   - mlbs
@@ -65,8 +39,8 @@
 
 #
 # 外部ロードバランサーの起動
+#   クラウドサービスのロードバランサーのサービス相当
 #
-
 - name: External HA-PROXY install
   hosts:
   - elbs
@@ -80,8 +54,12 @@
     - haproxy
     - keepalived
 
-#
+# 
 # etcd クラスタとマスターノードのセットアップ
+#   etcdサーバーはマスターノード上に配置
+#   クラスタネットワークすなわちノード間通信の選択により設定が変わる
+#     * 仮想環境の専用ネットワークをブリッジで繋ぐ方法 
+#     * flannelでオーバーレイで繋ぐ方法
 #
 - name: Configure etcd on masters
   hosts:
@@ -97,10 +75,8 @@
       when: pod_network == "flannel"      
     - role: net_bridge
       when: pod_network == "bridge"
-  #tasks:
-  #  - fail: msg="Abort"
 
-#
+# 
 #  RBAC for Kubelet Authorization
 #
 - name: Configure RBAC
@@ -111,13 +87,15 @@
   become_user: vagrant
   tasks:
     - include_tasks: tasks/config_rbac_kubelet.yml
-    
+
 #
 # ワーカーノードのセットアップ
 #
 - name: Configure work-nodes
   hosts:
   - nodes
+  - storages
+  - proxys
   gather_facts: true
   become: true
   roles:
@@ -131,7 +109,8 @@
 #
 # ノードへロール設定
 #
-# flannel使用時にマスターノードへのtaint設定
+#  flannel使用時にマスターノードへのtaint設定
+#  
 #
 - name: Configure work-nodes
   hosts:
@@ -144,8 +123,8 @@
     - include_tasks: tasks/role_master.yaml
       when:
       - pod_network == "flannel"
-    - wait_for:
-        timeout: 60
+#    - wait_for:  残骸と思うので暫定コメント
+#        timeout: 60
     - include_tasks: tasks/role_worker.yaml
 
 #########################################
