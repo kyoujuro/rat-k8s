@@ -1,0 +1,4 @@
+# ポッドのPDツール
+
+このマニフェストでデプロイされるポッドには、
+dns, ss, nslookup, ping, netstat, ps, curl などのコマンドが入っています。
