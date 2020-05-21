@@ -8,8 +8,8 @@ kubernetes_version: 1.18.2
 kubernetes_custom: false
 
 ### K8s cluster/pod network CNI plugin
-#pod_network: bridge
-pod_network: flannel
+pod_network: bridge
+#pod_network: flannel
 
 ### flannel_version if you choice flannel
 flannel_version: v0.12.0
