@@ -1,19 +1,22 @@
-- name: Download a containerd on NFS server
+#########################################
+#
+# プロキシノードのコンテナランタイム初期化
+#   cni0が起動していないと、kube-proxyが
+#   動作しないためにコンテナを起動して
+#　 初期化を促す
+- name: test proxy-nodes
   hosts:
-  - bootnode
+  - proxys    
+  gather_facts: true
+  become: true
   tasks:
-    - debug: msg="custom_kubernetes = {{ custom_kubernetes }}"
-    
-    - name: test true
-      command: ls
-      when: custom_kubernetes == 'true'
-      
-    - name: test false
-      command: ls
-      when: custom_kubernetes == "false"
+    - include_tasks: tasks/proxy_test.yaml
 
-    - name: test no condition
-      command: ls
+- name: delete file
+  hosts:
+  - proxys    
+  gather_facts: true
+  become: true
+  tasks:
+    - include_tasks: tasks/proxy_del_manifest.yaml
 
-   
-    

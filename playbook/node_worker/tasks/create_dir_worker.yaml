@@ -24,4 +24,9 @@
     owner: root
     group: root
     mode: '0755'
-
+- file:
+    path: /etc/kubelet.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'

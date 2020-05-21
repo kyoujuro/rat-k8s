@@ -128,6 +128,20 @@
     - include_tasks: tasks/role_worker.yaml
 
 #########################################
+#
+# プロキシノードのコンテナランタイム初期化
+#   cni0が起動していないと、kube-proxyが
+#   動作しないためにコンテナを起動して
+#　 初期化を促す
+- name: test proxy-nodes
+  hosts:
+  - proxys    
+  gather_facts: true
+  become: true
+  tasks:
+    - include_tasks: tasks/proxy_test.yaml
+
+#########################################
 
 #
 # モニタリングセットアップ
@@ -142,7 +156,16 @@
     - addon_metrics-server
     - addon_dashboard
 
-
+#
+# 不要のマニフェストのクリーンナップ
+#
+- name: delete file
+  hosts:
+  - proxys    
+  gather_facts: true
+  become: true
+  tasks:
+    - include_tasks: tasks/proxy_del_manifest.yaml
 
 
 

@@ -1,0 +1,5 @@
+- name: delete manifest
+  file:
+    path: /etc/kubelet.d/test-pod.yaml
+    state: absent
+

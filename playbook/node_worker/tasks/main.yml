@@ -4,10 +4,9 @@
 #
 #
 
-## クリーンナップ
-#- name: Cleanup worker node
-#  include_tasks: cleanup.yaml
-
+## ワーカーノードのディレクトリ作成
+- name: setup directory for worker node
+  include_tasks: create_dir_worker.yaml
 
 ## Containerd のセットアップ
 - name: Install Containerd
