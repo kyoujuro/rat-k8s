@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: proxy
+spec:
+  containers:
+  - name: main
+    image: maho/pdtools:1.0
+  tolerations:
+  - key: "role"
+    operator: "Equal"
+    value: "proxy-node"
+    effect: "NoSchedule"
+  nodeName: proxy1
