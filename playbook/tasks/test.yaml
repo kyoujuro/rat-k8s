@@ -1,0 +1,3 @@
+- debug: msg="{{ ansible_facts.hostname }}"
+- debug: msg="proxy_node = {{ proxy_node }}"
+- debug: msg="storage_node = {{ storage_node }}"      

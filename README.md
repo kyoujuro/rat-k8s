@@ -95,11 +95,12 @@ vagrant destroy -f
 * VirtualBox (https://www.virtualbox.org/)
 * メモリ16GB以上
 
+
 ### TIPS
 
 以下に全ノードとの疎通テスト、K8sインストール、ストレージマウントのコマンドを列挙する
 
 * ansible -i hosts_k8s all -m ping
 * ansible-playbook -i hosts_k8s playbook/install_k8s.yml
-* ansible-playbook -i hosts_k8s playbook/setup_storage.yml
+
 

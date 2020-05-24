@@ -8,8 +8,8 @@ kubernetes_version: 1.18.2
 kubernetes_custom: false
 
 ### K8s cluster/pod network CNI plugin
-pod_network: bridge
-#pod_network: flannel
+#pod_network: bridge
+pod_network: flannel
 
 ### flannel_version if you choice flannel
 flannel_version: v0.12.0
@@ -28,6 +28,7 @@ front_proxy_vip: 192.168.1.100
 ka_primary_frontend_host: elb1
 ka_backup_frontend_host: elb2
 
+domain: example.com
 
 ### Master, Worker, Internal/Frontend Loadbalancer and bootnode
 vm_spec:

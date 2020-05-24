@@ -2,6 +2,8 @@
 # 最小構成のK8sクラスタ
 #
 
+domain: example.com
+
 ### host network interfaice
 bridge_if: "en0: Wi-Fi (Wireless)"
 #bridge_if: "eno1"

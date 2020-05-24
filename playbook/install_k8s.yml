@@ -144,17 +144,31 @@
 #########################################
 
 #
-# モニタリングセットアップ
-# CoreDNSセットアップ
+# ストレージノードのセットアップ
 #
-- name: K8s Monitoring setup
-  hosts: bootnode
-  gather_facts: true
+- name: Setup Kubernetes Dirs
+  hosts:
+  - storages
   become: true
-  roles:
-    - addon_coredns
-    - addon_metrics-server
-    - addon_dashboard
+  tasks:
+    - name: Git Repositorys Create a ext4 filesystem on /dev/sdc and check disk blocks
+      filesystem:
+        fstype: ext4
+        dev: /dev/sdc
+    - name: Mount up device by /dev/sdb
+      mount:
+        path: /var/lib/rook
+        src:  /dev/sdc
+        fstype: ext4
+        state: mounted
+
+- name: Setup Kubernetes Dirs
+  hosts:
+  - bootnode
+  tasks:
+    - include_tasks: tasks/role_storage.yaml
+      when:
+      - storage_node == "true"
 
 #
 # 不要のマニフェストのクリーンナップ
@@ -167,5 +181,19 @@
   tasks:
     - include_tasks: tasks/proxy_del_manifest.yaml
 
+#
+# モニタリングセットアップ
+# CoreDNSセットアップ
+#
+- name: K8s Monitoring setup
+  hosts: bootnode
+  gather_facts: true
+  become: true
+  roles:
+    - addon_coredns
+    - addon_metrics-server
+    - addon_dashboard
 
+
+      
 

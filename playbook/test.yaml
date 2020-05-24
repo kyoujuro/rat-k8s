@@ -1,22 +1,13 @@
-#########################################
 #
-# プロキシノードのコンテナランタイム初期化
-#   cni0が起動していないと、kube-proxyが
-#   動作しないためにコンテナを起動して
-#　 初期化を促す
-- name: test proxy-nodes
+# テスト用タスク
+#
+- name: test 
   hosts:
-  - proxys    
+  - all 
   gather_facts: true
   become: true
   tasks:
-    - include_tasks: tasks/proxy_test.yaml
-
-- name: delete file
-  hosts:
-  - proxys    
-  gather_facts: true
-  become: true
-  tasks:
-    - include_tasks: tasks/proxy_del_manifest.yaml
-
+    - debug: msg="proxy_node = {{ proxy_node }}"
+    - include_tasks: tasks/test.yaml
+      when:
+      - proxy_node == "true"

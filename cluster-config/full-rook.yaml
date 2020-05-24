@@ -3,6 +3,8 @@
 #bridge_if: "en0: Wi-Fi (Wireless)"
 bridge_if: "eno1"
 
+domain: example.com
+
 ### Kubernetes version
 kubernetes_version: 1.18.2
 kubernetes_custom: false
