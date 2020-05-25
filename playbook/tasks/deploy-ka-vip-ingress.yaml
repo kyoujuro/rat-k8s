@@ -1,0 +1,17 @@
+#
+# kube-keepalived-vip と haproxy-ingress のセットアップ
+#  
+#
+
+- name: Deploy haproxy ingress & kube-keepalived-vip 
+  shell: |
+    kubectl apply -f https://raw.githubusercontent.com/takara9/rat-k8s/master/manifests/kube-keepalived-vip/proxy-sa.yaml
+    kubectl apply -f https://raw.githubusercontent.com/takara9/rat-k8s/master/manifests/kube-keepalived-vip/proxy-rbac.yaml
+    kubectl apply -f https://raw.githubusercontent.com/takara9/rat-k8s/master/manifests/kube-keepalived-vip/proxy-configmap.yaml
+    kubectl apply -f https://raw.githubusercontent.com/takara9/rat-k8s/master/manifests/kube-keepalived-vip/proxy-daemonset.yaml
+    kubectl apply -f https://raw.githubusercontent.com/takara9/rat-k8s/master/manifests/ingress-haproxy/haproxy-ingress-proxy.yaml
+    kubectl apply -f https://raw.githubusercontent.com/takara9/rat-k8s/master/manifests/ingress-haproxy/haproxy-ingress.yaml    
+  become_user: vagrant
+  args:
+    chdir: /home/vagrant
+  become_user: vagrant
