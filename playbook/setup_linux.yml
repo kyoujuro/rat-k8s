@@ -13,6 +13,14 @@
   roles:
   - base_linux
 
+#
+# 証明書をbootnodeのNFSサーバー上に準備
+#
+- name: Download a containerd on NFS server
+  hosts:
+  - bootnode
+  roles:
+    - cert_setup
 
   
 

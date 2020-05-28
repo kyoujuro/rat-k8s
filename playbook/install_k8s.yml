@@ -14,11 +14,11 @@
 #
 # 証明書をbootnodeのNFSサーバー上に準備
 #
-- name: Download a containerd on NFS server
-  hosts:
-  - bootnode
-  roles:
-    - cert_setup
+#- name: Download a containerd on NFS server
+#  hosts:
+#  - bootnode
+#  roles:
+#    - cert_setup
 
 #
 # マスターノードのための内部ロードバランサーの起動
@@ -123,8 +123,8 @@
     - include_tasks: tasks/role_master.yaml
       when:
       - pod_network == "flannel"
-#    - wait_for:  残骸と思うので暫定コメント
-#        timeout: 60
+    - wait_for:  # 残骸ではなく、Waitがないと、次のコマンドが失敗する
+        timeout: 20
     - include_tasks: tasks/role_worker.yaml
 
 #########################################
@@ -194,6 +194,17 @@
     - addon_metrics-server
     - addon_dashboard
 
-
-      
+#
+# Ingress コントローラーとHA-Proxyの設定
+#
+- name: Deploy kube-keepalived-vip + ingress 
+  hosts:
+  - bootnode
+  gather_facts: true
+  become: true
+  tasks:
+    - debug: msg="proxy_node = {{ proxy_node }}"
+    - include_tasks: tasks/deploy-ka-vip-ingress.yaml
+      when:
+      - proxy_node == "true"
 
