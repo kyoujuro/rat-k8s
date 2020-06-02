@@ -15,16 +15,16 @@ spec:
         contains: csi-cephfsplugin-metrics
     spec:
       serviceAccount: rook-csi-cephfs-provisioner-sa
+      {{ if .ProvisionerPriorityClassName }}
+      priorityClassName: {{ .ProvisionerPriorityClassName }}
+      {{ end }}
       containers:
         - name: csi-attacher
           image: {{ .AttacherImage }}
           args:
-            - "--v=5"
+            - "--v={{ .LogLevel }}"
             - "--csi-address=$(ADDRESS)"
             - "--leader-election=true"
-            {{ if .SetAttacherLeaderElectionType }}
-            - "--leader-election-type=leases"
-            {{ end }}
             - "--timeout=150s"
             - "--leader-election-namespace={{ .Namespace }}"
           env:
@@ -34,12 +34,11 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /csi
-        {{ if .EnableResizer }}
         - name: csi-resizer
           image: {{ .ResizerImage }}
           args:
             - "--csi-address=$(ADDRESS)"
-            - "--v=5"
+            - "--v={{ .LogLevel }}"
             - "--csiTimeout=150s"
             - "--leader-election"
             - "--leader-election-namespace={{ .Namespace }}"
@@ -50,12 +49,11 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /csi
-        {{ end }}
         - name: csi-provisioner
           image: {{ .ProvisionerImage }}
           args:
             - "--csi-address=$(ADDRESS)"
-            - "--v=5"
+            - "--v={{ .LogLevel }}"
             - "--timeout=150s"
             - "--retry-interval-start=500ms"
             - "--enable-leader-election=true"
@@ -69,16 +67,12 @@ spec:
             - name: socket-dir
               mountPath: /csi
         - name: csi-cephfsplugin
-          securityContext:
-            privileged: true
-            capabilities:
-              add: ["SYS_ADMIN"]
           image: {{ .CSIPluginImage }}
           args:
             - "--nodeid=$(NODE_ID)"
             - "--type=cephfs"
             - "--endpoint=$(CSI_ENDPOINT)"
-            - "--v=5"
+            - "--v={{ .LogLevel }}"
             - "--controllerserver=true"
             - "--drivername={{ .DriverNamePrefix }}cephfs.csi.ceph.com"
             - "--metadatastorage=k8s_configmap"

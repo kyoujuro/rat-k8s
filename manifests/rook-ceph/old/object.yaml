@@ -1,7 +1,7 @@
 #################################################################################################################
-# Create an object store with settings specific for OpenShift. A minimum of 3 OSDs are required in this example
-# for the replication since the failureDomain is host.
-#  oc create -f object-openshift.yaml
+# Create an object store with settings for replication in a production environment. A minimum of 3 hosts with
+# OSDs are required in this example.
+#  kubectl create -f object.yaml
 #################################################################################################################
 
 apiVersion: ceph.rook.io/v1
@@ -21,7 +21,7 @@ spec:
     replicated:
       size: 3
   # Whether to preserve metadata and data pools on object store deletion
-  preservePoolsOnDelete: true
+  preservePoolsOnDelete: false
   # The gateway service configuration
   gateway:
     # type of the gateway (s3)
@@ -29,26 +29,26 @@ spec:
     # A reference to the secret in the rook namespace where the ssl certificate is stored
     sslCertificateRef:
     # The port that RGW pods will listen on (http)
-    port: 8080
+    port: 80
     # The port that RGW pods will listen on (https). An ssl certificate is required.
     securePort:
     # The number of pods in the rgw deployment
     instances: 1
     # The affinity rules to apply to the rgw deployment or daemonset.
     placement:
-    #  nodeAffinity:
-    #    requiredDuringSchedulingIgnoredDuringExecution:
-    #      nodeSelectorTerms:
-    #      - matchExpressions:
-    #        - key: role
-    #          operator: In
-    #          values:
-    #          - rgw-node
-    #  tolerations:
-    #  - key: rgw-node
-    #    operator: Exists
-    #  podAffinity:
-    #  podAntiAffinity:
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: role
+              operator: In
+              values:
+              - rgw-node
+      tolerations:
+      - key: rgw-node
+        operator: Exists
+      podAffinity:
+      podAntiAffinity:
     # A key/value list of annotations
     annotations:
     #  key: value

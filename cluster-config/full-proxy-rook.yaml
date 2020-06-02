@@ -158,7 +158,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.4.61"
     storage:
-    - 40
+    - 80
     playbook: "setup_linux.yml"
     pod_network: "10.244.231.0/24"
     role: "storage"
@@ -170,7 +170,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.4.62"
     storage:
-    - 40
+    - 80
     playbook: "setup_linux.yml"
     pod_network: "10.244.232.0/24"
     role: "storage"
@@ -182,7 +182,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.4.63"
     storage:
-    - 40
+    - 80
     playbook: "setup_linux.yml"
     pod_network: "10.244.233.0/24"
     role: "storage"

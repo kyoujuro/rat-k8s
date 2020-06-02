@@ -1,0 +1,11 @@
+- debug: msg="{{ ansible_facts.hostname }}"
+
+- name: Set node roles
+  shell: |
+__ADD_NODELABEL_LIST__
+    kubectl get nodes --show-labels
+  args:
+    chdir: /home/vagrant
+  become: true
+  become_user: vagrant
+

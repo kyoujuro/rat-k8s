@@ -1,27 +1,18 @@
 
+## ROOK-CEPHのデプロイ
+
+
+次の３つのマニフェストを適用することで、ROOK-CEPHの機能を起動できる。
 
 ~~~
 kubectl apply -f common.yaml
 kubectl apply -f operator.yaml
+kubectl apply -f cluster.yaml
+kubectl apply -f dashboard-nodeport.yaml
+kubectl apply -f storageclass-rbd.yaml
 ~~~
 
-~~~
-kubectl get pod -n rook-ceph
-NAME                                  READY   STATUS    RESTARTS   AGE
-rook-ceph-operator-658dfb6cc4-rhgkk   1/1     Running   0          6m23s
-rook-discover-9lqgh                   1/1     Running   0          5m23s
-rook-discover-bqjd5                   1/1     Running   0          5m23s
-rook-discover-glb6j                   1/1     Running   0          5m23s
-rook-discover-hknjn                   1/1     Running   0          5m23s
-~~~
-
-上記の状態になったら、以下のマニフェストを適用する
-
-~~~
-$ kubectl apply -f cluster.yaml 
-~~~
-
-最終的に以下の状態になれば起動完了
+ポッドが動作しているノードが表示されるように、コマンドのオプションを組み立てた例
 
 ~~~
 $ kubectl get pod -n rook-ceph -o custom-columns=NAME:.metadata.name,STATUS:.status.phase,NODE:.spec.nodeName
@@ -58,24 +49,160 @@ rook-discover-glb6j                                  Running     node2
 rook-discover-hknjn                                  Running     node1
 ~~~
 
+
+
+
+## ダッシュボードへのアクセス
+
+次のマニフェストを提供してNodePortを開く。これでPublic IPを持ったノード経由で、Cephダッシュボードへのアクセスが可能になる。
+
+~~~
+$ kubectl apply -f dashboard-external-https.yaml 
+~~~
+
+
+Cephダッシュボードの初期パスワードの取得は次のコマンド
+
+~~~
+$ kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o jsonpath="{['data']['password']}" | base64 --decode && echo
+5yUC5QKKqA
+~~~
+
+フル構成の場合、プロキシノードのノードポートからアクセスが可能になる。
+
+https://192.168.1.98:30443/ https://192.168.1.99:30443/
+
+
+## rbd
+
+~~~
+vagrant@bootnode:/vagrant/manifests/rook/cluster/examples/kubernetes/ceph/csi/rbd$ ls
+pod.yaml  pvc-restore.yaml  pvc.yaml  snapshot.yaml  snapshotclass.yaml  storageclass-ec.yaml  storageclass-test.yaml  storageclass.yaml
+~~~
+
+
+~~~
+$ kubectl apply -f storageclass.yaml 
+$ kubectl get sc
+NAME              PROVISIONER                     RECLAIMPOLICY   VOLUMEBINDINGMODE   ALLOWVOLUMEEXPANSION   AGE
+rook-ceph-block   rook-ceph.rbd.csi.ceph.com      Delete          Immediate           true                   5s
+~~~
+
+~~~
+$ kubectl apply -f pvc.yaml 
+~~~
+
+~~~
+$ kubectl get pvc
+NAME         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS      AGE
+rbd-pvc      Bound    pvc-a3c040be-d74e-4061-833b-22c653ab6736   1Gi        RWO            rook-ceph-block   6s
+~~~
+
+
+~~~
+$ kubectl apply -f pod.yaml 
+~~~
+
+~~~
+$ kubectl get pod
+NAME              READY   STATUS    RESTARTS   AGE
+csirbd-demo-pod   1/1     Running   0          71s
+~~~
+
+~~~
+$ kubectl exec -it csirbd-demo-pod -- bash
+root@csirbd-demo-pod:/# df -h
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         9.7G  3.6G  6.1G  37% /
+tmpfs            64M     0   64M   0% /dev
+tmpfs           3.9G     0  3.9G   0% /sys/fs/cgroup
+shm              64M     0   64M   0% /dev/shm
+/dev/sda1       9.7G  3.6G  6.1G  37% /etc/hosts
+/dev/rbd0       976M  2.6M  958M   1% /var/lib/www/html
+tmpfs           3.9G   12K  3.9G   1% /run/secrets/kubernetes.io/serviceaccount
+tmpfs           3.9G     0  3.9G   0% /proc/acpi
+tmpfs           3.9G     0  3.9G   0% /proc/scsi
+tmpfs           3.9G     0  3.9G   0% /sys/firmware
+~~~
+
+
+
+
+## Cephファイルシステムの利用
+
+~~~
+kubectl apply -f filesystem.html
+~~~
+
+~~~
+cd csi/cephfs
+kubectl apply -f storageclass.yaml
+kubectl apply -f pvc.yaml
+kubectl apply -f pod.yaml
+~~~
+
+
+~~~
+vagrant@bootnode:/vagrant/manifests/rook/cluster/examples/kubernetes/ceph/csi/cephfs$ kubectl get pvc
+NAME         STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+cephfs-pvc   Bound    pvc-73391e91-aed5-4571-8459-b9e190bfeaa6   1Gi        RWO            rook-cephfs    6s
+~~~
+
+
+~~~
+vagrant@bootnode:/vagrant/manifests/rook/cluster/examples/kubernetes/ceph/csi/cephfs$ kubectl describe pvc cephfs-pvc
+Name:          cephfs-pvc
+Namespace:     default
+StorageClass:  rook-cephfs
+Status:        Bound
+Volume:        pvc-73391e91-aed5-4571-8459-b9e190bfeaa6
+Labels:        <none>
+Annotations:   pv.kubernetes.io/bind-completed: yes
+               pv.kubernetes.io/bound-by-controller: yes
+               volume.beta.kubernetes.io/storage-provisioner: rook-ceph.cephfs.csi.ceph.com
+Finalizers:    [kubernetes.io/pvc-protection]
+Capacity:      1Gi
+Access Modes:  RWO
+VolumeMode:    Filesystem
+Mounted By:    <none>
+Events:
+  Type    Reason                 Age   From                                                                                                              Message
+  ----    ------                 ----  ----                                                                                                              -------
+  Normal  ExternalProvisioning   2m1s  persistentvolume-controller                                                                                       waiting for a volume to be created, either by external provisioner "rook-ceph.cephfs.csi.ceph.com" or manually created by system administrator
+  Normal  Provisioning           2m1s  rook-ceph.cephfs.csi.ceph.com_csi-cephfsplugin-provisioner-7459667b67-chw7f_02030e6d-28a0-40d5-8ff8-2f04e6d2d5bd  External provisioner is provisioning volume for claim "default/cephfs-pvc"
+  Normal  ProvisioningSucceeded  119s  rook-ceph.cephfs.csi.ceph.com_csi-cephfsplugin-provisioner-7459667b67-chw7f_02030e6d-28a0-40d5-8ff8-2f04e6d2d5bd  Successfully provisioned volume pvc-73391e91-aed5-4571-8459-b9e190bfeaa6
+~~~
+
+
+
+
+
+
+
+
 ## ツールボックスによる動作確認
+
+CEPHツールを収めたコンテナを起動する。
 
 ~~~
 $ kubectl create -f toolbox.yaml
 ~~~
 
+起動を確認する。
 
 ~~~
 $ kubectl -n rook-ceph get pod -l "app=rook-ceph-tools"
-NAME                               READY   STATUS    RESTARTS   AGE
-rook-ceph-tools-55d5c49f79-c7ldf   1/1     Running   0          50s
 ~~~
 
+対話モードでシェルを起動する
 
 ~~~
 $ kubectl -n rook-ceph exec -it $(kubectl -n rook-ceph get pod -l "app=rook-ceph-tools" -o jsonpath='{.items[0].metadata.name}') -- bash
-[root@rook-ceph-tools-55d5c49f79-c7ldf /]#
 ~~~
+
+
+
+## Cephの状態をコマンドラインで取得
 
 
 ~~~
@@ -97,6 +224,7 @@ $ kubectl -n rook-ceph exec -it $(kubectl -n rook-ceph get pod -l "app=rook-ceph
 ~~~
 
 
+https://docs.ceph.com/docs/master/rados/operations/monitoring/
 
 ~~~
 [root@rook-ceph-tools-55d5c49f79-c7ldf /]# ceph osd status
@@ -134,54 +262,24 @@ total_space      117 GiB
 ~~~
 
 
-## ダッシュボード
 
-
-~~~
-$ kubectl -n rook-ceph get service rook-ceph-mgr-dashboard 
-NAME                      TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)    AGE
-rook-ceph-mgr-dashboard   ClusterIP   10.32.0.87   <none>        8443/TCP   33m
-~~~
-
-サービスタイプをノードポートへ変更
-
-~~~
-$ kubectl -n rook-ceph edit service rook-ceph-mgr-dashboard
-~~~
-
-~~~
- 59 spec:
- 60   clusterIP: 10.32.0.87
- 61   ports:
- 62   - name: https-dashboard
- 63     port: 8443
- 64     protocol: TCP
- 65     targetPort: 8443
- 66     nodePort: 31443
- 67   selector:
- 68     app: rook-ceph-mgr
- 69     rook_cluster: rook-ceph
- 70   sessionAffinity: None
- 71   type: NodePort
- 72 status:
-~~~
-
-~~~
-$ kubectl -n rook-ceph get service rook-ceph-mgr-dashboard 
-NAME                      TYPE       CLUSTER-IP   EXTERNAL-IP   PORT(S)          AGE
-rook-ceph-mgr-dashboard   NodePort   10.32.0.87   <none>        8443:31443/TCP   37m
-~~~
-
-~~~
-$ kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o jsonpath="{['data']['password']}" | base64 --decode && echo
-5yUC5QKKqA
-~~~
-
-https://192.168.1.98:31443/ https://192.168.1.99:31443/
+## Cephファイルシステム
 
 
 
-## ストレージクラス
+
+
+
+
+
+
+
+
+
+
+## WordPress の起動
+
+ストレージクラスの設定
 
 ~~~
 $ kubectl apply -f storageclass-rbd.yaml 
@@ -193,10 +291,6 @@ NAME              PROVISIONER                  RECLAIMPOLICY   VOLUMEBINDINGMODE
 rook-ceph-block   rook-ceph.rbd.csi.ceph.com   Delete          Immediate           true                   5s
 ~~~
 
-
-
-
-## WordPress の起動
 
 
 ~~~

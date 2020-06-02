@@ -4,6 +4,7 @@
   shell: |
     kubectl label node {{ item }} --overwrite=true role=storage-node
     kubectl taint node {{ item }} --overwrite=true storage-node="":NoSchedule
+    
   args:
     chdir: /home/vagrant
   loop:

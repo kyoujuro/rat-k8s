@@ -17,6 +17,20 @@ spec:
     active: 3
     # where to run the NFS server
     placement:
+
+      nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+            - key: role
+              operator: In
+              values:
+              - storage-node
+      tolerations:
+      - key: storage-node
+        operator: Exists
+
+
     #  nodeAffinity:
     #    requiredDuringSchedulingIgnoredDuringExecution:
     #      nodeSelectorTerms:
@@ -25,6 +39,7 @@ spec:
     #          operator: In
     #          values:
     #          - mds-node
+    #  topologySpreadConstraints:
     #  tolerations:
     #  - key: mds-node
     #    operator: Exists

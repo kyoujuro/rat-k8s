@@ -16,12 +16,15 @@ spec:
         contains: csi-rbdplugin-metrics
     spec:
       serviceAccount: rook-csi-rbd-provisioner-sa
+      {{ if .ProvisionerPriorityClassName }}
+      priorityClassName: {{ .ProvisionerPriorityClassName }}
+      {{ end }}
       containers:
         - name: csi-provisioner
           image: {{ .ProvisionerImage }}
           args:
             - "--csi-address=$(ADDRESS)"
-            - "--v=5"
+            - "--v={{ .LogLevel }}"
             - "--timeout=150s"
             - "--retry-interval-start=500ms"
           env:
@@ -31,10 +34,10 @@ spec:
           volumeMounts:
             - name: socket-dir
               mountPath: /csi
-        - name: csi-rbdplugin-attacher
+        - name: csi-attacher
           image: {{ .AttacherImage }}
           args:
-            - "--v=5"
+            - "--v={{ .LogLevel }}"
             - "--timeout=150s"
             - "--csi-address=$(ADDRESS)"
           env:
@@ -49,28 +52,22 @@ spec:
           image:  {{ .SnapshotterImage }}
           args:
             - "--csi-address=$(ADDRESS)"
-            - "--v=5"
+            - "--v={{ .LogLevel }}"
             - "--timeout=150s"
           env:
             - name: ADDRESS
               value: unix:///csi/csi-provisioner.sock
           imagePullPolicy: "IfNotPresent"
-          securityContext:
-            privileged: true
           volumeMounts:
             - name: socket-dir
               mountPath: /csi
         {{ end }}
         - name: csi-rbdplugin
-          securityContext:
-            privileged: true
-            capabilities:
-              add: ["SYS_ADMIN"]
           image: {{ .CSIPluginImage }}
           args :
             - "--nodeid=$(NODE_ID)"
             - "--endpoint=$(CSI_ENDPOINT)"
-            - "--v=5"
+            - "--v={{ .LogLevel }}"
             - "--type=rbd"
             - "--controllerserver=true"
             - "--drivername={{ .DriverNamePrefix }}rbd.csi.ceph.com"
