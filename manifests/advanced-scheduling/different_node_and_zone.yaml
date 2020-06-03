@@ -1,3 +1,7 @@
+#
+# ポッドをノードやゾーンに分散してスケジュールする
+#   検証用クラスタ構成 storage-in-mz.yaml
+#
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,6 +22,8 @@ spec:
       tolerations:
       - key: storage-node
         operator: Exists
+      #
+      # ポッドのスケジューリング
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
@@ -28,8 +34,9 @@ spec:
                 values:
                 - storage-node
         topologySpreadConstraints:
-        #podAffinity:
         podAntiAffinity:
+           # スケージューリング時の必須条件
+           #   ポッドラベル app: rook-ceph-mds のポッドを topologyKey を基準にアンチ配置
            requiredDuringSchedulingIgnoredDuringExecution:
            - labelSelector:
                matchExpressions:
@@ -37,8 +44,12 @@ spec:
                  operator: In
                  values:
                  - rook-ceph-mds
-             # topologyKey: kubernetes.io/hostname will place MDS across different hosts
+             # topologyKeyに指定したノードラベルの値を基準に異なるノードに配置する。
              topologyKey: kubernetes.io/hostname
+           #
+           # スケジューリング時の優先条件	   
+           #   ポッドラベル app: rook-ceph-mds のポッドを topologyKey を基準に配置
+           #   重み付け、条件に注意
            preferredDuringSchedulingIgnoredDuringExecution:
            - weight: 100
              podAffinityTerm:
@@ -48,8 +59,6 @@ spec:
                    operator: In
                    values:
                    - rook-ceph-mds
-               # topologyKey: */zone can be used to spread MDS across different AZ
-               # Use <topologyKey: failure-domain.beta.kubernetes.io/zone> in k8s cluster if your cluster is v1.16 or lower
-               # Use <topologyKey: topology.kubernetes.io/zone>  in k8s cluster is v1.17 or upper
+               # topologyKey: */zone によって異なるゾーンに分散配置
                topologyKey: topology.kubernetes.io/zone
 

@@ -1,0 +1,64 @@
+#
+# ポッドをノードやゾーンに分散してスケジュールする
+# 
+#
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test-pod-mds
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rook-ceph-mds
+  template:          
+    metadata:
+      labels:
+        app: rook-ceph-mds
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+      tolerations:
+      - key: storage-node
+        operator: Exists
+      #
+      # ポッドのスケジューリング
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: role
+                operator: In
+                values:
+                - storage-node
+        topologySpreadConstraints:
+        podAntiAffinity:
+           # スケージューリング時の必須条件
+           #   ポッドラベル app: rook-ceph-mds のポッドを topologyKey を基準にアンチ配置
+           requiredDuringSchedulingIgnoredDuringExecution:
+           - labelSelector:
+               matchExpressions:
+               - key: app
+                 operator: In
+                 values:
+                 - rook-ceph-mds
+             # topologyKeyに指定したノードラベルの値を基準に異なるノードに配置する。
+             topologyKey: kubernetes.io/hostname
+           #
+           # スケジューリング時の優先条件	   
+           #   ポッドラベル app: rook-ceph-mds のポッドを topologyKey を基準に配置
+           #   重み付け、条件に注意
+           preferredDuringSchedulingIgnoredDuringExecution:
+           - weight: 100
+             podAffinityTerm:
+               labelSelector:
+                 matchExpressions:
+                 - key: app
+                   operator: In
+                   values:
+                   - rook-ceph-mds
+               # topologyKey: */zone によって異なるゾーンに分散配置
+               topologyKey: topology.kubernetes.io/zone
+
