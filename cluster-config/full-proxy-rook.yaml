@@ -162,6 +162,8 @@ vm_spec:
     playbook: "setup_linux.yml"
     pod_network: "10.244.231.0/24"
     role: "storage"
+    node_label:
+    - app: rook-ceph-mds
     comment: "Storage node #1"
 
   - name: "storage2"
@@ -174,6 +176,8 @@ vm_spec:
     playbook: "setup_linux.yml"
     pod_network: "10.244.232.0/24"
     role: "storage"
+    node_label:
+    - app: rook-ceph-mds
     comment: "Storage node #2"
 
   - name: "storage3"
@@ -185,5 +189,7 @@ vm_spec:
     - 80
     playbook: "setup_linux.yml"
     pod_network: "10.244.233.0/24"
-    role: "storage"
+    role: "storage" 
+    node_label:
+    - app: rook-ceph-mds
     comment: "Storage node #3"
