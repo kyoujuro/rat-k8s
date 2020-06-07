@@ -2,54 +2,80 @@
 ## ROOK-CEPHのデプロイ
 
 
-次の３つのマニフェストを適用することで、ROOK-CEPHの機能を起動できる。
+ROOKのコードをGitHubからクローンする。
+
+~~~
+git clone --single-branch --branch release-1.3 https://github.com/rook/rook.git 
+~~~
+
+ディレクトリを移動
+
+~~~
+cd rook/cluster/examples/kubernetes/ceph/
+~~~
+
+次のマニフェストを適用することで、ROOK-CEPHの機能を起動できる。
 
 ~~~
 kubectl apply -f common.yaml
 kubectl apply -f operator.yaml
 kubectl apply -f cluster.yaml
-kubectl apply -f dashboard-nodeport.yaml
-kubectl apply -f storageclass-rbd.yaml
 ~~~
 
-ポッドが動作しているノードが表示されるように、コマンドのオプションを組み立てた例
+ポッドのリストを表示して動作を確認する。
 
 ~~~
 $ kubectl get pod -n rook-ceph -o custom-columns=NAME:.metadata.name,STATUS:.status.phase,NODE:.spec.nodeName
 NAME                                                 STATUS      NODE
-csi-cephfsplugin-gjx6b                               Running     node1
-csi-cephfsplugin-gxvq9                               Running     node2
-csi-cephfsplugin-kc4vh                               Running     node4
-csi-cephfsplugin-provisioner-599f5994c6-ctxrq        Running     node4
-csi-cephfsplugin-provisioner-599f5994c6-zv6x4        Running     node4
-csi-cephfsplugin-xjdft                               Running     node3
-csi-rbdplugin-cmszs                                  Running     node2
-csi-rbdplugin-hqjzx                                  Running     node4
-csi-rbdplugin-hr5b2                                  Running     node1
-csi-rbdplugin-provisioner-54c47fdcc7-xkx4l           Running     node2
-csi-rbdplugin-provisioner-54c47fdcc7-z28z9           Running     node1
-csi-rbdplugin-pxb22                                  Running     node3
-rook-ceph-crashcollector-storage1-565d7f4b6d-qtfzv   Running     storage1
-rook-ceph-crashcollector-storage2-796947bdf7-f8nkc   Running     storage2
-rook-ceph-crashcollector-storage3-c79dbfb94-6dq8n    Running     storage3
-rook-ceph-mgr-a-5c9b6ccc96-f2kq4                     Running     storage2
-rook-ceph-mon-a-79c4f8bf75-95s6n                     Running     storage2
-rook-ceph-mon-b-c97f894f-ld6tl                       Running     storage1
-rook-ceph-mon-c-84554f6598-mpwkc                     Running     storage3
-rook-ceph-operator-658dfb6cc4-rhgkk                  Running     node4
-rook-ceph-osd-0-84d7596478-hw25d                     Running     storage1
-rook-ceph-osd-1-7f8d7cfbd6-q9fcs                     Running     storage3
-rook-ceph-osd-2-66688b68b7-92qm2                     Running     storage2
-rook-ceph-osd-prepare-storage1-ftf7z                 Succeeded   storage1
-rook-ceph-osd-prepare-storage2-z222g                 Succeeded   storage2
-rook-ceph-osd-prepare-storage3-6tss8                 Succeeded   storage3
-rook-discover-9lqgh                                  Running     node3
-rook-discover-bqjd5                                  Running     node4
-rook-discover-glb6j                                  Running     node2
-rook-discover-hknjn                                  Running     node1
+csi-cephfsplugin-8z6d7                               Running     storage2
+csi-cephfsplugin-9nrn9                               Running     storage1
+csi-cephfsplugin-kkjlb                               Running     storage3
+csi-cephfsplugin-provisioner-7678bcfc46-k6nph        Running     storage3
+csi-cephfsplugin-provisioner-7678bcfc46-r7n2v        Running     storage2
+csi-cephfsplugin-v58bp                               Running     node1
+csi-rbdplugin-6m498                                  Running     storage3
+csi-rbdplugin-9tgrs                                  Running     storage2
+csi-rbdplugin-m868l                                  Running     node1
+csi-rbdplugin-nvbxm                                  Running     storage1
+csi-rbdplugin-provisioner-fbd45b7c8-m9gdm            Running     storage1
+csi-rbdplugin-provisioner-fbd45b7c8-rvdm5            Running     storage3
+rook-ceph-crashcollector-storage1-57d44589db-mpcch   Running     storage1
+rook-ceph-crashcollector-storage2-79656cd86f-9q7vk   Running     storage2
+rook-ceph-crashcollector-storage3-d86b9c568-h6r99    Running     storage3
+rook-ceph-mgr-a-6ff6f577dc-dcfvq                     Running     storage2
+rook-ceph-mon-a-868bd85854-hh6z6                     Running     storage3
+rook-ceph-mon-b-84b6d5f757-qfzz5                     Running     storage2
+rook-ceph-mon-c-7d7cc4bc64-nqsk9                     Running     storage1
+rook-ceph-operator-577bdbf9b7-ctkxv                  Running     storage2
+rook-ceph-osd-0-6c99c8cd64-b7dc7                     Running     storage1
+rook-ceph-osd-1-56fdb558d9-qb24n                     Running     storage3
+rook-ceph-osd-2-65c9965c8b-q5ggg                     Running     storage2
+rook-ceph-osd-3-9c58566d5-8s9nk                      Running     storage1
+rook-ceph-osd-4-649dcf58dd-xcbl4                     Running     storage3
+rook-ceph-osd-5-798cbf9f85-pp6tc                     Running     storage2
+rook-ceph-osd-prepare-node1-hzw88                    Succeeded   node1
+rook-ceph-osd-prepare-storage1-cth2r                 Succeeded   storage1
+rook-ceph-osd-prepare-storage2-fsf8n                 Succeeded   storage2
+rook-ceph-osd-prepare-storage3-gvtnn                 Succeeded   storage3
+rook-discover-f8qj5                                  Running     storage3
+rook-discover-kbksl                                  Running     node1
+rook-discover-ksqxv                                  Running     storage2
+rook-discover-t66sm                                  Running     storage1
 ~~~
 
+ストレージノードにLVMが設定されていることを確認
 
+~~~
+$ ssh storage1 sudo lsblk -f
+NAME                                                                                                 FSTYPE      LABEL           UUID                                   MOUNTPOINT
+sda                                                                                                                                                                     
+└─sda1                                                                                               ext4        cloudimg-rootfs 6ff622cc-497e-49df-964f-3e554089a0ce   /
+sdb                                                                                                  iso9660     cidata          2020-03-25-16-15-26-00                 
+sdc                                                                                                  LVM2_member                 Bn34HR-YFk8-eqpJ-2jdf-aAPz-1MlQ-eWzJrB 
+└─ceph--a08f5248--7095--48e7--be74--816f03ca425e-osd--data--867d0bf1--4ae9--4226--b91a--1a014d96b3af                                                                    
+sdd                                                                                                  LVM2_member                 NK964A-UxE0-QrVJ-2WSE-wvWF-72S9-FAkWLy 
+└─ceph--c1f45e9a--cd5f--4284--abb1--5febe0369777-osd--data--4bc31e9f--e9e8--4530--bfe8--9a9b288325bb    
+~~~
 
 
 ## ダッシュボードへのアクセス
@@ -71,6 +97,7 @@ $ kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o jsonpath="{['d
 フル構成の場合、プロキシノードのノードポートからアクセスが可能になる。
 
 https://192.168.1.98:30443/ https://192.168.1.99:30443/
+
 
 
 ## rbd
