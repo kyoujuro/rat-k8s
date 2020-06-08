@@ -32,12 +32,6 @@ kube_apiserver_vip: 172.16.2.4
 
 ### Virtual Machine Spec
 vm_spec:
-  - name: "bootnode"
-    cpu: 1
-    memory: 1024
-    private_ip: "172.16.2.3"
-    comment: "Bootstap node" 
-
   - name: "master1"
     cpu: 2
     memory: 2048
@@ -59,4 +53,13 @@ vm_spec:
     role: "worker"
     comment:  "Worker node #1"
 
+  - name: "bootnode"
+    cpu: 1
+    memory: 1024
+    box: "ubuntu/bionic64"    
+    private_ip: "172.16.2.3"
+    playbook: "setup_linux.yml"
+    comment: "Bootstap node" 
+
+    
 

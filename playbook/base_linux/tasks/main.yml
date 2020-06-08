@@ -7,6 +7,7 @@
     packages:
     - nfs-common
     - ruby
+    - emacs-nox
 
 - name: Ensure /etc/hosts
   template:
@@ -16,13 +17,31 @@
     group: root
     mode: '0644'
 
-- name: Mount up
-  mount:
-    path: /mnt
-    src: bootnode:/srv/k8s
-    fstype: nfs
-    state: mounted
+
+#############################    
+#- name: Mount up
+#  mount:
+#    path: /mnt
+#    src: bootnode:/srv/k8s
+#    fstype: nfs
+#    state: mounted
+#############################
+
+- name: check ssh-key existing
+  stat:
+    path: /vagrant/keys/id_rsa.pub
+  register: ssh_key
     
+- debug: msg="{{ ssh_key }}"
+
+- name: create ssh-key
+  command: ssh-keygen -t rsa -N '' -f id_rsa
+  args:
+    executable: /bin/bash
+    chdir: /vagrant/keys
+  when: ssh_key.stat.exists == false
+
+
 #############################
 
 - name: Ensure group 'admin' exists
@@ -49,6 +68,7 @@
     group: "{{ cluster_admin }}"
     mode: '0700'
 
+    
 - name: Copy id_rsa to cluster_admin  home
   command: cp {{ shared_fs }}/keys/id_rsa /home/{{ cluster_admin }}/.ssh/id_rsa
 - file:
@@ -56,6 +76,7 @@
     owner: "{{ cluster_admin }}"
     group: "{{ cluster_admin }}"
     mode: '0400'
+
 - name: Copy id_rsa.pub to  cluster_admin  home
   command: cp {{ shared_fs }}/keys/id_rsa.pub /home/{{ cluster_admin }}/.ssh/id_rsa.pub
 - file:
@@ -63,14 +84,26 @@
     owner: "{{ cluster_admin }}"
     group: "{{ cluster_admin }}"
     mode: '0644'
+
+- name: add authorized_keys
+  shell: |
+     cat {{ shared_fs }}/keys/id_rsa.pub >> /home/{{ cluster_admin }}/.ssh/authorized_keys
 - file:
     path: "/home/{{ cluster_admin }}/.ssh/authorized_keys"
     owner: "{{ cluster_admin }}"
     group: "{{ cluster_admin }}"
     mode: '0400'
-- name: add authorized_keys
-  shell: |
-     cat {{ shared_fs }}/keys/id_rsa.pub >> /home/{{ cluster_admin }}/.ssh/authorized_keys
 
+    
+- name: Copy config
+  command: cp {{ shared_fs }}/keys/config /home/{{ cluster_admin }}/.ssh/config
+- file:
+    path: "/home/{{ cluster_admin }}/.ssh/config"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
+    mode: '0400'
+
+
+     
 
 

@@ -47,7 +47,8 @@ __KUBERNETES_VERSION__
 
 
 # Ansible & Vagrant vars
-shared_fs=/mnt
+#shared_fs=/mnt
+shared_fs=/vagrant
 cluster_admin=vagrant
 
 # CNI

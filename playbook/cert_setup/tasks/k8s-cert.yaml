@@ -2,7 +2,7 @@
 ### Template file is templates/playbook/k8s-cert.yaml.template
 - name: Create Kubernetes CA working directory
   file:
-    path: "{{ ca_home }}"
+    path: /srv/k8s/ca
     state: directory
     owner: vagrant
     group: vagrant
@@ -13,20 +13,20 @@
 - name: Create CA
   template:  
     src: ca-config.json
-    dest: "{{ ca_home }}"
+    dest: /srv/k8s/ca
     owner: vagrant
     group: vagrant
     mode: '0644'
 - template:
     src: ca-csr.json
-    dest: "{{ ca_home }}"
+    dest: /srv/k8s/ca
     owner: vagrant
     group: vagrant
     mode: '0644'
 - shell: |
     cfssl gencert -initca ca-csr.json | cfssljson -bare ca
   args:
-    chdir: "{{ ca_home }}"
+    chdir: /srv/k8s/ca
 
 #
 # kubectl の管理者用クライアント証明書
@@ -35,7 +35,7 @@
 - name: Admin Client Certificate
   template:
     src: admin-csr.json
-    dest: "{{ ca_home }}"
+    dest: /srv/k8s/ca
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -47,7 +47,7 @@
       -profile=kubernetes \
     admin-csr.json | cfssljson -bare admin
   args:
-    chdir: "{{ ca_home }}"
+    chdir: /srv/k8s/ca
 
 #
 # Kubeletのクライアント証明書
@@ -57,7 +57,7 @@
 - name: Kubelet Client Certificates
   template:
     src: instance-csr.json.j2
-    dest: "{{ ca_home }}/{{ item.name }}-csr.json"
+    dest: "/srv/k8s/ca/{{ item.name }}-csr.json"
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -71,10 +71,10 @@
       -profile=kubernetes \
       "{{ item.name }}-csr.json" | cfssljson -bare "{{ item.name }}"
   args:
-    chdir: "{{ ca_home }}"
+    chdir: /srv/k8s/ca
   loop: "{{ nodes }}"
 - file:
-    path: "{{ ca_home }}/{{ item.name }}-key.pem"
+    path: "/srv/k8s/ca/{{ item.name }}-key.pem"
     mode: '0644'
   loop: "{{ nodes }}"
 
@@ -87,7 +87,7 @@
 - name: Controller Manager Client Certificate
   template:
     src: kube-controller-manager-csr.json
-    dest: "{{ ca_home }}"
+    dest: /srv/k8s/ca
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -99,7 +99,7 @@
       -profile=kubernetes \
     kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager    
   args:
-    chdir: "{{ ca_home }}"
+    chdir: /srv/k8s/ca
 
 
 
@@ -110,7 +110,7 @@
 - name: Kube Proxy Client Certificate
   template:
     src: kube-proxy-csr.json
-    dest: "{{ ca_home }}"
+    dest: /srv/k8s/ca
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -122,7 +122,7 @@
       -profile=kubernetes \
     kube-proxy-csr.json | cfssljson -bare kube-proxy
   args:
-    chdir: "{{ ca_home }}"
+    chdir: /srv/k8s/ca
 
 
 # 
@@ -132,7 +132,7 @@
 - name: Scheduler Client Certificate
   template:
     src: kube-scheduler-csr.json
-    dest: "{{ ca_home }}"
+    dest: /srv/k8s/ca
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -144,7 +144,7 @@
       -profile=kubernetes \
     kube-scheduler-csr.json | cfssljson -bare kube-scheduler
   args:
-    chdir: "{{ ca_home }}"
+    chdir: /srv/k8s/ca
 
 #
 # APIサーバーのサーバー証明書
@@ -153,7 +153,7 @@
 - name: Kubernetes API Server Certificate
   template:
     src: kubernetes-csr.json
-    dest: "{{ ca_home }}"
+    dest: /srv/k8s/ca
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -162,11 +162,11 @@
       -ca=ca.pem \
       -ca-key=ca-key.pem \
       -config=ca-config.json \
-      -hostname=10.32.0.1,master1,master2,master3,172.16.4.11,172.16.4.12,172.16.4.13,mlb1,mlb2,172.16.4.21,172.16.4.22,172.16.4.23,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \
+      -hostname=10.32.0.1,master1,172.16.19.11,,,172.16.19.11,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \
       -profile=kubernetes \
     kubernetes-csr.json | cfssljson -bare kubernetes
   args:
-    chdir: "{{ ca_home }}"
+    chdir: /srv/k8s/ca
 
 #
 # サービスアカウントの公開鍵ペア
@@ -175,7 +175,7 @@
 - name: Service Account Key Pair
   template:
     src: service-account-csr.json
-    dest: "{{ ca_home }}"
+    dest: /srv/k8s/ca
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -184,10 +184,10 @@
       -ca=ca.pem \
       -ca-key=ca-key.pem \
       -config=ca-config.json \
-      -hostname=10.32.0.1,master1,master2,master3,172.16.4.11,172.16.4.12,172.16.4.13,mlb1,mlb2,172.16.4.21,172.16.4.22,172.16.4.23,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \
+      -hostname=10.32.0.1,master1,172.16.19.11,,,172.16.19.11,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \
       -profile=kubernetes \
      service-account-csr.json | cfssljson -bare service-account
   args:
-    chdir: "{{ ca_home }}"
+    chdir: /srv/k8s/ca
 
 

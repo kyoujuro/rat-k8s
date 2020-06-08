@@ -23,23 +23,25 @@ Vagrant.configure("2") do |config|
         vbox.cpus = spec[:cpu]
         vbox.memory = spec[:memory]
         i = 1
-        spec[:storage].each do |vol|
-          vdisk = "vdisks/sd-" + spec[:name] + "-" + i.to_s + ".vdi"
-          if not File.exist?(vdisk) then
+        if !( spec[:storage].nil? )        
+          spec[:storage].each do |vol|
+            vdisk = "vdisks/sd-" + spec[:name] + "-" + i.to_s + ".vdi"
+            if not File.exist?(vdisk) then
+              vbox.customize [
+                'createmedium', 'disk',
+                '--filename', vdisk,
+                '--format', 'VDI',
+                '--size', vol * 1024 ]
+            end
             vbox.customize [
-              'createmedium', 'disk',
-              '--filename', vdisk,
-              '--format', 'VDI',
-              '--size', vol * 1024 ]
+              'storageattach', :id,
+              '--storagectl', 'SCSI',
+              '--port', 1 + i,
+              '--device', 0,
+              '--type', 'hdd',
+              '--medium', vdisk]
+            i = i + 1
           end
-          vbox.customize [
-            'storageattach', :id,
-            '--storagectl', 'SCSI',
-            '--port', 1 + i,
-            '--device', 0,
-            '--type', 'hdd',
-            '--medium', vdisk]
-          i = i + 1
         end
       end
       v.vm.synced_folder ".", "/vagrant", owner: "vagrant",
@@ -55,10 +57,12 @@ Vagrant.configure("2") do |config|
         ansible.inventory_path = "hosts_vagrant"
       end
     
-      # v.vm.provision "shell", inline: <<-SHELL
-      #   apt-get update
-      #   apt-get install -y apache2
-      # SHELL
+      v.vm.provision "shell", inline: <<-SHELL
+        if [ "bootnode" == `/bin/hostname` ]
+        then
+          su vagrant -c "cd /vagrant && ansible-playbook -i hosts_k8s playbook/install_k8s.yml"
+        fi
+      SHELL
     end
   end
 end

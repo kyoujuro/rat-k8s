@@ -32,12 +32,6 @@ domain: example.com
 
 ### Master, Worker, Internal/Frontend Loadbalancer and bootnode
 vm_spec:
-  - name: "bootnode"
-    cpu: 1
-    memory: 1024
-    private_ip: "172.16.7.10"
-    comment: "Bootstap node" 
-
   - name: "master1"
     cpu: 2
     memory: 2048
@@ -151,4 +145,12 @@ vm_spec:
     pod_network: "10.244.4.0/24"
     role: "worker"
     comment: "Worker node #4"
+
+  - name: "bootnode"
+    cpu: 1
+    memory: 1024
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.7.10"
+    playbook: "setup_linux.yml"
+    comment: "Bootstap node"
 
