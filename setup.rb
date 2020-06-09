@@ -27,17 +27,18 @@ $cnt = {
 ##
 ## コンフィグテンプレート
 ##
-$vm_spec_template = {
-  "name"=>"node",
-  "cpu"=>1,
-  "memory"=>1024,
-  "box"=>"ubuntu/bionic64",
-  "private_ip"=>"172.16.2.250",
-  "public_ip"=>"192.168.1.250",
-  "storage"=>[],
-  "playbook"=>"setup_linux.yml",
-  "comment"=>"template node" 
-}
+#$vm_spec_template = {
+#  "name"=>"node",
+#  "cpu"=>1,
+#  "memory"=>1024,
+#  "box"=>"ubuntu/bionic64",
+#  "private_ip"=>"172.16.2.250",
+#  "public_ip"=>"192.168.1.250",
+#  "storage"=>[],
+#  "role"=>[],
+#  "playbook"=>"setup_linux.yml",
+#  "comment"=>"template node" 
+#}
 
 
 ##
@@ -57,18 +58,19 @@ def read_yaml_config(file)
     # VMスペックの読み込み
     if val1.class == Array and key1 == "vm_spec"
       $conf[key1].each do |val2|
-        $wk = $vm_spec_template
+        wk = {}
         val2.each do |key3, val3|
           if val3 != nil
-            $wk[key3] = val3
+            wk[key3] = val3
           end
         end
+        
         # public_ipが存在しない場合はwkで補完しない。
         if !(val2.has_key?('public_ip'))
-          $wk.delete('public_ip')
+          wk.delete('public_ip')
         end
-        cnf = cnf + $wk.to_json + ",\n"
-        $vm_config_array.push($wk.to_s)
+        cnf = cnf + wk.to_json + ",\n"
+        $vm_config_array.push(wk.to_s)
       end
     end    
   end
@@ -266,6 +268,7 @@ end
 ##
 def list_by_role(role)
   rst = ""
+  print "\n"  
   $vm_config_array.each do |val|
     x = eval(val)
     if x['role'] != nil
@@ -355,7 +358,7 @@ def output_ansible_inventory0(input,sw)
           if sw == 0
             w.write sprintf("%-20s  %s\n", x['name'], "ansible_connection=local")
           else
-            w.write sprintf("%-20s ansible_ssh_host=%s  ansible_ssh_private_key_file=/srv/k8s/keys/id_rsa\n", x['name'],x['name'])
+            w.write sprintf("%-20s ansible_ssh_host=%s  ansible_ssh_private_key_file=/vagrant/keys/id_rsa\n", x['name'],x['name'])
           end
         end
       end

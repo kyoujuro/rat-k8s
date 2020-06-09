@@ -36,12 +36,6 @@ ka_backup_frontend_host: elb2
 
 ### Master, Worker, Internal/Frontend Loadbalancer and bootnode
 vm_spec:
-  - name: "bootnode"
-    cpu: 1
-    memory: 1024
-    private_ip: "172.16.4.10"
-    comment: "Bootstap node" 
-
   - name: "master1"
     cpu: 2
     memory: 2048
@@ -177,4 +171,11 @@ vm_spec:
     role: "storage"
     comment: "Worker node #6"
 
+  - name: "bootnode"
+    cpu: 1
+    memory: 1024
+    box: "ubuntu/bionic64"
+    playbook: "setup_linux.yml"    
+    private_ip: "172.16.4.10"
+    comment: "Bootstap node" 
 

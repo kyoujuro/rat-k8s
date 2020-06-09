@@ -6,7 +6,7 @@
 
 - name: Create ETCD CA working directory
   file:
-    path: "{{ etcd_ca_home }}"
+    path: /srv/k8s/ca-etcd
     state: directory
     owner: vagrant
     group: vagrant
@@ -17,20 +17,20 @@
 - name: Create Etcd CA
   template:  
     src: etcd-ca-config.json
-    dest: "{{ etcd_ca_home }}"
+    dest: /srv/k8s/ca-etcd
     owner: vagrant
     group: vagrant
     mode: '0644'
 - template:
     src: etcd-ca-csr.json
-    dest: "{{ etcd_ca_home }}"
+    dest: /srv/k8s/ca-etcd
     owner: vagrant
     group: vagrant
     mode: '0644'
 - shell: |
     cfssl gencert -initca etcd-ca-csr.json | cfssljson -bare etcd-ca
   args:
-    chdir: "{{ etcd_ca_home }}"
+    chdir: /srv/k8s/ca-etcd
 
 
 #
@@ -39,7 +39,7 @@
 - name: ETCD Server Certificate
   template:
     src: etcd-csr.json
-    dest: "{{ etcd_ca_home }}"
+    dest: /srv/k8s/ca-etcd
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -48,11 +48,11 @@
       -ca=etcd-ca.pem \
       -ca-key=etcd-ca-key.pem \
       -config=etcd-ca-config.json \
-      -hostname=10.32.0.1,master1,master2,master3,172.16.4.11,172.16.4.12,172.16.4.13,mlb1,mlb2,172.16.4.21,172.16.4.22,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \
+      -hostname=10.32.0.1,master1,172.16.19.11,,,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \
       -profile=kubernetes \      
     etcd-csr.json | cfssljson -bare etcd-server
   args:
-    chdir: "{{ etcd_ca_home }}"
+    chdir: /srv/k8s/ca-etcd
 
 #
 # ETCD ピア証明書
@@ -60,7 +60,7 @@
 - name: ETCD Peer Certificate
   template:
     src: etcd-peer-csr.json
-    dest: "{{ etcd_ca_home }}"
+    dest: /srv/k8s/ca-etcd
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -69,11 +69,11 @@
       -ca=etcd-ca.pem \
       -ca-key=etcd-ca-key.pem \
       -config=etcd-ca-config.json \
-      -hostname=10.32.0.1,master1,master2,master3,172.16.4.11,172.16.4.12,172.16.4.13,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \      
+      -hostname=10.32.0.1,master1,172.16.19.11,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \      
       -profile=kubernetes \
     etcd-peer-csr.json | cfssljson -bare etcd-peer
   args:
-    chdir: "{{ etcd_ca_home }}"
+    chdir: /srv/k8s/ca-etcd
 
 
 

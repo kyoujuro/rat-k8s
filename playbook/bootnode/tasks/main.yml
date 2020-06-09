@@ -3,14 +3,6 @@
 #
 #- debug: msg="{{ ansible_facts.hostname }}"
 
-- name: Install a list
-  apt:
-    name: "{{ packages }}"
-    state: present
-  vars:
-    packages:
-    - nfs-kernel-server
-    - emacs-nox
 
 - name: mkdir for nfs exports
   file:
@@ -52,6 +44,25 @@
     group: vagrant
     mode:  '0755'
 
+#############################
+# 必要なコードのダウンロード
+#############################
+- include_tasks: download_cri_container.yaml
+- include_tasks: download_etcd.yaml
+- include_tasks: download_addon.yaml
+- include_tasks: download_kubernetes_binary.yaml
+- include_tasks: install-k8s-command.yaml
+    
+    
+- name: Install a list
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - nfs-kernel-server
+    - emacs-nox
+    
 - name: re-start nfs server
   systemd:
     name: nfs-server
@@ -118,12 +129,3 @@
     mode: '0400'
 
 
-#############################
-# 必要なコードのダウンロード
-#############################
-
-- include_tasks: download_cri_container.yaml
-- include_tasks: download_etcd.yaml
-- include_tasks: download_addon.yaml
-- include_tasks: download_kubernetes_binary.yaml
-- include_tasks: install-k8s-command.yaml
