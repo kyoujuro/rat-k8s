@@ -100,14 +100,22 @@
 # 
 #  RBAC for Kubelet Authorization
 #
-- name: Configure RBAC
+- name: Configure RBAC & kubeconfig
   hosts:
   - bootnode
   gather_facts: true
   become: true
   become_user: vagrant
   tasks:
+    - include_tasks: tasks/kubectl_kubeconfig.yaml    
     - include_tasks: tasks/config_rbac_kubelet.yml
+
+- name: Configure kubectl
+  hosts:
+  - masters
+  tasks:
+    - include_tasks: tasks/kubectl_kubeconfig.yaml    
+      
 
 #
 # ワーカーノードのセットアップ
@@ -164,25 +172,6 @@
     - include_tasks: tasks/proxy_test.yaml
 
 #########################################
-
-#
-# ストレージノードのセットアップ
-#
-#- name: Setup Kubernetes Dirs
-#  hosts:
-#  - storages
-#  become: true
-#  tasks:
-#    - name: Git Repositorys Create a ext4 filesystem on /dev/sdc and check disk blocks
-#      filesystem:
-#        fstype: ext4
-#        dev: /dev/sdc
-#    - name: Mount up device by /dev/sdb
-#      mount:
-#        path: /var/lib/rook
-#        src:  /dev/sdc
-#        fstype: ext4
-#        state: mounted
 
 - name: Setup a role of the storage node 
   hosts:
