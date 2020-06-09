@@ -1,0 +1,64 @@
+#
+### host network interfaice
+#bridge_if: "en0: Wi-Fi (Wireless)"
+bridge_if: "eno1"
+
+### Kubernetes version
+kubernetes_version: 1.18.2
+kubernetes_custom: false
+
+### K8s cluster/pod network CNI plugin
+pod_network: bridge
+#pod_network: flannel
+
+### flannel_version if you choice flannel
+flannel_version: v0.12.0
+
+### Cluster Network
+private_ip_subnet: 172.16.7.0/24
+public_ip_subnet:  192.168.1.0/24
+
+kube_apiserver_vip: 172.16.7.11
+domain: example.com
+
+
+### Master, Worker, Internal/Frontend Loadbalancer and bootnode
+vm_spec:
+  - name: "master1"
+    cpu: 2
+    memory: 2048
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.7.11"
+    public_ip: "192.168.1.97"    
+    role: "master"
+    playbook: "setup_linux.yml"
+    comment: "Master node #1"
+
+  - name: "node1"
+    cpu: 1
+    memory: 1024
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.7.31"
+    playbook: "setup_linux.yml"
+    pod_network: "10.244.1.0/24"
+    role: "worker"
+    comment:  "Worker node #1"
+
+  - name: "node2"
+    cpu: 1
+    memory: 1024
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.7.32"
+    playbook: "setup_linux.yml"
+    pod_network: "10.244.2.0/24"
+    role: "worker"
+    comment:  "Worker node #2"
+    
+  - name: "bootnode"
+    cpu: 1
+    memory: 1024
+    box: "ubuntu/bionic64"    
+    private_ip: "172.16.7.10"
+    playbook: "setup_linux.yml"
+    comment: "Bootstap node" 
+
