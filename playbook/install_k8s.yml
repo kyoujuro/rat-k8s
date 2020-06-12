@@ -88,14 +88,14 @@
   gather_facts: true
   become: true
   roles:
-    - etcd
-    - node_master
     - role: node_worker
       when: pod_network == "flannel"
     - role: net_flannel
       when: pod_network == "flannel"      
     - role: net_bridge
       when: pod_network == "bridge"
+    - etcd      
+    - node_master
 
 # 
 #  RBAC for Kubelet Authorization
@@ -120,12 +120,12 @@
   gather_facts: true
   become: true
   roles:
-    - node_worker
     - role: net_bridge
       when: pod_network == "bridge"
     - role: net_flannel
       when: pod_network == "flannel"      
-
+    - node_worker
+      
 #########################################
 #
 # ノードへロール設定、ノードラベル設定

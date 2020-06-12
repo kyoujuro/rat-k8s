@@ -104,16 +104,16 @@ def create_bridge_conf()
       range_end = sprintf("%d.%d.%d.%d", n[0],n[1],n[2],253)
       gateway   = sprintf("%d.%d.%d.%d", n[0],n[1],n[2],254)
 
-      filename = sprintf("playbook/node_worker/templates/10-bridge.conf.%s", x['name'])
+      filename = sprintf("playbook/net_bridge/templates/10-bridge.conf.%s", x['name'])
       File.open("templates/playbook/10-bridge.conf.template", "r") do |f|
         File.open(filename, "w") do |w|
           #w.write $insert_msg # JSON形式なのでコメントが書けない
           f.each_line { |line|
             if line =~ /^__SET_CONFIG__/
-              w.write sprintf("%s\"%s\": \"%s\",\n", "               ", "subnet",    subnet)
-              w.write sprintf("%s\"%s\": \"%s\",\n", "               ", "rangeStart",range_start)
-              w.write sprintf("%s\"%s\": \"%s\",\n", "               ", "rangeEnd",  range_end)
-              w.write sprintf("%s\"%s\": \"%s\" \n", "               ", "gateway",   gateway)
+              w.write sprintf("%s\"%s\": \"%s\",\n", "\s"*16, "subnet",    subnet)
+              w.write sprintf("%s\"%s\": \"%s\",\n", "\s"*16, "rangeStart",range_start)
+              w.write sprintf("%s\"%s\": \"%s\",\n", "\s"*16, "rangeEnd",  range_end)
+              w.write sprintf("%s\"%s\": \"%s\" \n", "\s"*16, "gateway",   gateway)
             else
               w.write line
             end
