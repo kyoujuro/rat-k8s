@@ -26,9 +26,11 @@
     chdir: /home/vagrant
   become: true
   become_user: vagrant
-- copy:
-    src: /mnt/kubeconfig/admin.kubeconfig
-    dest: /home/vagrant/.kube/config
-  become: true
-  become_user: vagrant
+
+
+#- copy:
+#    src: /mnt/kubeconfig/admin.kubeconfig
+#    dest: /home/vagrant/.kube/config
+#  become: true
+#  become_user: vagrant
 

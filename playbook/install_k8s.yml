@@ -94,9 +94,14 @@
       when: pod_network == "flannel"      
     - role: node_worker
       when: pod_network == "flannel"
+    - role: net_calico
+      when: pod_network == "calico"
     - etcd      
     - node_master
+  tasks:
+    - include_tasks: tasks/kubeconfig_setup.yml
 
+    
 # 
 #  RBAC for Kubelet Authorization
 #
@@ -108,7 +113,7 @@
   become_user: vagrant
   tasks:
     - include_tasks: tasks/config_rbac_kubelet.yml
-
+    - include_tasks: tasks/kubeconfig_setup.yml
 #
 # ワーカーノードのセットアップ
 #
@@ -124,6 +129,8 @@
       when: pod_network == "bridge"
     - role: net_flannel
       when: pod_network == "flannel"      
+    - role: net_calico
+      when: pod_network == "calico"      
     - node_worker
       
 #########################################
