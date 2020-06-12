@@ -88,12 +88,12 @@
   gather_facts: true
   become: true
   roles:
-    - role: node_worker
-      when: pod_network == "flannel"
-    - role: net_flannel
-      when: pod_network == "flannel"      
     - role: net_bridge
       when: pod_network == "bridge"
+    - role: net_flannel
+      when: pod_network == "flannel"      
+    - role: node_worker
+      when: pod_network == "flannel"
     - etcd      
     - node_master
 
