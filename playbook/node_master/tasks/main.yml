@@ -9,10 +9,10 @@
   include_tasks: copy-certs-files.yaml
 
 ##
-## カーネル設定変更
+## カーネル設定変更 これは移動 base_linuxへ
 ##
-- name: Configure Kernel parameter
-  include_tasks: kernel-param.yaml
+#- name: Configure Kernel parameter
+#  include_tasks: kernel-param.yaml
 
 ##
 ## Configure Kubernetes API Server

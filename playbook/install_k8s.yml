@@ -90,11 +90,17 @@
   roles:
     - role: net_bridge
       when: pod_network == "bridge"
+    #      
     - role: net_flannel
       when: pod_network == "flannel"      
     - role: node_worker
       when: pod_network == "flannel"
+    #
+    #- role: net_bridge
+    #  when: pod_network == "calico"
     - role: net_calico
+      when: pod_network == "calico"      
+    - role: node_worker      
       when: pod_network == "calico"
     - etcd      
     - node_master
@@ -128,11 +134,13 @@
     - role: net_bridge
       when: pod_network == "bridge"
     - role: net_flannel
-      when: pod_network == "flannel"      
+      when: pod_network == "flannel"
+    #- role: net_bridge
+    #  when: pod_network == "calico"
     - role: net_calico
       when: pod_network == "calico"      
     - node_worker
-      
+
 #########################################
 #
 # ノードへロール設定、ノードラベル設定
@@ -150,7 +158,7 @@
         dir: vars
     - include_tasks: tasks/role_master.yaml
       when:
-      - pod_network == "flannel"
+      - pod_network == "flannel" or pod_network == "calico"
     - wait_for:  # 残骸ではなく、Waitがないと、次のコマンドが失敗する
         timeout: 20
     - include_tasks: tasks/role_worker.yaml
