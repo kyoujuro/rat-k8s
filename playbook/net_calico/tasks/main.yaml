@@ -14,4 +14,31 @@
     group: root
     mode: '0755'
 
+- name: deploy calico 
+  shell: |
+    kubectl apply -f /vagrant/playbook/net_calico/templates/calico-custom.yaml
+  args:
+    chdir: /home/vagrant
+  when: ansible_facts.hostname is match("bootnode")
+  become: true
+  become_user: vagrant
+    
+- get_url:
+    url: https://github.com/projectcalico/calicoctl/releases/download/v3.14.1/calicoctl
+    dest: /usr/local/bin/calicoctl
+    mode: '0755'
+    owner: root
+    group: root
+  when: ansible_facts.hostname is match("bootnode") or ansible_facts.hostname is match("master*")
+
+- name: deploy calico 
+  shell: |
+    cat <<EOF >> /home/vagrant/.profile
+    # for calicoctl
+    export DATASTORE_TYPE=kubernetes
+    export KUBECONFIG=~/.kube/config
+    EOF
+  args:
+    chdir: /home/vagrant
+  when: ansible_facts.hostname is match("bootnode") or ansible_facts.hostname is match("master*")
 

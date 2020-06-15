@@ -25,28 +25,30 @@
     owner: root
     group: root
     mode: '0644'
-  when: ansible_facts.hostname is not match("master[123]")  
-
+  when:
+    - ansible_facts.hostname is not match("master[123]")  
+    - pod_network == "bridge"
     
-- template:
-    src: 99-loopback.conf
-    dest: /etc/cni/net.d
-    owner: root
-    group: root
-    mode: '0644'
-  when: ansible_facts.hostname is not match("master[123]")
+#- template:
+#    src: 99-loopback.conf
+#    dest: /etc/cni/net.d
+#    owner: root
+#    group: root
+#    mode: '0644'
+#  when: ansible_facts.hostname is not match("master[123]")
   
   
 - name: static route masters
   include_tasks: /vagrant/playbook/net_bridge/tasks/static-route.yaml
   when: ansible_facts.hostname is match("master[123]")
 
+  
 - name: static route for each node
   include_tasks: "/vagrant/playbook/net_bridge/tasks/static-route-{{ ansible_facts.hostname }}.yaml"
-  when:
-  - ansible_facts.hostname == item.name
-  - ansible_facts.hostname is not match("master[123]")  
+  #when:
+  #- ansible_facts.hostname == item.name
+  #- ansible_facts.hostname is not match("master[123]")  
   #- ansible_facts.hostname is match("node*")
-  loop: "{{ nodes }}"
+  #loop: "{{ nodes }}"
 
 

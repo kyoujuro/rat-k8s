@@ -90,18 +90,13 @@
   roles:
     - role: net_bridge
       when: pod_network == "bridge"
-    #      
     - role: net_flannel
-      when: pod_network == "flannel"      
-    - role: node_worker
       when: pod_network == "flannel"
-    #
-    #- role: net_bridge
-    #  when: pod_network == "calico"
     - role: net_calico
-      when: pod_network == "calico"      
-    - role: node_worker      
-      when: pod_network == "calico"
+      when: pod_network == "calico" 
+    #      
+    - role: node_worker
+      when: pod_network == "flannel" or pod_network == "calico"
     - etcd      
     - node_master
   tasks:
@@ -135,10 +130,8 @@
       when: pod_network == "bridge"
     - role: net_flannel
       when: pod_network == "flannel"
-    #- role: net_bridge
-    #  when: pod_network == "calico"
     - role: net_calico
-      when: pod_network == "calico"      
+      when: pod_network == "calico" 
     - node_worker
 
 #########################################
@@ -148,7 +141,7 @@
 #  flannel使用時にマスターノードへのtaint設定
 #  
 #
-- name: Configure work-nodes
+- name: Configure cluster
   hosts:
   - bootnode
   gather_facts: true
@@ -163,7 +156,10 @@
         timeout: 20
     - include_tasks: tasks/role_worker.yaml
     - include_tasks: tasks/add-node-label.yaml
-
+  roles:
+    - role: net_calico
+      when: pod_network == "calico"      
+      
 #########################################
 #
 # プロキシノードのコンテナランタイム初期化
@@ -177,27 +173,6 @@
   become: true
   tasks:
     - include_tasks: tasks/proxy_test.yaml
-
-#########################################
-
-#
-# ストレージノードのセットアップ
-#
-#- name: Setup Kubernetes Dirs
-#  hosts:
-#  - storages
-#  become: true
-#  tasks:
-#    - name: Git Repositorys Create a ext4 filesystem on /dev/sdc and check disk blocks
-#      filesystem:
-#        fstype: ext4
-#        dev: /dev/sdc
-#    - name: Mount up device by /dev/sdb
-#      mount:
-#        path: /var/lib/rook
-#        src:  /dev/sdc
-#        fstype: ext4
-#        state: mounted
 
 - name: Setup a role of the storage node 
   hosts:
