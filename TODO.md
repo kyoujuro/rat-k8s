@@ -2,20 +2,23 @@
 
 技術的な理解を深め、スキルを磨くことを目指して、実施したいこと
 
+* ⭐️完了  コンフィグスクリプトの開発、ノード数、資源量変更など
+* ⭐️完了  Calicoの適用 完了
+* Rook-Cephの自動化 Helmチャート化が良いな。
+* ノード追加と削除の手順　
+* Ansible playbookをリラン可能にする。証明書が上書きされる様で、動作しなくなるため。
+* addon_ingress-vip の実装 kube-keepalived-vip、HA-Proxy Ingress のインストールを自動化したい。
+
+
 * 外部むけロードバランサーのVIPと外部DNSの連携
 * crictl の環境設定
 * etcdctl の動作確認
-* Calicoの適用
 * Terraformで作成したホストでのk8sのデプロイ
-* ノード追加と削除の手順
 * クラスタのバージョンアップの手順
-* コンフィグスクリプトの開発、ノード数、資源量変更など
 * GPUを使用してDL可能な環境を作りたい
 * マスターノードでは、etcd用ストレージ領域は、コンテナ用ファイルシステムと異なるストレージ区画に置きたい。
 * コンテナのサイズによってファイルシステムを消費するため、制御が難しく、etcdへの書き込み失敗などの障害から保護するため
-* Ansible playbookをリラン可能にする。証明書が上書きされる様で、動作しなくなるため。
-* addon_ingress-vip の実装 kube-keepalived-vip、HA-Proxy Ingress のインストールを自動化したい。
-* Rook-Cephの自動化 Helmチャート化が良いな。
+
 
 
 
@@ -23,9 +26,9 @@
 
 build-k8sの仮想マシンを使ってK8sの本体やアドオンをビルドする
 
-* Kubernetes本体: 済み
-* kube-keepalived-vip: 済み
-* coredns: 済み
+* ⭐️完了  Kubernetes本体: 済み
+* ⭐️完了  kube-keepalived-vip: 済み
+* ⭐️完了  coredns: 済み
 * haproxy-ingress: 
 * nginx-ingress:
 
@@ -48,8 +51,6 @@ build-k8sの仮想マシンを使ってK8sの本体やアドオンをビルド�
 * セキュリティ重視デザイン・パターン
 * DLパターン？
 * エッジパターン、エッジはエッジノードに見立てたものを作って対応
-
-
 
 
 
