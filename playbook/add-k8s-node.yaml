@@ -1,3 +1,15 @@
+- name: Setup/etc/hosts on node
+  hosts: bootnode
+  become: true
+  tasks:
+    - template:
+        src: base_linux/templates/hosts.j2
+        dest: /etc/hosts
+        owner: root
+        group: root
+        mode: '0644'
+        force: yes
+
 #
 # K8sコンポーネント配置に必要なディレクトリを作成
 #
@@ -10,6 +22,14 @@
   become: true
   tasks:
     - include_tasks: tasks/setup_k8s_dirs.yml
+
+- name: Setup Certs
+  vars:
+    mode: "add-node"
+  hosts:
+  - bootnode
+  roles:
+    - cert_setup
 
       
 - name: Mount NFS server (bootnode)
@@ -29,8 +49,6 @@
 - name: Configure work-nodes
   hosts:
   - nodes
-  - storages
-  - proxys
   gather_facts: true
   become: true
   roles:
@@ -57,9 +75,9 @@
   tasks:
     - include_vars:
         dir: vars
-    - include_tasks: tasks/role_worker.yaml
-    - include_tasks: tasks/add-node-label.yaml
+    - include_tasks: tasks/role_worker_add.yaml
   roles:
     - role: net_calico
       when: pod_network == "calico"      
-      
+    - role: net_flannel
+      when: pod_network == "flannel"

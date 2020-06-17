@@ -49,35 +49,35 @@
   args:
     chdir: /srv/k8s/ca
 
+##
+## Kubeletのクライアント証明書
+##    The Kubelet Client Certificates
+##    ノードの数だけ作成する
+##
+#- name: Kubelet Client Certificates
+#  template:
+#    src: instance-csr.json.j2
+#    dest: "/srv/k8s/ca/{{ item.name }}-csr.json"
+#    owner: vagrant
+#    group: vagrant
+#    mode: '0644'
+#  loop: "{{ nodes }}"
+#- shell: |
+#    cfssl gencert \
+#      -ca=ca.pem \
+#      -ca-key=ca-key.pem \
+#      -config=ca-config.json \
+#      -hostname="{{ item.name }},{{ item.pri_ip }}" \
+#      -profile=kubernetes \
+#      "{{ item.name }}-csr.json" | cfssljson -bare "{{ item.name }}"
+#  args:
+#    chdir: /srv/k8s/ca
+#  loop: "{{ nodes }}"
+#- file:
+#    path: "/srv/k8s/ca/{{ item.name }}-key.pem"
+#    mode: '0644'
+#  loop: "{{ nodes }}"
 #
-# Kubeletのクライアント証明書
-#    The Kubelet Client Certificates
-#    ノードの数だけ作成する
-#
-- name: Kubelet Client Certificates
-  template:
-    src: instance-csr.json.j2
-    dest: "/srv/k8s/ca/{{ item.name }}-csr.json"
-    owner: vagrant
-    group: vagrant
-    mode: '0644'
-  loop: "{{ nodes }}"
-- shell: |
-    cfssl gencert \
-      -ca=ca.pem \
-      -ca-key=ca-key.pem \
-      -config=ca-config.json \
-      -hostname="{{ item.name }},{{ item.pri_ip }}" \
-      -profile=kubernetes \
-      "{{ item.name }}-csr.json" | cfssljson -bare "{{ item.name }}"
-  args:
-    chdir: /srv/k8s/ca
-  loop: "{{ nodes }}"
-- file:
-    path: "/srv/k8s/ca/{{ item.name }}-key.pem"
-    mode: '0644'
-  loop: "{{ nodes }}"
-
 
 
 # 
@@ -162,7 +162,7 @@
       -ca=ca.pem \
       -ca-key=ca-key.pem \
       -config=ca-config.json \
-      -hostname=10.32.0.1,master1,172.16.19.11,,,172.16.19.11,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \
+      -hostname=10.32.0.1,master1,172.16.5.11,,,172.16.5.11,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \
       -profile=kubernetes \
     kubernetes-csr.json | cfssljson -bare kubernetes
   args:
@@ -184,7 +184,7 @@
       -ca=ca.pem \
       -ca-key=ca-key.pem \
       -config=ca-config.json \
-      -hostname=10.32.0.1,master1,172.16.19.11,,,172.16.19.11,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \
+      -hostname=10.32.0.1,master1,172.16.5.11,,,172.16.5.11,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \
       -profile=kubernetes \
      service-account-csr.json | cfssljson -bare service-account
   args:

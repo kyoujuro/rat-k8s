@@ -484,7 +484,7 @@ def set_node_role()
 EOF
     $vm_config_array.each do |val|
       x = eval(val)
-      if x['role'] != nil
+      if x['role'] != nil and !(x['name'] =~ /^master*/)
         w.write sprintf("%skubectl label node %s --overwrite=true node-role.kubernetes.io/%s=\'\'\n",
                         "\s"*4, x['name'], x['role'])
         w.write sprintf("%skubectl label node %s --overwrite=true role=%s-node\n",
@@ -503,6 +503,36 @@ EOF
   become: true
   become_user: vagrant
 EOF
+  end
+end
+
+
+##
+## ノードのロールラベル設定 role_worker.yaml
+## Set role to node
+##
+def set_role_added_node()
+  
+  File.open("playbook/tasks/role_worker_add.yaml", "w") do |w|
+    w.write $insert_msg
+    w.write <<EOF
+- name: Set role to added node 
+  shell: |
+    x=(`kubectl get node {{ item.name }} -o json |jq .metadata.labels.role`)
+    if [ $x == null ] 
+    then
+      kubectl label node {{ item.name }} --overwrite=true node-role.kubernetes.io/worker=""
+      kubectl taint node {{ item.name }} --overwrite=true role=worker-node
+    fi
+  args:
+    chdir: /home/vagrant
+    executable: /bin/bash
+  when: item.name is match("node*")
+  loop: "{{ nodes }}"
+  become: true
+  become_user: vagrant
+EOF
+  
   end
 end
 
@@ -961,6 +991,9 @@ if __FILE__ == $0
   set_node_role()
   printf("完了\n")
 
+  printf("追加ノードのロールラベル設定 role_worker_add.yaml")
+  set_role_added_node()    
+  printf("完了\n")
   
   ## ストレージノードのリストセット
   printf("ストレージノードのラベル設定")
@@ -980,7 +1013,8 @@ if __FILE__ == $0
   append_ansible_inventory("hosts_k8s")
   printf("完了\n")
 
-  
+
+
   
   ## 自動起動
   if $auto_start
