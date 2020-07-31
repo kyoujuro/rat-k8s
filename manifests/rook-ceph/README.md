@@ -158,7 +158,7 @@ tmpfs           3.9G     0  3.9G   0% /sys/firmware
 ## Cephファイルシステムの利用
 
 ~~~
-kubectl apply -f filesystem.html
+kubectl apply -f filesystem.yaml
 ~~~
 
 ~~~
