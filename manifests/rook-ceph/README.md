@@ -153,6 +153,12 @@ tmpfs           3.9G     0  3.9G   0% /sys/firmware
 ~~~
 
 
+## デフォルトのストレージクラスに設定
+
+~~~
+kubectl patch storageclass rook-ceph-block  -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+~~~
+
 
 
 ## Cephファイルシステムの利用
