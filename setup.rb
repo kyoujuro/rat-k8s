@@ -342,6 +342,7 @@ def output_ansible_inventory0(input,sw)
         if x['name'] == "bootnode"
           w.write sprintf("%-20s %s\n", x['name'], "ansible_connection=local")
         else
+
           if x['name'] =~ /^node*/
             counter_node += 1
           elsif x['name'] =~ /^master*/
@@ -417,7 +418,7 @@ def output_ansible_inventory0(input,sw)
           # elbを検索して存在しなければパスする
           $vm_config_array.each do |val|
             x = eval(val)
-            if x['name'] =~ /elb*/
+            if x['name'] =~ /elb1/
               w.write line.gsub(/__FRONTEND_IPADDR__/, $conf['front_proxy_vip'])
             end
           end
@@ -673,7 +674,8 @@ def k8s_cert()
   list_mst = host_list("master",0,0) + "," + host_list("master",1,0)  
   list_mlb = host_list("mlb",0,0) + "," + host_list("mlb",1,0)
   list_vip = $conf['kube_apiserver_vip']
-  list_all = list_mst + "," + list_mlb + "," + list_vip
+  list_eep = $conf['front_proxy_vip']
+  list_all = list_mst + "," + list_mlb + "," + list_vip + "," + list_eep
   
   #
   tfn = "templates/playbook/k8s-cert.yaml.template"
@@ -730,32 +732,38 @@ end
 ##
 def haproxy_front_cfg()
 
-  server_list = ""
+  cfg_file = "playbook/haproxy/templates/haproxy_frontend.cfg.j2"
+  server_list_node = ""
+  server_list_api = ""  
   $vm_config_array.each do |val|
     x = eval(val)
     ## ワーカーノード
     if x['name'] =~ /^node*/
       if x['role'] =~ /^worker/
-        server_list = server_list + sprintf("%s server %s %s:30443 check\n", "\s"*4, x['name'], x['private_ip'])
+        server_list_node = server_list_node + sprintf("%s server %s %s:30443 check\n", "\s"*4, x['name'], x['private_ip'])
       end
     end
+    if x['name'] =~ /^master*/
+      server_list_api = server_list_api + sprintf("%s server %s %s:6443 check\n", "\s"*4, x['name'], x['private_ip'])
+    end
   end
-
+  
   tfn = "templates/playbook/haproxy_frontend.cfg.j2.template"
   File.open(tfn, "r") do |f|
-    File.open("playbook/haproxy/templates/haproxy_frontend.cfg.j2", "w") do |w|
+    File.open(cfg_file, "w") do |w|
       w.write $insert_msg
       w.write sprintf("### Template file is %s\n",tfn)
       f.each_line { |line|
-        if line =~ /^__SERVER_LIST__/
-          w.write server_list
+        if line =~ /^__SERVER_LIST_APL__/
+          w.write server_list_node
+        elsif line =~ /^__SERVER_LIST_API__/
+          w.write server_list_api
         else
           w.write line
         end
       }
     end
   end
-
 end
 
 #

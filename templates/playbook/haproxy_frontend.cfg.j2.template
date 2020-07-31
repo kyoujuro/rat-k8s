@@ -36,6 +36,19 @@ defaults
 	errorfile 503 /etc/haproxy/errors/503.http
 	errorfile 504 /etc/haproxy/errors/504.http
 
+frontend api_frontend
+     bind *:6443
+     mode tcp
+     option tcplog
+     default_backend api_servers
+
+backend api_servers
+     mode tcp
+     balance roundrobin
+     option ssl-hello-chk
+     default-server inter 10s fall 2
+__SERVER_LIST_API__
+
 frontend apl_frontend
      bind *:80
      mode tcp
@@ -47,4 +60,4 @@ backend apl_servers
      balance roundrobin
      ###option ssl-hello-chk
      default-server inter 10s fall 2
-__SERVER_LIST__
+__SERVER_LIST_APL__
