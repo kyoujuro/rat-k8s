@@ -102,6 +102,9 @@ vm_spec:
     comment: "Frontend Backup Loadbalancer #2"
 
 
+
+
+    
   - name: "node1"
     cpu: 2
     memory: 8192

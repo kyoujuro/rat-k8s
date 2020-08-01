@@ -15,10 +15,10 @@ pod_network: flannel
 flannel_version: v0.12.0
 
 ### Cluster Network
-private_ip_subnet: 172.16.7.0/24
+private_ip_subnet: 172.16.6.0/24
 public_ip_subnet:  192.168.1.0/24
 
-kube_apiserver_vip: 172.16.7.11
+kube_apiserver_vip: 172.16.6.11
 domain: example.com
 
 
@@ -28,8 +28,8 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.11"
-    public_ip: "192.168.1.97"    
+    private_ip: "172.16.6.11"
+    public_ip: "192.168.1.96"    
     role: "master"
     playbook: "setup_linux.yml"
     comment: "Master node #1"
@@ -38,7 +38,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.31"
+    private_ip: "172.16.6.31"
     playbook: "setup_linux.yml"
     pod_network: "10.244.1.0/24"
     role: "worker"
@@ -48,7 +48,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.32"
+    private_ip: "172.16.6.32"
     playbook: "setup_linux.yml"
     pod_network: "10.244.2.0/24"
     role: "worker"
@@ -58,7 +58,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"    
-    private_ip: "172.16.7.10"
+    private_ip: "172.16.6.10"
     playbook: "setup_linux.yml"
     comment: "Bootstap node" 
 
