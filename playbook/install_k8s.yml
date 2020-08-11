@@ -219,4 +219,19 @@
     - include_tasks: tasks/deploy-ka-vip-ingress.yaml
       when:
       - proxy_node == "true"
-
+    - debug: msg="export KUBECONFIG=./kubeconfig"
+#
+# KUBECONFIGのコピー
+#
+#- name: Copy ./kube/config /vagrant/kubeconfig
+#  hosts:
+#  - bootnode
+#  become: true
+#  become_user: vagrant
+#  tasks:
+#    - shell: |
+#        cp ./kube/config /vagrant/kubeconfig
+#
+#      args:
+#        chdir: /home/vagrant
+ 

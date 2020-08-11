@@ -854,6 +854,12 @@ def node_label_task()
   end
 end
 
+##
+## 終了
+##
+def print_complete()
+  printf("   \u001b[32m完了\u001b[37m\n")
+end
 
 
 ##
@@ -911,13 +917,13 @@ if __FILE__ == $0
       }
     end
   end
-  printf("完了\n")
+  print_complete()
 
   
   ## inventory
   printf("Ansible インベントリファイルの書き出し")
   output_ansible_inventory()
-  printf("完了\n") 
+  print_complete()
 
   printf("ノード構成\n")
   printf("マスターノード   = %d\n", $cnt['master'])
@@ -932,88 +938,81 @@ if __FILE__ == $0
   ## ansible変数としてノードのリスト作成、hostsファイル作成
   printf("Ansible 変数としてノードリストの作成")
   vars_nodelist()
-  printf("完了\n") 
+  print_complete()
 
   printf("/etc/hostsファイルのテンプレート作成")
   create_hosts_file()
-  printf("完了\n")   
-
+  print_complete()
   
   printf("systemd の etcd.serviceのテンプレート作成")
   etcd_service()
-  printf("完了\n")
+  print_complete()
 
   printf("etcd の playbook 作成")  
   etcd_yaml()  
-  printf("完了\n")
+  print_complete()
 
   printf("kube-apiserver起動のテンプレート作成")  
   kube_apiserver_service()
-  printf("完了\n")
+  print_complete()
 
   printf("bootnode の NFSアクセス許可範囲指定")    
   nfs_exports()
-  printf("完了\n")
+  print_complete()
 
   printf("証明書の対象ホストのリスト作成")
   k8s_cert()
-  printf("完了\n")
+  print_complete()
 
   printf("マスターノード用ロードバランサー設定作成")
   haproxy_cfg()
-  printf("完了\n")
+  print_complete()  
 
   printf("フロント用ロードバランサー設定作成")
   haproxy_front_cfg()
-  printf("完了\n")
+  print_complete()
 
   printf("CoreDNSのエントリーをコンフィグを元に追加")
   coredns_config()
-  printf("完了\n")
-
+  print_complete()
   
   ## ルーティング設定
   printf("ポッドネットワークをブリッジで構成時のルーティング設定")
   create_static_network_route()
-  printf("完了\n")
-
+  print_complete()
+  
   printf("ポッドネットワークをブリッジで構成時のルーティング設定 Ubuntu18.04 netplan")  
   create_ubuntu_static_routing()
-  printf("完了\n")
+  print_complete()  
 
   printf("ポッドネットワークをブリッジで構成時  各ノードのブリッジ設定 10-bridge.conf")
   create_bridge_conf()
-  printf("完了\n")
-
+  print_complete()
   
   ## Worker ノードへロールをセット
   printf("ノードのロールラベル設定 role_worker.yaml")
   set_node_role()
-  printf("完了\n")
-
+  print_complete()
+  
   printf("追加ノードのロールラベル設定 role_worker_add.yaml")
-  set_role_added_node()    
-  printf("完了\n")
+  set_role_added_node()
+  print_complete()
   
   ## ストレージノードのリストセット
   printf("ストレージノードのラベル設定")
   list_storage = list_by_role("storage")
   create_storage_node_taint(list_storage)
-  printf("完了\n")
-
+  print_complete()
   
   ## ノードラベル追加設定
   printf("ノード・ラベルの追加設定")  
   node_label_task()
-  printf("完了\n")
-  
+  print_complete()
 
   ## 変数追加
   printf("Ansible playbookに変数追加")  
   append_ansible_inventory("hosts_k8s")
-  printf("完了\n")
-
-
+  print_complete()
 
   
   ## 自動起動
