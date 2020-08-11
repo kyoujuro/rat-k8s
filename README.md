@@ -104,3 +104,18 @@ vagrant destroy -f
 * ansible-playbook -i hosts_k8s playbook/install_k8s.yml
 
 
+
+## メモ ノード追加手順
+
+* vagrant up
+* export KUBECONFIG=./kubeconfig
+* kubectl get no で2ノードの起動確認
+* Vagrantfile の編集
+* hosts_vagrant の編集
+* hosts_k8sの編集
+* vagrant up node2
+* vagrant ssh bootnode
+* sudo vi /etc/hosts ノードのエントリ追加
+* cd /vagrant
+* ansible -i hosts_k8s all -m ping
+* ansible-playbook -i hosts_k8s playbook/add-k8s-node.yaml

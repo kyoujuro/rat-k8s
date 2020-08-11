@@ -4,7 +4,7 @@
     x=(`kubectl get node {{ item.name }} -o json |jq .metadata.labels.role`)
     if [ $x == null ] 
     then
-      kubectl label node {{ item.name }} --overwrite=true node-role.kubernetes.io/worker=""
+      kubectl label node {{ item.name }} --overwrite=true node-role.kubernetes.io/worker=''
       kubectl taint node {{ item.name }} --overwrite=true role=worker-node
     fi
   args:
