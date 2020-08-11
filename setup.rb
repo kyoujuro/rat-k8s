@@ -333,7 +333,7 @@ def output_ansible_inventory0(input,sw)
     File.open(input, "w") do |w|
 
       w.write $insert_msg
-      w.write sprintf("### Template file is %s\n", tfn)
+      w.write sprintf("#\n### Template file is %s\n#\n", tfn)
 
       
       # コンフィグからそれぞれのノードをカウントする。
