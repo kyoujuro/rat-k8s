@@ -48,7 +48,7 @@
       -ca=etcd-ca.pem \
       -ca-key=etcd-ca-key.pem \
       -config=etcd-ca-config.json \
-      -hostname=10.32.0.1,master1,172.16.19.11,,,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \
+      -hostname=10.32.0.1,master1,master2,master3,172.16.5.11,172.16.5.12,172.16.5.13,mlb1,mlb2,172.16.5.21,172.16.5.22,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \
       -profile=kubernetes \      
     etcd-csr.json | cfssljson -bare etcd-server
   args:
@@ -69,7 +69,7 @@
       -ca=etcd-ca.pem \
       -ca-key=etcd-ca-key.pem \
       -config=etcd-ca-config.json \
-      -hostname=10.32.0.1,master1,172.16.19.11,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \      
+      -hostname=10.32.0.1,master1,master2,master3,172.16.5.11,172.16.5.12,172.16.5.13,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \      
       -profile=kubernetes \
     etcd-peer-csr.json | cfssljson -bare etcd-peer
   args:
