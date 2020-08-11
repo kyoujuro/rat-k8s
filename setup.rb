@@ -907,7 +907,10 @@ if __FILE__ == $0
   File.open(tfn, "r") do |f|
     File.open("Vagrantfile", "w") do |w|
       w.write $insert_msg
+      w.write sprintf("#\n")      
       w.write sprintf("### Template file is %s\n",tfn)
+      w.write sprintf("###   Config file is %s\n",$config_yaml)
+      w.write sprintf("#\n")       
       f.each_line { |line|
         if line =~ /^__VM_CONFIG__/
           w.write vm_config
