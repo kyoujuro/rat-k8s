@@ -22,3 +22,7 @@ rm -f ubuntu-bionic-18.04-cloudimg-console.log
 rm -f playbook/base_linux/templates/hosts.j2
 rm -f playbook/net_bridge/tasks/static-route*
 rm -f playbook/net_bridge/templates/10-bridge.conf*
+rm -f playbook/haproxy/templates/haproxy_internal.cfg.j2
+rm -f playbook/tasks/role_storage.yaml
+rm -r playbook/tasks/role_worker.yaml
+
