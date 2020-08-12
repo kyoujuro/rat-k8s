@@ -554,8 +554,14 @@ def host_list(hostname,sw,op)
       end
       if sw == 0
         w = x['name']
-      else
+      elsif sw == 1
         w = x['private_ip']
+      elsif sw == 2
+        if x['public_ip'].nil?
+          w = ""
+        else
+          w = x['public_ip']
+        end
       end
       if op > 0
         w = "https://" + w + sprintf(":%d",op)
@@ -644,7 +650,7 @@ end
 def etcd_yaml()
 
   # マスターノードと内部ロードバランサーのリスト作成
-  list_mst = host_list("master",0,0) + "," + host_list("master",1,0)  
+  list_mst = host_list("master",0,0) + "," + host_list("master",1,0) 
   list_mlb = host_list("mlb",0,0) + "," + host_list("mlb",1,0)  
   list_all = list_mst + "," + list_mlb
   
@@ -706,8 +712,10 @@ def k8s_cert()
 
   list_all = list_mst \
              + (list_mlb.length == 1 ? "" : "," + list_mlb) \
+             + (host_list("master",2,0).length > 0 ? "," + host_list("master",2,0) : "") \
              + (list_vip.length == 0 ? "" : "," + list_vip) \
              + (list_eep.nil? ?  "" : "," + list_eep)
+
   printf("\n証明書対象リスト %s\n", list_all)
   
   #
