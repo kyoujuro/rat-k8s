@@ -223,4 +223,4 @@
     - include_tasks: tasks/deploy-ka-vip-ingress.yaml
       when:
       - proxy_node == "true"
-
+    - debug: msg="export KUBECONFIG=./kubeconfig"
