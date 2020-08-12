@@ -703,7 +703,12 @@ def k8s_cert()
   list_mlb = host_list("mlb",0,0) + "," + host_list("mlb",1,0)
   list_vip = $conf['kube_apiserver_vip']
   list_eep = $conf['front_proxy_vip']
-  list_all = list_mst + "," + list_mlb + "," + list_vip + "," + list_eep
+
+  list_all = list_mst \
+             + (list_mlb.length == 1 ? "" : "," + list_mlb) \
+             + (list_vip.length == 0 ? "" : "," + list_vip) \
+             + (list_eep.nil? ?  "" : "," + list_eep)
+  printf("\n証明書対象リスト %s\n", list_all)
   
   #
   tfn = "templates/playbook/k8s-cert.yaml.template"
