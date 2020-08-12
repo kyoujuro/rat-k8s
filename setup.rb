@@ -1009,6 +1009,9 @@ if __FILE__ == $0
   set_node_role()
   print_complete()
 
+  printf("追加ノードのロールラベル設定 role_worker_add.yaml")
+  set_role_added_node()
+  print_complete()
   
   ## ストレージノードのリストセット
   printf("ストレージノードのラベル設定")

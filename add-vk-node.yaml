@@ -1,9 +1,0 @@
-- name: Setup Certs
-  vars:
-    mode: "add-node"
-  hosts:
-  - bootnode
-  roles:
-    - cert_setup
-
-      
