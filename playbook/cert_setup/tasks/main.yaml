@@ -8,16 +8,23 @@
 #
 - include_vars: ../../vars/main.yaml
 
+- debug: msg="mode={{ mode }}"
+  
 - name: Setup Kubernetes CA, Certificate
   include_tasks: k8s-cert.yaml
-
+  when: mode == "new"
+  
 - name: Setup kubeconfig
   include_tasks: k8s-kubeconfig.yaml
+  when: mode == "new"
 
 - name: Setup Etcd CA, Certification
   include_tasks: etcd.yaml
+  when: mode == "new"
 
 - name: Setup FRONT-PROXY CA
   include_tasks: front-proxy.yaml
+  when: mode == "new"
 
-
+- name: Setup kubelet by node
+  include_tasks: kubelet-by-node.yaml
