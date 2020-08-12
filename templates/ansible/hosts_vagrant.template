@@ -78,5 +78,7 @@ ca_home=/mnt/ca
 etcd_ca_home=/mnt/ca-etcd
 proxy_ca_home=/mnt/ca-front-proxy
 kubeconfig=/mnt/kubeconfig
+mode=new
+
 KUBERNETES_PUBLIC_ADDRESS=__API_SERVER_IPADDR__
 
