@@ -17,7 +17,7 @@ rm -f Vagrantfile
 rm -f hosts_k8s
 rm -f hosts_vagrant
 rm -f ubuntu-bionic-18.04-cloudimg-console.log
-date > playbook/vars/main.yaml
+echo "# dummy for keep directory on git" > playbook/vars/main.yaml
 
 
 # template less
