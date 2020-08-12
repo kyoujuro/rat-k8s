@@ -14,7 +14,7 @@
     group: root
     mode: '0755'
 
-- name: deploy calico 
+- name: deploy calico by kubectl
   shell: |
     kubectl apply -f /vagrant/playbook/net_calico/templates/calico-custom.yaml
   args:
@@ -22,8 +22,9 @@
   when: ansible_facts.hostname is match("bootnode")
   become: true
   become_user: vagrant
-    
-- get_url:
+
+- name: Download calicoctl command
+  get_url:
     url: https://github.com/projectcalico/calicoctl/releases/download/v3.14.1/calicoctl
     dest: /usr/local/bin/calicoctl
     mode: '0755'
@@ -31,7 +32,7 @@
     group: root
   when: ansible_facts.hostname is match("bootnode") or ansible_facts.hostname is match("master*")
 
-- name: deploy calico 
+- name: setup ENVIRONMENT VAR in .profile at home dir
   shell: |
     cat <<EOF >> /home/vagrant/.profile
     # for calicoctl
