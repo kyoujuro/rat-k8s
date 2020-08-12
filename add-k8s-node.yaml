@@ -1,0 +1,83 @@
+- name: Setup/etc/hosts on node
+  hosts: bootnode
+  become: true
+  tasks:
+    - template:
+        src: base_linux/templates/hosts.j2
+        dest: /etc/hosts
+        owner: root
+        group: root
+        mode: '0644'
+        force: yes
+
+#
+# K8sコンポーネント配置に必要なディレクトリを作成
+#
+- name: Setup Kubernetes Dirs
+  hosts:
+  - masters
+  - nodes
+  - proxys
+  - storages
+  become: true
+  tasks:
+    - include_tasks: tasks/setup_k8s_dirs.yml
+
+- name: Setup Certs
+  vars:
+    mode: "add-node"
+  hosts:
+  - bootnode
+  roles:
+    - cert_setup
+
+      
+- name: Mount NFS server (bootnode)
+  hosts: all
+  become: true
+  tasks:
+  - name: Mount up
+    mount:
+      path: /mnt
+      src: bootnode:/srv/k8s
+      fstype: nfs
+      state: mounted
+
+#
+# ワーカーノードのセットアップ
+#
+- name: Configure work-nodes
+  hosts:
+  - nodes
+  gather_facts: true
+  become: true
+  roles:
+    - role: net_bridge
+      when: pod_network == "bridge"
+    - role: net_flannel
+      when: pod_network == "flannel"
+    - role: net_calico
+      when: pod_network == "calico" 
+    - node_worker
+
+#########################################
+#
+# ノードへロール設定、ノードラベル設定
+#
+#  flannel使用時にマスターノードへのtaint設定
+#  
+#
+- name: Configure cluster
+  hosts:
+  - bootnode
+  gather_facts: true
+  become: true
+  tasks:
+    - include_vars:
+        dir: vars
+    - include_tasks: tasks/role_worker_add.yaml
+  roles:
+    - role: net_calico
+      when: pod_network == "calico"      
+    - role: net_flannel
+      when: pod_network == "flannel"
