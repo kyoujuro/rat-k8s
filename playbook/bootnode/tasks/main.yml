@@ -100,8 +100,12 @@
     owner: root
     group: root
     mode: '0700'
+
 - name: keygen
-  command: ssh-keygen -t rsa -N '' -f .ssh/id_rsa
+  shell: |
+    if [ ! -f .ssh/id_rsa ]; then
+      ssh-keygen -t rsa -N '' -f .ssh/id_rsa
+    fi
   args:
     chdir: /root
     

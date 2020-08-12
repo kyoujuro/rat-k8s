@@ -26,7 +26,6 @@ flannel_version: v0.12.0
 private_ip_subnet: 172.16.2.0/24
 public_ip_subnet:  192.168.1.0/24
 
-
 kube_apiserver_vip: 172.16.2.4
 
 
@@ -36,7 +35,8 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.2.4"
+    private_ip: "172.16.2.11"
+    public_ip: "192.168.1.40"    
     storage:
     playbook: "setup_linux.yml"
     comment: "Master node #1"
@@ -45,8 +45,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.2.10"
-    public_ip: "192.168.1.40"
+    private_ip: "172.16.2.21"
     storage:
     playbook: "setup_linux.yml"
     pod_network: "10.244.1.0/24"
@@ -57,7 +56,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"    
-    private_ip: "172.16.2.3"
+    private_ip: "172.16.2.10"
     playbook: "setup_linux.yml"
     comment: "Bootstap node" 
 
