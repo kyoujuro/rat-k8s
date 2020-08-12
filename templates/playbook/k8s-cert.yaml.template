@@ -52,29 +52,29 @@
 #    The Kubelet Client Certificates
 #    ノードの数だけ作成する
 #
-- name: Kubelet Client Certificates
-  template:
-    src: instance-csr.json.j2
-    dest: "/srv/k8s/ca/{{ item.name }}-csr.json"
-    owner: vagrant
-    group: vagrant
-    mode: '0644'
-  loop: "{{ nodes }}"
-- shell: |
-    cfssl gencert \
-      -ca=ca.pem \
-      -ca-key=ca-key.pem \
-      -config=ca-config.json \
-      -hostname="{{ item.name }},{{ item.pri_ip }}" \
-      -profile=kubernetes \
-      "{{ item.name }}-csr.json" | cfssljson -bare "{{ item.name }}"
-  args:
-    chdir: /srv/k8s/ca
-  loop: "{{ nodes }}"
-- file:
-    path: "/srv/k8s/ca/{{ item.name }}-key.pem"
-    mode: '0644'
-  loop: "{{ nodes }}"
+#- name: Kubelet Client Certificates
+#  template:
+#    src: instance-csr.json.j2
+#    dest: "/srv/k8s/ca/{{ item.name }}-csr.json"
+#    owner: vagrant
+#    group: vagrant
+#    mode: '0644'
+#  loop: "{{ nodes }}"
+#- shell: |
+#    cfssl gencert \
+#      -ca=ca.pem \
+#      -ca-key=ca-key.pem \
+#      -config=ca-config.json \
+#      -hostname="{{ item.name }},{{ item.pri_ip }}" \
+#      -profile=kubernetes \
+#      "{{ item.name }}-csr.json" | cfssljson -bare "{{ item.name }}"
+#  args:
+#    chdir: /srv/k8s/ca
+#  loop: "{{ nodes }}"
+#- file:
+#    path: "/srv/k8s/ca/{{ item.name }}-key.pem"
+#    mode: '0644'
+#  loop: "{{ nodes }}"
 
 
 
