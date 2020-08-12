@@ -17,6 +17,8 @@ rm -f Vagrantfile
 rm -f hosts_k8s
 rm -f hosts_vagrant
 rm -f ubuntu-bionic-18.04-cloudimg-console.log
+date > playbook/vars/main.yaml
+
 
 # template less
 rm -f playbook/base_linux/templates/hosts.j2
@@ -25,4 +27,6 @@ rm -f playbook/net_bridge/templates/10-bridge.conf*
 rm -f playbook/haproxy/templates/haproxy_internal.cfg.j2
 rm -f playbook/tasks/role_storage.yaml
 rm -r playbook/tasks/role_worker.yaml
-
+rm -f playbook/tasks/add-node-label.yaml
+rm -f playbook/tasks/role_worker_add.yaml
+rm -f kubeconfig
