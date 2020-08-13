@@ -5,7 +5,7 @@
 - debug: msg="custom_kubernetes = {{ custom_kubernetes }}"
 
 
-- name: Configure the Kubernetes API Server
+- name: copy kube-apiserver
   copy:
     src: "{{ k8s_bin }}/kube-apiserver"
     dest: /usr/local/bin
@@ -14,7 +14,8 @@
     mode: '0755'
     remote_src: yes
 
-- copy:
+- name: copy kubectl
+  copy:
     src: "{{ k8s_bin }}/kubectl"
     dest: /usr/local/bin
     owner: root
@@ -22,14 +23,16 @@
     mode: '0755'
     remote_src: yes
 
-- copy:
+- name: copy admin.kubeconfig
+  copy:
     src: "{{ ca_kubeconfig }}/admin.kubeconfig"
     dest: /etc/kubernetes/kube-apiserver.conf
     owner: root
     group: root
     mode: '0644'
 
-- template:
+- name: copy  kube-apiserver.service
+  template:
     src: kube-apiserver.service.j2
     dest: /etc/systemd/system/kube-apiserver.service
     owner: root
