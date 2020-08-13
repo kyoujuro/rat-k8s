@@ -679,24 +679,23 @@ end
 ## bootnode の NFSアクセス許可範囲指定
 ## playbook/bootnode/templates/exports.j2
 ##
-def nfs_exports()
-
-  tfn = "templates/playbook/exports.j2.template"
-  File.open(tfn, "r") do |f|  
-    File.open("playbook/bootnode/templates/exports.j2", "w") do |w|
-      w.write $insert_msg
-      w.write sprintf("### Template file is %s\n",tfn)
-      f.each_line { |line|
-        if line =~ /__SUBNET__/
-          w.write line.gsub(/__SUBNET__/, $conf['private_ip_subnet'])
-        else
-          w.write line
-        end
-      }
-    end
-  end
-  
-end
+#def nfs_exports()
+#  tfn = "templates/playbook/exports.j2.template"
+#  File.open(tfn, "r") do |f|  
+#    File.open("playbook/bootnode/templates/exports.j2", "w") do |w|
+#      w.write $insert_msg
+#      w.write sprintf("### Template file is %s\n",tfn)
+#      f.each_line { |line|
+#        if line =~ /__SUBNET__/
+#          w.write line.gsub(/__SUBNET__/, $conf['private_ip_subnet'])
+#        else
+#          w.write line
+#        end
+#      }
+#    end
+#  end
+#  
+#end
 
 ##
 ## 証明書の対象ホストのリスト作成
