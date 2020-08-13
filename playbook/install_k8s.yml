@@ -50,7 +50,6 @@
     - haproxy
     - keepalived
 
-
 #
 # 外部ロードバランサーの起動
 #   クラウドサービスのロードバランサーのサービス相当
@@ -108,6 +107,7 @@
   tasks:
     - include_tasks: tasks/config_rbac_kubelet.yml
     - include_tasks: tasks/kubeconfig_setup.yml
+
 #
 # ワーカーノードのセットアップ
 #

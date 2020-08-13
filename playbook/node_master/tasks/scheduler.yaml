@@ -3,7 +3,7 @@
 ##
 - name: Copy Scheduler bin
   copy:
-    src: /mnt/bin/kube-scheduler
+    src: "{{ k8s_bin }}/kube-scheduler"
     dest: /usr/local/bin
     owner: root
     group: root
@@ -13,8 +13,7 @@
 
 - name: Configure the Kubernetes Scheduler
   copy:
-    src: /mnt/kubeconfig/kube-scheduler.kubeconfig
-    #dest: /var/lib/kubernetes/
+    src: "{{ ca_kubeconfig }}/kube-scheduler.kubeconfig"
     dest: /etc/kubernetes/kube-scheduler.conf
     owner: root
     group: root

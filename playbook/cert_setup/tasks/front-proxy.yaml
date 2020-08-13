@@ -48,4 +48,17 @@
 
 
 
+- name: chmod 0644 front-proxy-ca-key.pem
+  file:
+    path: "{{ ca_front_proxy }}/front-proxy-ca-key.pem"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: chmod 0644 front-proxy-client-key.pem
+  file:
+    path: "{{ ca_front_proxy }}/front-proxy-client-key.pem"
+    owner: root
+    group: root
+    mode: '0644'
 

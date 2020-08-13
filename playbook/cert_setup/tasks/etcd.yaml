@@ -75,6 +75,26 @@
 
 
 
+- name: chmod 0644 etcd-ca-key.pem
+  file:
+    path: "{{ ca_etcd_home }}/etcd-ca-key.pem"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: chmod 0644 etcd-peer-key.pem
+  file:
+    path: "{{ ca_etcd_home }}/etcd-peer-key.pem"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: chmod 0644 etcd-server-key.pem
+  file:
+    path: "{{ ca_etcd_home }}/etcd-server-key.pem"
+    owner: root
+    group: root
+    mode: '0644'
 
 
 

@@ -4,13 +4,13 @@
 #
 ###########
 - copy:
-    src:  /mnt/download/etcd-{{ etcd_version }}-linux-amd64/etcd
+    src:  "{{ download_dir }}/etcd-{{ etcd_version }}-linux-amd64/etcd"
     dest: /usr/local/bin
     owner: root
     group: root
     mode: '0755'
 - copy:
-    src:  /mnt/download/etcd-{{ etcd_version }}-linux-amd64/etcdctl
+    src:  "{{ download_dir }}/etcd-{{ etcd_version }}-linux-amd64/etcdctl"
     dest: /usr/local/bin
     owner: root
     group: root
@@ -28,43 +28,43 @@
     group: root
     mode: '0755'
 - copy:
-    src: /mnt/ca/ca.pem
+    src: "{{ ca_home2 }}/ca.pem"
     dest: /etc/kubernetes/pki/ca.crt
     owner: root
     group: root
     mode: '0600'
 - copy:
-    src: /mnt/ca-etcd/etcd-ca.pem
+    src: "{{ ca_etcd_home }}/etcd-ca.pem"
     dest: /etc/kubernetes/pki/etcd/ca.crt
     owner: root
     group: root
     mode: '0600'
 - copy:
-    src: /mnt/ca-etcd/etcd-ca-key.pem
+    src: "{{ ca_etcd_home }}/etcd-ca-key.pem"
     dest: /etc/kubernetes/pki/etcd/ca.key
     owner: root
     group: root
     mode: '0600'
 - copy:
-    src: /mnt/ca-etcd/etcd-server.pem
+    src: "{{ ca_etcd_home }}/etcd-server.pem"
     dest: /etc/kubernetes/pki/etcd/server.crt
     owner: root
     group: root
     mode: '0600'
 - copy:
-    src: /mnt/ca-etcd/etcd-server-key.pem
+    src: "{{ ca_etcd_home }}/etcd-server-key.pem"
     dest: /etc/kubernetes/pki/etcd/server.key
     owner: root
     group: root
     mode: '0600'
 - copy:
-    src: /mnt/ca-etcd/etcd-peer.pem
+    src: "{{ ca_etcd_home }}/etcd-peer.pem"
     dest: /etc/kubernetes/pki/etcd/peer.crt
     owner: root
     group: root
     mode: '0600'
 - copy:
-    src: /mnt/ca-etcd/etcd-peer-key.pem
+    src: "{{ ca_etcd_home }}/etcd-peer-key.pem"
     dest: /etc/kubernetes/pki/etcd/peer.key
     owner: root
     group: root

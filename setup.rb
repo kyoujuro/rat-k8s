@@ -402,7 +402,9 @@ def output_ansible_inventory0(input,sw)
         elsif line =~ /__POD_NETWORK__/
           w.write line.gsub(/__POD_NETWORK__/, $conf['pod_network'])
         elsif line =~ /__FLANNEL_VER__/
-          w.write line.gsub(/__FLANNEL_VER__/, $conf['flannel_version'])
+          if $conf['flannel_version'].nil? == false
+            w.write line.gsub(/__FLANNEL_VER__/, $conf['flannel_version'])
+          end
         elsif line =~ /__API_SERVER_IPADDR__/
           w.write line.gsub(/__API_SERVER_IPADDR__/, $conf['kube_apiserver_vip'])
         elsif line =~ /__MLB_IP_PRIMALY__/

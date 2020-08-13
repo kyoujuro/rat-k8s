@@ -189,3 +189,58 @@
     chdir: "{{ ca_home2 }}"
 
 
+
+- name: chmod 0644 admin-key.pem
+  file:
+    path: "{{ ca_home2 }}/admin-key.pem"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: chmod 0644 ca-key.pem
+  file:
+    path: "{{ ca_home2 }}/ca-key.pem"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: chmod 0644 kube-controller-manager-key.pem
+  file:
+    path: "{{ ca_home2 }}/kube-controller-manager-key.pem"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: chmod 0644 kube-proxy-key.pem
+  file:
+    path: "{{ ca_home2 }}/kube-proxy-key.pem"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: chmod 0644 kube-scheduler-key.pem
+  file:
+    path: "{{ ca_home2 }}/kube-scheduler-key.pem"
+    owner: root
+    group: root
+    mode: '0644'
+
+
+- name: chmod 0644 kubernetes-key.pem
+  file:
+    path: "{{ ca_home2 }}/kubernetes-key.pem"
+    owner: root
+    group: root
+    mode: '0644'
+
+
+- name: chmod 0644 service-account-key.pem
+  file:
+    path: "{{ ca_home2 }}/service-account-key.pem"
+    owner: root
+    group: root
+    mode: '0644'
+
+
+
+

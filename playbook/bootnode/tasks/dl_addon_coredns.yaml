@@ -11,6 +11,6 @@
     dest: "{{ download_dir }}/coredns"
     force: yes
     update: yes
-  become_user: vagrant    
+  #become_user: vagrant    
   when: coredns.stat.exists == false  
 

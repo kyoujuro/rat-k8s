@@ -7,7 +7,7 @@
 
 - name: Configure the Kubernetes API Server
   copy:
-    src: /mnt/bin/kube-apiserver
+    src: "{{ k8s_bin }}/kube-apiserver"
     dest: /usr/local/bin
     owner: root
     group: root
@@ -15,7 +15,7 @@
     remote_src: yes
 
 - copy:
-    src: /mnt/bin/kubectl
+    src: "{{ k8s_bin }}/kubectl"
     dest: /usr/local/bin
     owner: root
     group: root
@@ -23,7 +23,7 @@
     remote_src: yes
 
 - copy:
-    src: /mnt/kubeconfig/admin.kubeconfig
+    src: "{{ ca_kubeconfig }}/admin.kubeconfig"
     dest: /etc/kubernetes/kube-apiserver.conf
     owner: root
     group: root

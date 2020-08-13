@@ -4,7 +4,7 @@
 
 - name: copy kube-controller-manager bin
   copy:
-    src: /mnt/bin/kube-controller-manager
+    src: "{{ k8s_bin }}/kube-controller-manager"
     dest: /usr/local/bin
     owner: root
     group: root
@@ -13,7 +13,7 @@
 
 - name: Configure the Kubernetes Controller Manager
   copy:
-    src: /mnt/kubeconfig/kube-controller-manager.kubeconfig
+    src: "{{ ca_kubeconfig }}/kube-controller-manager.kubeconfig"
     dest: /etc/kubernetes/controller-manager.conf
     owner: root
     group: root
