@@ -19,8 +19,8 @@
 
 - name: Copy kubernetes binary to nfs
   shell: |
-    cp -fr "{{ download_dir }}/kubernetes/server/bin/*" "{{ work_dir }}/bin"
-    chmod -R 0755 "{{ work_dir }}/bin"
+    cp -fr {{ download_dir }}/kubernetes/server/bin/* {{ work_dir }}/bin
+    chmod -R 0755 {{ work_dir }}/bin
   when: custom_kubernetes == 'false'
 
   

@@ -654,6 +654,12 @@ def etcd_yaml()
   list_mlb = host_list("mlb",0,0) + "," + host_list("mlb",1,0)  
   list_all = list_mst + "," + list_mlb
 
+  list_all = (host_list("master",0,0).length == 0 ? "" : host_list("master",0,0)) \
+             + (host_list("master",1,0).length == 0 ? "" : "," + host_list("master",1,0)) \
+             + (host_list("mlb",0,0).length == 0 ? "" : "," + host_list("mlb",0,0)) \
+             + (host_list("mlb",1,0).length == 0 ? "" : "," + host_list("mlb",1,0)) \
+             + ",10.32.0.1,127.0.0.1"
+    
   File.open("playbook/cert_setup/vars/main.yaml", "w") do |w|
     w.write sprintf("host_list_etcd: %s\n",list_all)
   end
@@ -709,18 +715,14 @@ end
 def k8s_cert()
 
   # マスターノードと内部ロードバランサーのリスト作成
-  list_mst = host_list("master",0,0) + "," + host_list("master",1,0)  
-  list_mlb = host_list("mlb",0,0) + "," + host_list("mlb",1,0)
-  list_vip = $conf['kube_apiserver_vip']
-  list_eep = $conf['front_proxy_vip']
-
-  list_all = list_mst \
-             + (list_mlb.length == 1 ? "" : "," + list_mlb) \
-             + (host_list("master",2,0).length > 0 ? "," + host_list("master",2,0) : "") \
-             + (list_vip.length == 0 ? "" : "," + list_vip) \
-             + (list_eep.nil? ?  "" : "," + list_eep)
-
-
+  list_all = (host_list("master",0,0).length == 0 ? "" : host_list("master",0,0)) \
+             + (host_list("master",1,0).length == 0 ? "" : "," + host_list("master",1,0)) \
+             + (host_list("master",2,0).length == 0 ? "" : "," + host_list("master",2,0)) \
+             + (host_list("mlb",0,0).length == 0 ? "" : "," + host_list("mlb",0,0)) \
+             + (host_list("mlb",1,0).length == 0 ? "" : "," + host_list("mlb",1,0)) \
+             + ($conf['kube_apiserver_vip'].length == 0 ? "" : "," + $conf['kube_apiserver_vip']) \
+             + ($conf['front_proxy_vip'].nil? ? "" : "," + $conf['front_proxy_vip']) \
+             + ",10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local"
   
   printf("\n証明書対象リスト %s\n", list_all)
 
