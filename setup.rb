@@ -653,24 +653,29 @@ def etcd_yaml()
   list_mst = host_list("master",0,0) + "," + host_list("master",1,0) 
   list_mlb = host_list("mlb",0,0) + "," + host_list("mlb",1,0)  
   list_all = list_mst + "," + list_mlb
-  
-  #
-  tfn = "templates/playbook/etcd.yaml.template"
-  File.open(tfn, "r") do |f|  
-    File.open("playbook/cert_setup/tasks/etcd.yaml", "w") do |w|
-      w.write $insert_msg
-      w.write sprintf("### Template file is %s\n",tfn)
-      f.each_line { |line|
-        if line =~ /__MASTER_LIST__/
-          w.write line.gsub(/__MASTER_LIST__/, list_all)
-        elsif line =~ /__PEER_LIST__/
-          w.write line.gsub(/__PEER_LIST__/, list_mst)
-        else
-          w.write line
-        end
-      }
-    end
+
+  File.open("playbook/cert_setup/vars/main.yaml", "w") do |w|
+    w.write sprintf("host_list_etcd: %s\n",list_all)
   end
+
+    
+  #
+  #tfn = "templates/playbook/etcd.yaml.template"
+  #File.open(tfn, "r") do |f|  
+  #  File.open("playbook/cert_setup/tasks/etcd.yaml", "w") do |w|
+  #    w.write $insert_msg
+  #    w.write sprintf("### Template file is %s\n",tfn)
+  #    f.each_line { |line|
+  #      if line =~ /__MASTER_LIST__/
+  #        w.write line.gsub(/__MASTER_LIST__/, list_all)
+  #      elsif line =~ /__PEER_LIST__/
+  #        w.write line.gsub(/__PEER_LIST__/, list_mst)
+  #      else
+  #        w.write line
+  #      end
+  #    }
+  #  end
+  #end
   
 end
 
@@ -715,23 +720,29 @@ def k8s_cert()
              + (list_vip.length == 0 ? "" : "," + list_vip) \
              + (list_eep.nil? ?  "" : "," + list_eep)
 
-  printf("\n証明書対象リスト %s\n", list_all)
+
   
-  #
-  tfn = "templates/playbook/k8s-cert.yaml.template"
-  File.open(tfn, "r") do |f|  
-    File.open("playbook/cert_setup/tasks/k8s-cert.yaml", "w") do |w|
-      w.write $insert_msg
-      w.write sprintf("### Template file is %s\n",tfn)
-      f.each_line { |line|
-        if line =~ /__MASTER_LIST__/
-          w.write line.gsub(/__MASTER_LIST__/, list_all)
-        else
-          w.write line
-        end
-      }
-    end
+  printf("\n証明書対象リスト %s\n", list_all)
+
+  File.open("playbook/cert_setup/vars/main.yaml", "a") do |w|
+    w.write sprintf("host_list_k8sapi: %s\n",list_all)
   end
+
+  #
+  #tfn = "templates/playbook/k8s-cert.yaml.template"
+  #File.open(tfn, "r") do |f|  
+  #  File.open("playbook/cert_setup/tasks/k8s-cert.yaml", "w") do |w|
+  #    w.write $insert_msg
+  #    w.write sprintf("### Template file is %s\n",tfn)
+  #    f.each_line { |line|
+  #      if line =~ /__MASTER_LIST__/
+  #        w.write line.gsub(/__MASTER_LIST__/, list_all)
+  #      else
+  #        w.write line
+  #      end
+  #    }
+  #  end
+  #end
   
 end
 
