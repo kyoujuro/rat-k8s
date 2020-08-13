@@ -3,24 +3,24 @@
 #
 - name: Downloading Kubernetes binary
   stat:
-    path: /srv/k8s/download/kubernetes-server-linux-amd64.tar.gz
+    path: "{{ download_dir }}/kubernetes-server-linux-amd64.tar.gz"
   register: k8s_bin
 
 - get_url:
     url: https://dl.k8s.io/{{ kubernetes_version }}/kubernetes-server-linux-amd64.tar.gz
-    dest: /srv/k8s/download
+    dest: "{{ download_dir }}"
     mode: '0644'
   when: k8s_bin.stat.exists == false and custom_kubernetes == 'false'
 
 - unarchive:
-    src:  /srv/k8s/download/kubernetes-server-linux-amd64.tar.gz
-    dest: /srv/k8s/download
+    src:  "{{ download_dir }}/kubernetes-server-linux-amd64.tar.gz"
+    dest: "{{ download_dir }}"
   when: custom_kubernetes == 'false'
 
 - name: Copy kubernetes binary to nfs
   shell: |
-    cp -fr /srv/k8s/download/kubernetes/server/bin/* /srv/k8s/bin
-    chmod -R 0755 /srv/k8s/bin
+    cp -fr "{{ download_dir }}/kubernetes/server/bin/*" "{{ work_dir }}/bin"
+    chmod -R 0755 "{{ work_dir }}/bin"
   when: custom_kubernetes == 'false'
 
   
@@ -29,8 +29,8 @@
 #
 - name: Copy kubernetes binary to nfs
   shell: |
-    cp -fr /vagrant/build-k8s/bin/* /srv/k8s/bin
-    chmod -R 0755 /srv/k8s/bin
+    cp -fr /vagrant/build-k8s/bin/* {{ work_dir }}/bin
+    chmod -R 0755 "{{ work_dir }}/bin"
   when: custom_kubernetes == 'true'
 
 

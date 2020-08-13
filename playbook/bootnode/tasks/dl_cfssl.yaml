@@ -1,0 +1,45 @@
+- name: check a exisiting cfssl 
+  stat:
+    path: "{{ download_dir }}/cfssl"
+  register: cfssl
+- name: downloading cfssl
+  get_url:
+    url: https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/linux/cfssl
+    dest: "{{ download_dir }}"
+    mode: '0755'
+    owner: root
+    group: root
+  when: cfssl.stat.exists == false	
+- name: copy cfssl local_bin
+  copy:
+    src: "{{ download_dir }}/cfssl"
+    dest: /usr/local/bin
+    owner: root
+    group: root
+    mode: '0755'
+    #remote_src: yes
+
+
+- name: check a exisiting cfssljson
+  stat:
+    path: "{{ download_dir }}/cfssljson"
+  register: cfssl
+- name: downloading cfssljson
+  get_url:
+    url: https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/linux/cfssljson
+    dest: "{{ download_dir }}"
+    mode: '0755'
+    owner: root
+    group: root
+  when: cfssl.stat.exists == false	
+- name: copy cfssljson local_bin
+  copy:
+    src: "{{ download_dir }}/cfssljson"
+    dest: /usr/local/bin
+    owner: root
+    group: root
+    mode: '0755'
+    #remote_src: yes
+
+
+

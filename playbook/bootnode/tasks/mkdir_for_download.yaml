@@ -1,0 +1,43 @@
+
+
+- name: mkdir for download
+  file:
+    path: "{{ work_dir }}"
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: '0755'
+
+- name: mkdir for k8s bin
+  file:
+    path: "{{ work_dir }}/bin"
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: '0755'
+
+- name: mkdir for ssh keys
+  file:
+    path: "{{ work_dir }}/keys"
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: '0755'
+
+- name: mkdir kubeconfig
+  file:
+    path: "{{ work_dir }}/kubeconfig"
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode:  '0755'
+
+- name: mkdir download
+  file:
+    path: "{{ work_dir }}/download"
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode:  '0755'
+
+

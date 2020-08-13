@@ -1,0 +1,21 @@
+#
+# FLANNEL
+#
+# この部分は、net_flannelへ入れるべきじゃ？
+
+- name: Flannel Download 
+  stat:
+    path: "{{ download_dir }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz"
+  register: flannel
+
+- get_url:
+    url: https://github.com/coreos/flannel/releases/download/{{ flannel_version }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz
+    dest: "{{ download_dir }}"
+    mode: '0644'
+  when: flannel.stat.exists == false	
+
+- unarchive:
+    src:  "{{ download_dir }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz"
+    dest: "{{ download_dir }}"
+
+

@@ -4,132 +4,30 @@
 #- debug: msg="{{ ansible_facts.hostname }}"
 
 
-- name: mkdir for nfs exports
-  file:
-    path:  /srv/k8s
-    state: directory
-    owner: vagrant
-    group: vagrant
-    mode: '0777'
+# ダウンロード用ディレクトリ作成    
+- include_tasks: mkdir_for_download.yaml
 
-- name: mkdir for k8s bin
-  file:
-    path:  /srv/k8s/bin
-    state: directory
-    owner: vagrant
-    group: vagrant
-    mode: '0755'
 
-- name: mkdir for ssh keys
-  file:
-    path:  /srv/k8s/keys
-    state: directory
-    owner: vagrant
-    group: vagrant
-    mode: '0755'
-
-- name: mkdir kubeconfig
-  file:
-    path:  /srv/k8s/kubeconfig
-    state: directory
-    owner: vagrant
-    group: vagrant
-    mode:  '0755'
-
-- name: mkdir download
-  file:
-    path:  /srv/k8s/download
-    state: directory
-    owner: vagrant
-    group: vagrant
-    mode:  '0755'
-
-#############################
 # 必要なコードのダウンロード
-#############################
-- include_tasks: download_cri_container.yaml
-- include_tasks: download_etcd.yaml
-- include_tasks: download_addon.yaml
-- include_tasks: download_kubernetes_binary.yaml
-- include_tasks: install-k8s-command.yaml
-    
-    
-- name: Install a list
-  apt:
-    name: "{{ packages }}"
-    state: present
-  vars:
-    packages:
-    - nfs-kernel-server
-    - emacs-nox
-    
-- name: re-start nfs server
-  systemd:
-    name: nfs-server
-    state: started
-    enabled: yes
+- include_tasks: dl_cni_plugin.yaml
+- include_tasks: dl_containerd.yaml
+- include_tasks: dl_cri_containerd.yaml
+- include_tasks: dl_crictl.yaml
+- include_tasks: dl_runc.yaml
 
-- name: install nfs exports
-  template:
-    src: exports.j2
-    dest: /etc/exports
-    owner: root
-    group: root
-    mode: '0644'
-- command: exportfs -a
+- include_tasks: dl_addon_etcd.yaml
+- include_tasks: dl_addon_coredns.yaml
+- include_tasks: dl_addon_flannel.yaml
+- include_tasks: dl_addon_keepalived.yaml
 
 
-#############################
-#- name: Install ansible code from git repo
-#  git:
-#    repo: https://github.com/takara9/rat-kubernetes
-#    dest: /home/vagrant/k8s
-#    #version: test
-#    #version: multi-ca
-#    version: bridge
-#    force: yes
-#    update: yes
-#  become_user: vagrant    
+# ノード設定ツールのインストール
+- include_tasks: dl_k8s_bin.yaml
+- include_tasks: dl_cfssl.yaml
+- include_tasks: install_kubectl.yaml
 
-
-#############################
-- name: mkdir .ssh directory
-  file:
-    path: "/root/.ssh"
-    state: directory
-    owner: root
-    group: root
-    mode: '0700'
-
-- name: keygen
-  shell: |
-    if [ ! -f .ssh/id_rsa ]; then
-      ssh-keygen -t rsa -N '' -f .ssh/id_rsa
-    fi
-  args:
-    chdir: /root
-    
-- name: Copy id_rsa.pub to  shared_fs keys
-  command: cp /root/.ssh/id_rsa.pub /srv/k8s/keys/id_rsa.pub
-- file:
-    path: /srv/k8s/keys/id_rsa.pub
-    owner: root
-    group: root
-    mode: '0444'
-- name: Copy id_rsa to  shared_fs/keys
-  command: cp /root/.ssh/id_rsa /srv/k8s/keys/id_rsa
-- file:
-    path: /srv/k8s/keys/id_rsa
-    owner: root
-    group: root
-    mode: '0444'
-
-- name: Create authorized_keys
-  command: cp /srv/k8s/keys/id_rsa.pub  /root/.ssh/authorized_keys
-- file:
-    path: /root/.ssh/authorized_keys
-    owner: root
-    group: root
-    mode: '0400'
-
+  
+# 共有環境の設定
+- include_tasks: start_nfs_server.yaml
+- include_tasks: gen-sshkey-root.yaml    
 

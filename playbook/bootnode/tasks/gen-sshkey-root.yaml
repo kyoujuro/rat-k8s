@@ -1,0 +1,38 @@
+- name: mkdir .ssh directory
+  file:
+    path: "/root/.ssh"
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+
+- name: keygen
+  shell: |
+    if [ ! -f .ssh/id_rsa ]; then
+      ssh-keygen -t rsa -N '' -f .ssh/id_rsa
+    fi
+  args:
+    chdir: /root
+    
+- name: Copy id_rsa.pub to  shared_fs keys
+  command: cp /root/.ssh/id_rsa.pub "{{ work_dir }}/keys/id_rsa.pub"
+- file:
+    path: "{{ work_dir }}/keys/id_rsa.pub"
+    owner: root
+    group: root
+    mode: '0444'
+- name: Copy id_rsa to  shared_fs/keys
+  command: cp /root/.ssh/id_rsa "{{ work_dir }}/keys/id_rsa"
+- file:
+    path: "{{ work_dir }}/keys/id_rsa"
+    owner: root
+    group: root
+    mode: '0444'
+
+- name: Create authorized_keys
+  command: cp "{{ work_dir }}/keys/id_rsa.pub"  /root/.ssh/authorized_keys
+- file:
+    path: /root/.ssh/authorized_keys
+    owner: root
+    group: root
+    mode: '0400'

@@ -1,13 +1,32 @@
 #
-# テスト用タスク
+# K8sコンポーネント配置に必要なディレクトリを作成
 #
-- name: test 
+# QAチェック: OK
+- name: Setup Kubernetes Dirs
   hosts:
-  - all 
-  gather_facts: true
+  - masters
+  - nodes
+  - proxys
+  - storages
+  - elbs
   become: true
   tasks:
-    - debug: msg="proxy_node = {{ proxy_node }}"
-    - include_tasks: tasks/test.yaml
-      when:
-      - proxy_node == "true"
+    - include_tasks: tasks/setup_k8s_dirs.yml
+
+      
+#
+# 証明書をbootnodeのNFSサーバー上に準備
+#
+# QAチェック: in progress
+- name: Download a containerd on NFS server
+  hosts:
+  - bootnode
+  become: true  
+  roles:
+    - bootnode    
+
+#- name: クライアント証明書などの作成
+#  hosts:
+#  - bootnode
+#  roles:
+#    - cert_setup

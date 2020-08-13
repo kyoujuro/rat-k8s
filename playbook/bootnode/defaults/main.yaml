@@ -1,0 +1,3 @@
+#work_dir : /srv/k8s
+work_dir : /vagrant/work_tmp
+download_dir : "{{ work_dir }}/download"
