@@ -12,24 +12,17 @@
   tasks:
     - include_tasks: tasks/setup_k8s_dirs.yml
 
-      
 #
 # 証明書をbootnodeのNFSサーバー上に準備
 #
-- name: Download a containerd on NFS server
+- name: Download software packeges
   hosts:
   - bootnode
   become: true  
   roles:
     - bootnode    
-
-- name: Download a containerd on NFS server
-  hosts:
-  - bootnode
-  roles:
     - cert_setup
-    
-    
+
 - name: Mount NFS server (bootnode)
   hosts: all
   become: true
@@ -40,7 +33,6 @@
       src: bootnode:/srv/k8s
       fstype: nfs
       state: mounted
-
     
 #
 # マスターノードのための内部ロードバランサーの起動

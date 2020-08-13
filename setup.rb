@@ -549,24 +549,26 @@ def host_list(hostname,sw,op)
   $vm_config_array.each do |val|
     x = eval(val)
     if x['name'] =~ /^#{hostname}*/
-      if n > 0
-        host_list = host_list + ","
-      end
+      w = ""
       if sw == 0
         w = x['name']
       elsif sw == 1
         w = x['private_ip']
       elsif sw == 2
-        if x['public_ip'].nil?
-          w = ""
-        else
+        if x['public_ip'].nil? == false
           w = x['public_ip']
         end
       end
       if op > 0
         w = "https://" + w + sprintf(":%d",op)
       end
-      host_list = host_list + w
+      if n == 0
+        host_list = w
+      else
+        if w.length > 0
+          host_list = host_list + "," + w
+        end
+      end
       n = n + 1
     end
   end

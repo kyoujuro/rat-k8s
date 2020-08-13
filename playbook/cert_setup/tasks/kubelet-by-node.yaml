@@ -6,7 +6,7 @@
 - name: Kubelet Client Certificates
   template:
     src: instance-csr.json.j2
-    dest: "{{ ca_home }}/{{ item.name }}-csr.json"
+    dest: "{{ ca_home2 }}/{{ item.name }}-csr.json"
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -22,11 +22,11 @@
         "{{ item.name }}-csr.json" | cfssljson -bare "{{ item.name }}"
     fi
   args:
-    chdir: "{{ ca_home }}"
+    chdir: "{{ ca_home2 }}"
     executable: /bin/bash    
   loop: "{{ nodes }}"
 - file:
-    path: "{{ ca_home }}/{{ item.name }}-key.pem"
+    path: "{{ ca_home2 }}/{{ item.name }}-key.pem"
     mode: '0644'
   loop: "{{ nodes }}"
 
@@ -63,7 +63,7 @@
       kubectl config use-context default --kubeconfig={{ ca_kubeconfig }}/{{ item.name }}.kubeconfig
     fi
   args:
-    chdir: "{{ ca_home }}"
+    chdir: "{{ ca_home2 }}"
     executable: /bin/bash    
   loop: "{{ nodes }}"
 
