@@ -976,9 +976,9 @@ if __FILE__ == $0
   kube_apiserver_service()
   print_complete()
 
-  printf("bootnode の NFSアクセス許可範囲指定")    
-  nfs_exports()
-  print_complete()
+  #printf("bootnode の NFSアクセス許可範囲指定")    
+  #nfs_exports()
+  #print_complete()
 
   printf("証明書の対象ホストのリスト作成")
   k8s_cert()
