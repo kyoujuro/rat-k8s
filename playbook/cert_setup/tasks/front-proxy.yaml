@@ -3,7 +3,7 @@
 #
 - name: Create Front-Proxy CA working directory
   file:
-    path: /srv/k8s/ca-front-proxy
+    path: "{{ ca_front_proxy }}"
     state: directory
     owner: vagrant
     group: vagrant
@@ -14,25 +14,25 @@
 - name: Create Front-Proxy CA
   template:  
     src: front-proxy-ca-config.json
-    dest: /srv/k8s/ca-front-proxy
+    dest: "{{ ca_front_proxy }}"
     owner: vagrant
     group: vagrant
     mode: '0644'
 - template:
     src: front-proxy-ca-csr.json
-    dest: /srv/k8s/ca-front-proxy
+    dest: "{{ ca_front_proxy }}"
     owner: vagrant
     group: vagrant
     mode: '0644'
 - shell: |
     cfssl gencert -initca front-proxy-ca-csr.json | cfssljson -bare front-proxy-ca
   args:
-    chdir: /srv/k8s/ca-front-proxy
+    chdir: "{{ ca_front_proxy }}"
 
 - name: Front-proxy Client Certificate
   template:
     src: front-proxy-client-csr.json
-    dest: /srv/k8s/ca-front-proxy
+    dest: "{{ ca_front_proxy }}"
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -44,7 +44,7 @@
       -profile=kubernetes \
     front-proxy-client-csr.json | cfssljson -bare front-proxy-client
   args:
-    chdir: /srv/k8s/ca-front-proxy
+    chdir: "{{ ca_front_proxy }}"
 
 
 

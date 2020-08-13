@@ -6,7 +6,7 @@
 - name: Kubelet Client Certificates
   template:
     src: instance-csr.json.j2
-    dest: "/srv/k8s/ca/{{ item.name }}-csr.json"
+    dest: "{{ ca_home }}/{{ item.name }}-csr.json"
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -22,11 +22,11 @@
         "{{ item.name }}-csr.json" | cfssljson -bare "{{ item.name }}"
     fi
   args:
-    chdir: /srv/k8s/ca
+    chdir: "{{ ca_home }}"
     executable: /bin/bash    
   loop: "{{ nodes }}"
 - file:
-    path: "/srv/k8s/ca/{{ item.name }}-key.pem"
+    path: "{{ ca_home }}/{{ item.name }}-key.pem"
     mode: '0644'
   loop: "{{ nodes }}"
 
@@ -36,7 +36,7 @@
 #
 - name: Ensure kubeconfig Home directory
   file:
-    path: /srv/k8s/kubeconfig
+    path: "{{ ca_kubeconfig }}"
     state: directory
     owner: vagrant
     group: vagrant
@@ -47,28 +47,28 @@
         --certificate-authority=ca.pem \
         --embed-certs=true \
         --server=https://{{ KUBERNETES_PUBLIC_ADDRESS }}:6443 \
-        --kubeconfig=/srv/k8s/kubeconfig/{{ item.name }}.kubeconfig
+        --kubeconfig={{ ca_kubeconfig }}/{{ item.name }}.kubeconfig
 
       kubectl config set-credentials system:node:{{ item.name }} \
         --client-certificate={{ item.name }}.pem \
         --client-key={{ item.name }}-key.pem \
         --embed-certs=true \
-        --kubeconfig=/srv/k8s/kubeconfig/{{ item.name }}.kubeconfig
+        --kubeconfig={{ ca_kubeconfig }}/{{ item.name }}.kubeconfig
 
       kubectl config set-context default \
         --cluster=kubernetes \
         --user=system:node:{{ item.name }} \
-        --kubeconfig=/srv/k8s/kubeconfig/{{ item.name }}.kubeconfig
+        --kubeconfig={{ ca_kubeconfig }}/{{ item.name }}.kubeconfig
 
-      kubectl config use-context default --kubeconfig=/srv/k8s/kubeconfig/{{ item.name }}.kubeconfig
+      kubectl config use-context default --kubeconfig={{ ca_kubeconfig }}/{{ item.name }}.kubeconfig
     fi
   args:
-    chdir: /srv/k8s/ca
+    chdir: "{{ ca_home }}"
     executable: /bin/bash    
   loop: "{{ nodes }}"
 
 - file:
-    path: "/srv/k8s/kubeconfig/{{ item.name }}.kubeconfig"
+    path: "{{ ca_kubeconfig }}/{{ item.name }}.kubeconfig"
     mode: '0644'
   loop: "{{ nodes }}"
   

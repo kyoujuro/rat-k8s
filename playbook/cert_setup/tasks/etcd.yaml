@@ -4,7 +4,7 @@
 
 - name: Create ETCD CA working directory
   file:
-    path: /srv/k8s/ca-etcd
+    path: "{{ ca_etcd_home }}"
     state: directory
     owner: vagrant
     group: vagrant
@@ -15,20 +15,20 @@
 - name: Create Etcd CA
   template:  
     src: etcd-ca-config.json
-    dest: /srv/k8s/ca-etcd
+    dest: "{{ ca_etcd_home }}"
     owner: vagrant
     group: vagrant
     mode: '0644'
 - template:
     src: etcd-ca-csr.json
-    dest: /srv/k8s/ca-etcd
+    dest: "{{ ca_etcd_home }}"
     owner: vagrant
     group: vagrant
     mode: '0644'
 - shell: |
     cfssl gencert -initca etcd-ca-csr.json | cfssljson -bare etcd-ca
   args:
-    chdir: /srv/k8s/ca-etcd
+    chdir: "{{ ca_etcd_home }}"
 
 
 #
@@ -37,7 +37,7 @@
 - name: ETCD Server Certificate
   template:
     src: etcd-csr.json
-    dest: /srv/k8s/ca-etcd
+    dest: "{{ ca_etcd_home }}"
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -46,11 +46,11 @@
       -ca=etcd-ca.pem \
       -ca-key=etcd-ca-key.pem \
       -config=etcd-ca-config.json \
-      -hostname=10.32.0.1,__MASTER_LIST__,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \
+      -hostname={{ host_list_etcd }} \
       -profile=kubernetes \      
     etcd-csr.json | cfssljson -bare etcd-server
   args:
-    chdir: /srv/k8s/ca-etcd
+    chdir: "{{ ca_etcd_home }}"
 
 #
 # ETCD ピア証明書
@@ -58,7 +58,7 @@
 - name: ETCD Peer Certificate
   template:
     src: etcd-peer-csr.json
-    dest: /srv/k8s/ca-etcd
+    dest: "{{ ca_etcd_home }}"
     owner: vagrant
     group: vagrant
     mode: '0644'
@@ -67,11 +67,11 @@
       -ca=etcd-ca.pem \
       -ca-key=etcd-ca-key.pem \
       -config=etcd-ca-config.json \
-      -hostname=10.32.0.1,__PEER_LIST__,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local \      
+      -hostname={{ host_list_etcd }} \      
       -profile=kubernetes \
     etcd-peer-csr.json | cfssljson -bare etcd-peer
   args:
-    chdir: /srv/k8s/ca-etcd
+    chdir: "{{ ca_etcd_home }}"
 
 
 
