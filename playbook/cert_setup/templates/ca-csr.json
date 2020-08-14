@@ -6,11 +6,11 @@
   },
   "names": [
     {
-      "C": "US",
-      "L": "Portland",
-      "O": "Kubernetes",
-      "OU": "CA",
-      "ST": "Oregon"
+      "C": "JP",
+      "L": "Nihombashi",
+      "O": "Kubernetes",       
+      "OU": "System Labo",
+      "ST": "Tokyo"
     }
   ]
 }
