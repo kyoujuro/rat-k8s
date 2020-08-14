@@ -5,32 +5,28 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
+
 - template:
     src: rbac-kubelet-rolebinding.yaml
     dest: /home/vagrant/rbac-kubelet-rolebinding.yaml
     owner: vagrant
     group: vagrant
     mode: '0644'
-- wait_for:
-    timeout: 100
+
+#- wait_for:
+#    timeout: 100
+
 - name: apply rbac manifests
   shell: |
     kubectl apply --kubeconfig {{ ca_kubeconfig }}/admin.kubeconfig -f rbac-kubelet.yaml
   args:
     chdir: /home/vagrant
   become: true
-  #become_user: vagrant
+
 - shell: |
     kubectl apply --kubeconfig {{ ca_kubeconfig }}/admin.kubeconfig -f rbac-kubelet-rolebinding.yaml
   args:
     chdir: /home/vagrant
   become: true
-  #become_user: vagrant
 
-
-#- copy:
-#    src: /mnt/kubeconfig/admin.kubeconfig
-#    dest: /home/vagrant/.kube/config
-#  become: true
-#  become_user: vagrant
 

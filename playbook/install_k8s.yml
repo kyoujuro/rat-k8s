@@ -82,18 +82,14 @@
   roles:
     - etcd
     - node_master
+    - role: node_worker
+      when: pod_network == "flannel" or pod_network == "calico"
     - role: net_bridge
       when: pod_network == "bridge"
     - role: net_flannel
       when: pod_network == "flannel"
-    - role: net_calico
-      when: pod_network == "calico" 
-    #      
-    - role: node_worker
-      when: pod_network == "flannel" or pod_network == "calico"
   tasks:
     - include_tasks: tasks/kubeconfig_setup.yml
-
     
 # 
 #  RBAC for Kubelet Authorization
@@ -120,20 +116,15 @@
   gather_facts: true
   become: true
   roles:
+    - node_worker    
     - role: net_bridge
       when: pod_network == "bridge"
     - role: net_flannel
       when: pod_network == "flannel"
-    - role: net_calico
-      when: pod_network == "calico" 
-    - node_worker    
-
-#########################################
+      
 #
 # ノードへロール設定、ノードラベル設定
-#
-#  flannel使用時にマスターノードへのtaint設定
-#  
+# マスターノードへのtaint設定
 #
 - name: Configure cluster
   hosts:
@@ -141,21 +132,25 @@
   gather_facts: true
   become: true
   tasks:
+    # ノードのリスト読み込み
     - include_vars:
         dir: vars
+    #  flannel使用時にマスターノードへのtaint設定
     - include_tasks: tasks/role_master.yaml
       when:
       - pod_network == "flannel" or pod_network == "calico"
-    - wait_for:  # 残骸ではなく、Waitがないと、次のコマンドが失敗する
+    # 残骸ではなく、Waitがないと、次のコマンドが失敗する
+    - wait_for:
         timeout: 20
+    # ワーカーノードにロール設定
     - include_tasks: tasks/role_worker.yaml
-    - include_tasks: tasks/add-node-label.yaml
+    #- include_tasks: tasks/add-node-label.yaml
   roles:
+    # Calicoマニフェストデプロイ
     - role: net_calico
       when: pod_network == "calico"      
       
-#########################################
-#
+
 # プロキシノードのコンテナランタイム初期化
 #   cni0が起動していないと、kube-proxyが
 #   動作しないためにコンテナを起動して
@@ -216,3 +211,5 @@
       when:
       - proxy_node == "true"
     - debug: msg="export KUBECONFIG=./kubeconfig"
+
+      

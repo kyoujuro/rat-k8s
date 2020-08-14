@@ -1,23 +1,7 @@
-- include_vars: /vagrant/playbook/vars/main.yaml
-
-- name: start configuration  
-  file:
-    path: /etc/cni/net.d
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
-- file:
-    path: /opt/cni/bin
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
-
+#- include_vars: /vagrant/playbook/vars/main.yaml
 #
 # ブリッジ設定でポッドネットワークを構築する
 #
-
 - name: deploy /etc/cni/net.d/10-bridge.conf
   template:
     src: "10-bridge.conf.{{ ansible_facts.hostname }}"
@@ -25,19 +9,8 @@
     owner: root
     group: root
     mode: '0644'
-  when:
-    - ansible_facts.hostname is not match("master[123]")  
-    - pod_network == "bridge"
-    
-#- template:
-#    src: 99-loopback.conf
-#    dest: /etc/cni/net.d
-#    owner: root
-#    group: root
-#    mode: '0644'
-#  when: ansible_facts.hostname is not match("master[123]")
-  
-  
+  when: ansible_facts.hostname is not match("master[123]")
+
 - name: static route masters
   include_tasks: /vagrant/playbook/net_bridge/tasks/static-route.yaml
   when: ansible_facts.hostname is match("master[123]")
@@ -45,10 +18,7 @@
   
 - name: static route for each node
   include_tasks: "/vagrant/playbook/net_bridge/tasks/static-route-{{ ansible_facts.hostname }}.yaml"
-  #when:
-  #- ansible_facts.hostname == item.name
-  #- ansible_facts.hostname is not match("master[123]")  
-  #- ansible_facts.hostname is match("node*")
-  #loop: "{{ nodes }}"
+  when: ansible_facts.hostname is not match("master[123]")
+
 
 

@@ -1,25 +1,5 @@
-- name: start configuration  
-  file:
-    path: /etc/cni/net.d
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
-- file:
-    path: /opt/cni/bin
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
-- file:
-    path: /etc/kubernetes
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
 - copy:
     src: "/mnt/kubeconfig/{{ ansible_facts.hostname }}.kubeconfig"
-    #dest: /var/lib/kubernetes/kubeconfig
     dest: /etc/kubernetes/node.conf
     owner: root
     group: root
@@ -32,6 +12,7 @@
     owner: root
     group: root
     mode: '0755'
+
 - name: Configure CNI Networking
   unarchive:
     src: /mnt/download/cni-plugins-linux-amd64-{{ cni_plugins }}.tgz
@@ -39,6 +20,7 @@
     owner: root
     group: root
     mode: '0755'
+   
 - template:
     src: 10-flannel.conflist
     dest: /etc/cni/net.d

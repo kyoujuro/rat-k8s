@@ -1,27 +1,22 @@
-- include_vars: /vagrant/playbook/vars/main.yaml
+#- include_vars: /vagrant/playbook/vars/main.yaml
 
-- name: start configuration  
-  file:
-    path: /etc/cni/net.d
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
-- file:
-    path: /opt/cni/bin
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
+- name: copy calico-custom.yaml to local
+  template:
+    src: calico-custom.yaml
+    dest: /home/vagrant/calico-custom.yaml
+    owner: vagrant
+    group: vagrant
+    mode: '0644'
 
 - name: deploy calico by kubectl
   shell: |
-    kubectl apply -f /vagrant/playbook/net_calico/templates/calico-custom.yaml
+    kubectl apply -f calico-custom.yaml
   args:
     chdir: /home/vagrant
   when: ansible_facts.hostname is match("bootnode")
   become: true
   become_user: vagrant
+
 
 - name: Download calicoctl command
   get_url:
@@ -32,6 +27,7 @@
     group: root
   when: ansible_facts.hostname is match("bootnode") or ansible_facts.hostname is match("master*")
 
+  
 - name: setup ENVIRONMENT VAR in .profile at home dir
   shell: |
     cat <<EOF >> /home/vagrant/.profile

@@ -3,6 +3,7 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+require 'mb_string'
 require 'yaml'
 require 'json'
 
@@ -22,25 +23,6 @@ $cnt = {
   "mon"     => 0
 }
     
-
-
-##
-## コンフィグテンプレート
-##
-#$vm_spec_template = {
-#  "name"=>"node",
-#  "cpu"=>1,
-#  "memory"=>1024,
-#  "box"=>"ubuntu/bionic64",
-#  "private_ip"=>"172.16.2.250",
-#  "public_ip"=>"192.168.1.250",
-#  "storage"=>[],
-#  "role"=>[],
-#  "playbook"=>"setup_linux.yml",
-#  "comment"=>"template node" 
-#}
-
-
 ##
 ## YAML環境ファイルの読み込み
 ##  グローバル変数 $conf、
@@ -50,35 +32,41 @@ $cnt = {
 def read_yaml_config(file)
   $vm_config_array = []
   i = 10
-  $conf = YAML.load_file(file)
-  cnf = "vm_spec = [\n"
-  $conf.class
-  $domain = $conf['domain']  
-  $conf.each do |key1, val1|
-    # VMスペックの読み込み
-    if val1.class == Array and key1 == "vm_spec"
-      $conf[key1].each do |val2|
-        wk = {}
-        val2.each do |key3, val3|
-          if val3 != nil
-            wk[key3] = val3
+  begin
+    $conf = YAML.load_file(file)
+    cnf = "vm_spec = [\n"
+    $conf.class
+    $domain = $conf['domain']  
+    $conf.each do |key1, val1|
+      # VMスペックの読み込み
+      if val1.class == Array and key1 == "vm_spec"
+        $conf[key1].each do |val2|
+          wk = {}
+          val2.each do |key3, val3|
+            if val3 != nil
+              wk[key3] = val3
+            end
           end
+          # public_ipが存在しない場合はwkで補完しない。
+          if !(val2.has_key?('public_ip'))
+            wk.delete('public_ip')
+          end
+          cnf = cnf + wk.to_json + ",\n"
+          $vm_config_array.push(wk.to_s)
         end
-        
-        # public_ipが存在しない場合はwkで補完しない。
-        if !(val2.has_key?('public_ip'))
-          wk.delete('public_ip')
-        end
-        cnf = cnf + wk.to_json + ",\n"
-        $vm_config_array.push(wk.to_s)
-      end
-    end    
+      end    
+    end
+    return cnf + "]\n"
+  rescue
+    return ""
   end
-  return cnf + "]\n"
 end
 
-######################################
 
+##
+## ホスト名からIPアドレス取得
+##
+##
 def get_ip_by_host(hostname)
   $vm_config_array.each do |val|
     x = eval(val)
@@ -151,10 +139,10 @@ def routing_by_worker(node)
     x = eval(val)
     if x['pod_network'] != nil
       if node != x['name'] 
-        rst = rst + sprintf("              - to: %s\n", x['pod_network'])
-        rst = rst + sprintf("                via: %s\n", x['private_ip'])
-        rst = rst + sprintf("                metric: 100\n")
-        rst = rst + sprintf("                on-link: true\n")
+        rst = rst + sprintf("%s - to: %s\n",        "\s"*11, x['pod_network'])
+        rst = rst + sprintf("%s   via: %s\n",       "\s"*11, x['private_ip'])
+        rst = rst + sprintf("%s   metric: 100\n",   "\s"*11) 
+        rst = rst + sprintf("%s   on-link: true\n", "\s"*11) 
       end
     end
   end
@@ -180,10 +168,10 @@ def create_static_network_route()
       if rst1 == ""
         tfn = "templates/playbook/net_bridge_iptables.yaml.template"
       end
-      filename = sprintf("playbook/net_bridge/tasks/static-route-%s.yaml",x['name'])
+      ofn = sprintf("playbook/net_bridge/tasks/static-route-%s.yaml",x['name'])
 
       File.open(tfn, "r") do |f|
-        File.open( filename, "w") do |w|
+        File.open(ofn, "w") do |w|
           w.write $insert_msg
           w.write sprintf("### Template file is %s\n",tfn)
           f.each_line { |line|
@@ -210,31 +198,30 @@ end
 def create_ubuntu_static_routing()
 
   tfn = "templates/playbook/net_bridge_static-route.yaml.template"
+  ofn = "playbook/net_bridge/tasks/static-route.yaml"
   File.open(tfn, "r") do |f|
-    File.open("playbook/net_bridge/tasks/static-route.yaml", "w") do |w|
+    File.open(ofn, "w") do |w|
       w.write $insert_msg
       w.write sprintf("### Template file is %s\n",tfn)
-      
       f.each_line { |line|
         if line =~ /^__SET_ROUTING__/
-
           $vm_config_array.each do |val|
             x = eval(val)
             if x['pod_network'] != nil
-              w.write sprintf("              - to: 10.32.0.0/24\n")
-              w.write sprintf("                via: %s\n", x['private_ip'])
-              w.write sprintf("                metric: 100\n")
-              w.write sprintf("                on-link: true\n")
+              w.write sprintf("%s - to: %s\n",        "\s"*11,  "10.32.0.0/24")
+              w.write sprintf("%s   via: %s\n",       "\s"*11,  x['private_ip'])
+              w.write sprintf("%s   metric: 100\n",   "\s"*11)
+              w.write sprintf("%s   on-link: true\n", "\s"*11)              
             end
           end
 
           $vm_config_array.each do |val|
             x = eval(val)
             if x['pod_network'] != nil
-              w.write sprintf("              - to: %s\n",  x['pod_network'])
-              w.write sprintf("                via: %s\n", x['private_ip'])
-              w.write sprintf("                metric: 100\n")
-              w.write sprintf("                on-link: true\n")
+              w.write sprintf("%s - to: %s\n",        "\s"*11,  x['pod_network'])
+              w.write sprintf("%s   via: %s\n",       "\s"*11,  x['private_ip'])
+              w.write sprintf("%s   metric: 100\n",   "\s"*11)
+              w.write sprintf("%s   on-link: true\n", "\s"*11)              
             end
           end
         else
@@ -247,7 +234,6 @@ end
 
 ##
 ## Linuxの/etc/hosts設定
-##
 ## playbook/base_linux/templates/hosts.j2
 ##
 def create_hosts_file()
@@ -268,7 +254,6 @@ end
 ##
 def list_by_role(role)
   rst = ""
-  print "\n"  
   $vm_config_array.each do |val|
     x = eval(val)
     if x['role'] != nil
@@ -288,8 +273,9 @@ end
 def vars_nodelist()
 
   tfn = "templates/playbook/var-main.yaml.template"
+  ofn = "playbook/vars/main.yaml"
   File.open(tfn, "r") do |f|
-    File.open("playbook/vars/main.yaml", "w") do |w|
+    File.open(ofn, "w") do |w|
       w.write $insert_msg
       w.write sprintf("### Template file is %s\n",tfn)
       f.each_line { |line|
@@ -319,7 +305,8 @@ end
 ##
 ## Ansibleインベントリ・テンプレート #1  hosts_vagrant
 ##
-def output_ansible_inventory0(input,sw)
+##
+def output_ansible_inventory0(ifn,sw)
   counter_master  = 0
   counter_node    = 0
   counter_proxy   = 0
@@ -327,10 +314,9 @@ def output_ansible_inventory0(input,sw)
   counter_mlb     = 0
   counter_elb     = 0
 
-  
   tfn = "templates/ansible/hosts_vagrant.template"
   File.open(tfn, "r") do |f|    
-    File.open(input, "w") do |w|
+    File.open(ifn, "w") do |w|
 
       w.write $insert_msg
       w.write sprintf("#\n### Template file is %s\n#\n", tfn)
@@ -399,18 +385,22 @@ def output_ansible_inventory0(input,sw)
           else
             w.write sprintf("custom_kubernetes=false\n")
           end
+          
         elsif line =~ /__POD_NETWORK__/
           w.write line.gsub(/__POD_NETWORK__/, $conf['pod_network'])
+          
         elsif line =~ /__FLANNEL_VER__/
           if $conf['flannel_version'].nil? == false
             w.write line.gsub(/__FLANNEL_VER__/, $conf['flannel_version'])
           end
+          
         elsif line =~ /__API_SERVER_IPADDR__/
           w.write line.gsub(/__API_SERVER_IPADDR__/, $conf['kube_apiserver_vip'])
+          
         elsif line =~ /__MLB_IP_PRIMALY__/
           pub_ip,priv_ip = get_ip_by_host($conf['ka_primary_internal_host'])
-
           w.write line.gsub(/__MLB_IP_PRIMALY__/, priv_ip.to_s)
+          
         elsif line =~ /__MLB_IP_BACKUP__/
           pub_ip,priv_ip = get_ip_by_host($conf['ka_backup_internal_host'])
           w.write line.gsub(/__MLB_IP_BACKUP__/, priv_ip.to_s)
@@ -427,17 +417,25 @@ def output_ansible_inventory0(input,sw)
         elsif line =~ /__ELB_IP_PRIMALY__/
           pub_ip,priv_ip = get_ip_by_host($conf['ka_primary_frontend_host'])
           w.write line.gsub(/__ELB_IP_PRIMALY__/, pub_ip.to_s)
+          
         elsif line =~ /__ELB_IP_BACKUP__/
           pub_ip,priv_ip = get_ip_by_host($conf['ka_backup_frontend_host'])
           w.write line.gsub(/__ELB_IP_BACKUP__/, pub_ip.to_s)
+          
         else
           w.write line
+          
         end
       }
     end
   end
 end
 
+##
+## Ansible インベントリファイルの出力
+##   Vagrant から起動する初期化用
+##   ノードから起動するK8sセットアップ用
+##
 def output_ansible_inventory()
   output_ansible_inventory0("hosts_k8s", 1)
   output_ansible_inventory0("hosts_vagrant", 0)
@@ -456,10 +454,11 @@ def coredns_config()
   end
 
   tfn = "templates/playbook/coredns-configmap.yaml.template"
+  ifn = "playbook/addon_coredns/templates/coredns-configmap.yaml"
   File.open(tfn, "r") do |f|
-    File.open("playbook/addon_coredns/templates/coredns-configmap.yaml", "w") do |w|
+    File.open(ifn, "w") do |w|
       w.write $insert_msg
-      w.write sprintf("### Template file is %s\n",tfn)      
+      w.write sprintf("### Template file is %s\n",tfn)
       f.each_line { |line|
         if line =~ /^__DNS_ENTRY__/
           w.write dns_entry
@@ -577,6 +576,11 @@ def host_list(hostname,sw,op)
   return host_list
 end
 
+
+##
+## マスターノードのhost_list を生成する
+##
+##
 def coredns_host_ip_list()
   
   hostnames = host_list("master",0,0).split(",")
@@ -667,50 +671,7 @@ def etcd_yaml()
   File.open("playbook/cert_setup/vars/main.yaml", "w") do |w|
     w.write sprintf("host_list_etcd: %s\n",list_all)
   end
-
-    
-  #
-  #tfn = "templates/playbook/etcd.yaml.template"
-  #File.open(tfn, "r") do |f|  
-  #  File.open("playbook/cert_setup/tasks/etcd.yaml", "w") do |w|
-  #    w.write $insert_msg
-  #    w.write sprintf("### Template file is %s\n",tfn)
-  #    f.each_line { |line|
-  #      if line =~ /__MASTER_LIST__/
-  #        w.write line.gsub(/__MASTER_LIST__/, list_all)
-  #      elsif line =~ /__PEER_LIST__/
-  #        w.write line.gsub(/__PEER_LIST__/, list_mst)
-  #      else
-  #        w.write line
-  #      end
-  #    }
-  #  end
-  #end
-  
 end
-
-
-
-## bootnode の NFSアクセス許可範囲指定
-## playbook/bootnode/templates/exports.j2
-##
-#def nfs_exports()
-#  tfn = "templates/playbook/exports.j2.template"
-#  File.open(tfn, "r") do |f|  
-#    File.open("playbook/bootnode/templates/exports.j2", "w") do |w|
-#      w.write $insert_msg
-#      w.write sprintf("### Template file is %s\n",tfn)
-#      f.each_line { |line|
-#        if line =~ /__SUBNET__/
-#          w.write line.gsub(/__SUBNET__/, $conf['private_ip_subnet'])
-#        else
-#          w.write line
-#        end
-#      }
-#    end
-#  end
-#  
-#end
 
 ##
 ## 証明書の対象ホストのリスト作成
@@ -728,28 +689,11 @@ def k8s_cert()
              + ($conf['front_proxy_vip'].nil? ? "" : "," + $conf['front_proxy_vip']) \
              + ",10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local"
   
-  printf("\n証明書対象リスト %s\n", list_all)
+  #printf("\n証明書対象リスト %s\n", list_all)
 
   File.open("playbook/cert_setup/vars/main.yaml", "a") do |w|
     w.write sprintf("host_list_k8sapi: %s\n",list_all)
   end
-
-  #
-  #tfn = "templates/playbook/k8s-cert.yaml.template"
-  #File.open(tfn, "r") do |f|  
-  #  File.open("playbook/cert_setup/tasks/k8s-cert.yaml", "w") do |w|
-  #    w.write $insert_msg
-  #    w.write sprintf("### Template file is %s\n",tfn)
-  #    f.each_line { |line|
-  #      if line =~ /__MASTER_LIST__/
-  #        w.write line.gsub(/__MASTER_LIST__/, list_all)
-  #      else
-  #        w.write line
-  #      end
-  #    }
-  #  end
-  #end
-  
 end
 
 
@@ -823,9 +767,9 @@ def haproxy_front_cfg()
   end
 end
 
-#
-# ストレージサーバーのリストを埋め込む
-#
+##
+## ストレージサーバーのリストを埋め込む
+##
 def create_storage_node_taint(server_list)
   tfn = "templates/playbook/set_taint_label_for_storage.yaml.template"
   File.open(tfn, "r") do |f|
@@ -843,18 +787,23 @@ def create_storage_node_taint(server_list)
   end
 end
 
-
+##
+##
+##
 def append_ansible_inventory(file)
-  File.open(file, "a") do |w|  
+  File.open(file, "a") do |w|
+    w.write sprintf("\n")
     w.write sprintf("proxy_node=%s\n", $exist_proxy_node)
     w.write sprintf("storage_node=%s\n", $exist_storage_node)
     w.write sprintf("domain=%s\n", $domain)
+    w.write sprintf("internal_subnet=%s\n", $conf['private_ip_subnet'])
+    w.write sprintf("\n")    
   end
 end
 
-#
-# ノードにラベルを追加する
-#
+##
+## ノードにラベルを追加する
+##
 def node_label_task()
 
   tfn = "templates/playbook/set-node-label.yaml.template"
@@ -872,7 +821,6 @@ def node_label_task()
       end
     end
   end
-  
 
   File.open(tfn, "r") do |f|
     File.open(ofn, "w") do |w|
@@ -890,15 +838,29 @@ def node_label_task()
 end
 
 ##
-## 終了
+## ステップの開始
 ##
-def print_complete()
-  printf("   \u001b[32m完了\u001b[37m\n")
+def step_start(msg)
+  xmsg = "\u001b[33m" + msg + "\u001b[49m "
+  printf("%s", xmsg.mb_ljust(70,'*'))
 end
 
+##
+## 終了
+##
+def step_end(ret)
+  if ret == 0
+    printf(" [\u001b[32m完了\u001b[49m\u001b[33m]\u001b[49m\n")
+  else
+    printf(" [\u001b[31m失敗\u001b[49m\u001b[33m]\u001b[49m\n")
+    exit(1)
+  end
+end
+
+###############################################################
 
 ##
-## Main method
+## メイン処理
 ##
 
 if __FILE__ == $0
@@ -925,18 +887,17 @@ if __FILE__ == $0
 
   ## Vagarntの仮想サーバースペックを作成
   ## 及び、メモリ編集に取り込み
-  printf("コンフィグファイルの読み取り: %s\n",$config_yaml) 
+  printf("ファイル名: %s\n",$config_yaml)
+  step_start("コンフィグファイルの読み取り")
   vm_config = read_yaml_config($config_yaml)
-
+  step_end( vm_config.length > 0 ? 0 : 1 )
   if $mode == "test"
     puts vm_config
-    ##====
-    ##====
     exit!
   end
   
   ## テンプレートを読み込んで、Vagrantfileを生成
-  printf("Vagrantfileの書き出し")
+  step_start("Vagrantfileの書き出し")
   linenum = 1
   tfn = "templates/vagrant/Vagrantfile.template"
   File.open(tfn, "r") do |f|
@@ -955,17 +916,17 @@ if __FILE__ == $0
       }
     end
   end
-  print_complete()
+  step_end(0)
   
-  ## inventory
-  printf("Ansible インベントリファイルの書き出し")
+  ## Ansibleインベントリ書き出し
+  step_start("Ansible インベントリ書き出し")
   output_ansible_inventory()
-  print_complete()
+  step_end(0)
   
   printf("ノード構成\n")
   printf("マスターノード   = %d\n", $cnt['master'])
   printf("ワーカーノード   = %d\n", $cnt['node'])  
-  printf("プロキシノード   = %d\n", $cnt['proxy'])  
+  #printf("プロキシノード   = %d\n", $cnt['proxy'])  
   printf("ストレージノード = %d\n", $cnt['storage'])  
   printf("マスター用LB     = %d\n", $cnt['mlb'])
   printf("外部LB           = %d\n", $cnt['elb'])  
@@ -973,90 +934,81 @@ if __FILE__ == $0
 
   
   ## ansible変数としてノードのリスト作成、hostsファイル作成
-  printf("Ansible 変数としてノードリストの作成")
+  step_start("ノードリストの変数作成")
   vars_nodelist()
-  print_complete()
+  step_end(0)
   
-  printf("/etc/hostsファイルのテンプレート作成")
+  step_start("/etc/hosts テンプレート作成")
   create_hosts_file()
-  print_complete()
+  step_end(0)
   
-  printf("systemd の etcd.serviceのテンプレート作成")
+  step_start("etcd.service テンプレート作成")
   etcd_service()
-  print_complete()
+  step_end(0)
 
-  printf("etcd の playbook 作成")  
+  step_start("etcd の playbook 作成")  
   etcd_yaml()
-  print_complete()
+  step_end(0)
 
-  printf("kube-apiserver起動のテンプレート作成")  
+  step_start("kube-apiserver テンプレート作成")  
   kube_apiserver_service()
-  print_complete()
+  step_end(0)
 
-  #printf("bootnode の NFSアクセス許可範囲指定")    
-  #nfs_exports()
-  #print_complete()
-
-  printf("証明書の対象ホストのリスト作成")
+  step_start("証明書の対象ホストのリスト作成")
   k8s_cert()
-  print_complete()
+  step_end(0)
 
-  printf("マスターノード用ロードバランサー設定作成")
+  step_start("マスター用Load Balancer設定作成")
   haproxy_cfg()
-  print_complete()
+  step_end(0)
 
-  printf("フロント用ロードバランサー設定作成")
+  step_start("フロント用oLoad Balancer設定作成")
   haproxy_front_cfg()
-  print_complete()
+  step_end(0)
 
-  printf("CoreDNSのエントリーをコンフィグを元に追加")
+  step_start("CoreDNS エントリー追加")
   coredns_config()
-  print_complete()
-
+  step_end(0)
   
   ## ルーティング設定
-  printf("ポッドネットワークをブリッジで構成時のルーティング設定")
+  step_start("Pod Network ブリッジで構成")
   create_static_network_route()
-  print_complete()
+  step_end(0)
 
-  printf("ポッドネットワークをブリッジで構成時のルーティング設定 Ubuntu18.04 netplan")  
+  step_start("Pod Network Ubuntu18.04 netplan")  
   create_ubuntu_static_routing()
-  print_complete()
+  step_end(0)
 
-  printf("ポッドネットワークをブリッジで構成時  各ノードのブリッジ設定 10-bridge.conf")
+  step_start("Pod Network 10-bridge.conf設定")
   create_bridge_conf()
-  print_complete()
-
+  step_end(0)
   
   ## Worker ノードへロールをセット
-  printf("ノードのロールラベル設定 role_worker.yaml")
+  step_start("ノード role設定 role_worker.yaml")
   set_node_role()
-  print_complete()
+  step_end(0)
 
-  printf("追加ノードのロールラベル設定 role_worker_add.yaml")
+  step_start("追加ノード role設定 role_worker_add.yaml")
   set_role_added_node()
-  print_complete()
+  step_end(0)
   
   ## ストレージノードのリストセット
-  printf("ストレージノードのラベル設定")
+  step_start("ストレージノードのラベル設定")
   list_storage = list_by_role("storage")
   create_storage_node_taint(list_storage)
-  print_complete()
+  step_end(0)
 
   
   ## ノードラベル追加設定
-  printf("ノード・ラベルの追加設定")  
+  step_start("ノード・ラベルの追加処理")  
   node_label_task()
-  print_complete()
+  step_end(0)
   
-
   ## 変数追加
-  printf("Ansible playbookに変数追加")  
+  step_start("Ansible playbookに変数追加")  
   append_ansible_inventory("hosts_k8s")
-  print_complete()
+  step_end(0)
 
-  
-  
   ## 自動起動
   if $auto_start
     ## 仮想マシン起動
