@@ -4,10 +4,17 @@
 #
 # 証明書をbootnodeのNFSサーバー上に準備
 #
-- name: test
+- name: Internal HA-PROXY install
   hosts:
-  - bootnode
-  become: true  
+  - mlbs
+  vars:
+    lb_pos: "Internal"
+  gather_facts: true
+  become: true
+  become_user: root
+  become_method: sudo
   roles:
-    - coredns
+    - haproxy
+    - keepalived
+
 

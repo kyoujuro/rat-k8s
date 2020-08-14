@@ -33,15 +33,9 @@
 
 - shell: netplan apply
 
-- copy:
-    src:  "{{ r_download_dir }}/keepalived-{{ keepalived_version }}.tar.gz"
-    dest: "/home/vagrant/keepalived-{{ keepalived_version }}.tar.gz }}"
-    mode: '0644'
-
 - unarchive:
-    src:  "/home/vagrant/keepalived-{{ keepalived_version }}.tar.gz"
+    src: "{{ r_download_dir }}/keepalived-{{ keepalived_version }}.tar.gz"
     dest: /home/vagrant
-    remote_src: yes
 
 - shell: |
       cd keepalived-{{ keepalived_version }}
