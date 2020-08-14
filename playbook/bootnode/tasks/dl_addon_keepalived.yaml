@@ -4,13 +4,13 @@
 - name: Downloading keepalived
   stat:
     path: "{{ download_dir }}/keepalived-2.0.15.tar.gz"
-  register: keepalived
+  register: regi_keepalived
 
 - get_url:
     url: https://www.keepalived.org/software/keepalived-2.0.15.tar.gz
     dest: "{{ download_dir }}"
     mode: '0644'
-  when: keepalived.stat.exists == false	
+  when: regi_keepalived.stat.exists == false	
 
 #- unarchive:
 #    src:  "{{ download_dir }}/keepalived-2.0.15.tar.gz"

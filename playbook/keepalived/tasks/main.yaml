@@ -34,18 +34,17 @@
 - shell: netplan apply
 
 - copy:
-    src:  /mnt/download/keepalived-2.0.15.tar.gz
-    dest: /home/vagrant/keepalived-2.0.15.tar.gz
+    src:  "{{ r_download_dir }}/keepalived-{{ keepalived_version }}.tar.gz"
+    dest: "/home/vagrant/keepalived-{{ keepalived_version }}.tar.gz }}"
     mode: '0644'
 
 - unarchive:
-    src:  /home/vagrant/keepalived-2.0.15.tar.gz
+    src:  "/home/vagrant/keepalived-{{ keepalived_version }}.tar.gz"
     dest: /home/vagrant
     remote_src: yes
 
-
 - shell: |
-      cd keepalived-2.0.15
+      cd keepalived-{{ keepalived_version }}
       ./configure
       make && make install
   args:

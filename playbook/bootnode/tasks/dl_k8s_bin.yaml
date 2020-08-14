@@ -8,25 +8,25 @@
 - name: Downloading Kubernetes binary
   stat:
     path: "{{ download_dir }}/kubernetes-server-linux-amd64.tar.gz"
-  register: r_k8s_bin
+  register: regi_k8s_bin
 
 - get_url:
     url: https://dl.k8s.io/{{ kubernetes_version }}/kubernetes-server-linux-amd64.tar.gz
     dest: "{{ download_dir }}"
     mode: '0644'
-  when: r_k8s_bin.stat.exists == false and custom_kubernetes == 'false'
+  when: regi_k8s_bin.stat.exists == false and custom_kubernetes == 'false'
 
 
 - name: Check unarchive 
   stat:
     path: "{{ download_dir }}/kubernetes/server/bin/kube-apiserver"
-  register: check_kube_apiserver
+  register: regi_check_kube_apiserver
 
   
 - unarchive:
     src:  "{{ download_dir }}/kubernetes-server-linux-amd64.tar.gz"
     dest: "{{ download_dir }}"
-  when: custom_kubernetes == 'false' and check_kube_apiserver.stat.exists == false
+  when: custom_kubernetes == 'false' and regi_check_kube_apiserver.stat.exists == false
 
   
 - name: Copy kubernetes binary to nfs

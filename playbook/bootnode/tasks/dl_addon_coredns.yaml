@@ -4,13 +4,12 @@
 - name: Download CoreDNS 
   stat:
     path: "{{ download_dir }}/coredns/README.md"
-  register: coredns
+  register: regi_coredns
 
 - git:
     repo: https://github.com/coredns/deployment
     dest: "{{ download_dir }}/coredns"
     force: yes
     update: yes
-  #become_user: vagrant    
-  when: coredns.stat.exists == false  
+  when: regi_coredns.stat.exists == false  
 

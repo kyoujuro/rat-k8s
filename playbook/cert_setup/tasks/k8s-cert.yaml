@@ -47,36 +47,6 @@
   args:
     chdir: "{{ ca_home2 }}"
 
-#
-# Kubeletのクライアント証明書
-#    The Kubelet Client Certificates
-#    ノードの数だけ作成する
-#
-#- name: Kubelet Client Certificates
-#  template:
-#    src: instance-csr.json.j2
-#    dest: ""{{ ca_home2 }}"/{{ item.name }}-csr.json"
-#    owner: vagrant
-#    group: vagrant
-#    mode: '0644'
-#  loop: "{{ nodes }}"
-#- shell: |
-#    cfssl gencert \
-#      -ca=ca.pem \
-#      -ca-key=ca-key.pem \
-#      -config=ca-config.json \
-#      -hostname="{{ item.name }},{{ item.pri_ip }}" \
-#      -profile=kubernetes \
-#      "{{ item.name }}-csr.json" | cfssljson -bare "{{ item.name }}"
-#  args:
-#    chdir: "{{ ca_home2 }}"
-#  loop: "{{ nodes }}"
-#- file:
-#    path: ""{{ ca_home2 }}"/{{ item.name }}-key.pem"
-#    mode: '0644'
-#  loop: "{{ nodes }}"
-
-
 
 # 
 # Controller-Manager のクライアント証明書

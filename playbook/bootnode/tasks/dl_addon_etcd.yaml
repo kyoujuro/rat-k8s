@@ -4,13 +4,13 @@
 - name: Downloading etcd
   stat:
     path: "{{ download_dir }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
-  register: etcd
+  register: regi_etcd
 
 - get_url:
     url: https://github.com/etcd-io/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz
     dest: "{{ download_dir }}"
     mode: '0644'
-  when: etcd.stat.exists == false
+  when: regi_etcd.stat.exists == false
 
 - unarchive:
     src:  "{{ download_dir }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"

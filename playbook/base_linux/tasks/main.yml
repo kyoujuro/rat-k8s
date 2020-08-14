@@ -24,31 +24,19 @@
     group: root
     mode: '0644'
 
-
-    
-#############################    
-#- name: Mount up
-#  mount:
-#    path: /mnt
-#    src: bootnode:/srv/k8s
-#    fstype: nfs
-#    state: mounted
-#############################
-
 - name: check ssh-key existing
   stat:
     path: /vagrant/keys/id_rsa.pub
-  register: ssh_key
+  register: regi_ssh_key
     
-- debug: msg="{{ ssh_key }}"
+#- debug: msg="{{ ssh_key }}"
 
 - name: create ssh-key
   command: ssh-keygen -t rsa -N '' -f id_rsa
   args:
     executable: /bin/bash
     chdir: /vagrant/keys
-  when: ssh_key.stat.exists == false
-
+  when: regi_ssh_key.stat.exists == false
 
 #############################
 

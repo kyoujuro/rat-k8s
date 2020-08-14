@@ -5,22 +5,3 @@
   roles:
   - base_linux
 
-  
-#- name: config boot node
-#  hosts: bootnode
-#  gather_facts: true
-#  become: true
-#  roles:
-#  - bootnode
-  
-#
-# 証明書をbootnodeのNFSサーバー上に準備
-#
-#- name: Download a containerd on NFS server
-#  hosts:
-#  - bootnode
-#  roles:
-#    - cert_setup
-
-  
-  

@@ -13,9 +13,6 @@
     group: vagrant
     mode: '0644'
 
-#- wait_for:
-#    timeout: 100
-
 - name: apply rbac manifests
   shell: |
     kubectl apply --kubeconfig {{ ca_kubeconfig }}/admin.kubeconfig -f rbac-kubelet.yaml

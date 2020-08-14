@@ -1,32 +1,13 @@
 #
 # K8sコンポーネント配置に必要なディレクトリを作成
 #
-# QAチェック: OK
-- name: Setup Kubernetes Dirs
-  hosts:
-  - masters
-  - nodes
-  - proxys
-  - storages
-  - elbs
-  become: true
-  tasks:
-    - include_tasks: tasks/setup_k8s_dirs.yml
-
-      
 #
 # 証明書をbootnodeのNFSサーバー上に準備
 #
-# QAチェック: in progress
-- name: Download a containerd on NFS server
+- name: test
   hosts:
   - bootnode
   become: true  
   roles:
-    - bootnode    
+    - coredns
 
-#- name: クライアント証明書などの作成
-#  hosts:
-#  - bootnode
-#  roles:
-#    - cert_setup

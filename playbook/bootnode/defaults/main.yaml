@@ -1,4 +1,3 @@
 work_dir :       /srv/k8s
-#work_dir :       /vagrant/work_tmp
 download_dir :   "{{ work_dir }}/download"
-#internal_subnet: "172.16.2.0/24"
+

@@ -87,7 +87,7 @@ mode=new
 work_dir         =  /srv/k8s  
 #work_dir        =  /vagrant/work_tmp
 download_dir     =  {{ work_dir }}/download
-internal_subnet  = "172.16.2.0/24"
+#internal_subnet  = "172.16.2.0/24"
 ca_home2         = {{ work_dir }}/ca
 ca_etcd_home     = {{ work_dir }}/ca-etcd
 ca_front_proxy   = {{ work_dir }}/ca-front-proxy
@@ -105,7 +105,10 @@ r_ca_front_proxy = {{ r_work_dir }}/ca-front-proxy
 r_ca_kubeconfig  = {{ r_work_dir }}/kubeconfig
 r_k8s_binary     = {{ r_work_dir }}/bin
 
-
+kubernetes_dashborad_ver  = v2.0.0-beta6
+kubernetes_metrics_server = v0.3.6
+keepalived_version        = 2.0.15
+calico_version            = v3.14.1
 #
 # 
 #

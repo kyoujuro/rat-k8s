@@ -1,8 +1,3 @@
-###########
-#
-# リセット???
-#
-###########
 - name: Setup environment for etcd
   file:
     path: /etc/kubernetes/pki/etcd
@@ -73,12 +68,6 @@
 
 #########    
 - name: Copy ETCD CA Cert
-#  copy:
-#    src: "{{ r_ca_home2 }}-etcd/etcd-ca.pem"
-#    dest: /etc/kubernetes/pki/etcd/ca.crt
-#    owner: root
-#    group: root
-#    mode: '0600'
   copy:
     src: "{{ r_ca_home2 }}/kubernetes.pem"
     dest: /etc/kubernetes/pki/apiserver-etcd-client.crt
@@ -92,8 +81,6 @@
     group: root
     mode: '0600'
 #########    
-
-
     
 - template:
     src: etcd.service.j2
@@ -103,9 +90,6 @@
     mode: '0644'
 
 - debug: msg="{{ ansible_facts.hostname }}"
-#- debug: msg="{{ ansible_facts }}"
-#- debug: msg="{{ ansible_facts.enp0s3.ipv4.address }}"
-#- debug: msg="{{ ansible_facts.enp0s8.ipv4.address }}"
 
 - name: Start etcd service
   systemd:

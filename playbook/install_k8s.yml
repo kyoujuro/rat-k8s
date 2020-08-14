@@ -90,7 +90,7 @@
       when: pod_network == "flannel"
   tasks:
     - include_tasks: tasks/kubeconfig_setup.yml
-    
+      
 # 
 #  RBAC for Kubelet Authorization
 #
@@ -101,6 +101,9 @@
   become: true
   become_user: vagrant
   tasks:
+    # 処理完了まで時間を取らないと失敗する
+    - wait_for:
+        timeout: 100
     - include_tasks: tasks/config_rbac_kubelet.yml
     - include_tasks: tasks/kubeconfig_setup.yml
 

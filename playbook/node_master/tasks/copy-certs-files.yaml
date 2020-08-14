@@ -25,27 +25,6 @@
     mode: '0600'
 
 #-----------------------
-#- name: Copy ETCD CA Cert
-#  copy:
-#    src: "{{ r_ca_home2 }}-etcd/etcd-ca.pem"
-#    dest: /etc/kubernetes/pki/etcd/ca.crt
-#    owner: root
-#    group: root
-#    mode: '0600'
-#- copy:
-#    src: "{{ r_ca_home2 }}/kubernetes.pem"
-#    dest: /etc/kubernetes/pki/apiserver-etcd-client.crt
-#    owner: root
-#    group: root
-#    mode: '0600'
-#- copy:
-#    src: "{{ r_ca_home2 }}/kubernetes-key.pem"
-#    dest: /etc/kubernetes/pki/apiserver-etcd-client.key
-#    owner: root
-#    group: root
-#    mode: '0600'
-
-#-----------------------
 - name: Deploy the apiserver-kubelet-client cert
   copy:
     src: "{{ r_ca_home2 }}/kubernetes.pem"
