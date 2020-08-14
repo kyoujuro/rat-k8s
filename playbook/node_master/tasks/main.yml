@@ -1,7 +1,10 @@
 #
 # K8sディレクトリ作成
-#
 
+# 追加 どうして壊れたか不明
+- name: create k8s dires
+  include_tasks: setup-k8s-dirs.yaml
+  
 ##
 ## 認証局証明書、サーバー証明書、クライアント証明などのコピー
 ##

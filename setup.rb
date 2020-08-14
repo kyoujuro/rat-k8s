@@ -662,7 +662,7 @@ def etcd_yaml()
              + (host_list("master",1,0).length == 0 ? "" : "," + host_list("master",1,0)) \
              + (host_list("mlb",0,0).length == 0 ? "" : "," + host_list("mlb",0,0)) \
              + (host_list("mlb",1,0).length == 0 ? "" : "," + host_list("mlb",1,0)) \
-             + ",10.32.0.1,127.0.0.1"
+             + ",10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local"
     
   File.open("playbook/cert_setup/vars/main.yaml", "w") do |w|
     w.write sprintf("host_list_etcd: %s\n",list_all)

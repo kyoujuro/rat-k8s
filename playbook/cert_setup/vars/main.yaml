@@ -1,2 +1,2 @@
-host_list_etcd: master1,172.16.2.11,10.32.0.1,127.0.0.1
-host_list_k8sapi: master1,172.16.2.11,192.168.1.211,172.16.2.11,10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local
+host_list_etcd: master1,172.16.2.11,10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local
+host_list_k8sapi: master1,172.16.2.11,192.168.1.40,172.16.2.11,10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local

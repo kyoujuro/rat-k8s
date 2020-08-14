@@ -1,10 +1,11 @@
-- name: Clean up kubernets directory
-  file:
-    path: /var/lib/kubernetes
-    state: absent
-- file:
-    path: /etc/kubernetes
-    state: absent
+#- name: Clean up kubernets directory
+# これを書くと、冪等性が失われる。
+#  file:
+#    path: /var/lib/kubernetes
+#    state: absent
+#- file:
+#    path: /etc/kubernetes
+#    state: absent
 
 - name: Create kubernetes directorys
   file:

@@ -3,7 +3,7 @@
 ##
 - name: Copy Scheduler bin
   copy:
-    src: "{{ k8s_bin }}/kube-scheduler"
+    src: "{{ r_k8s_binary }}/kube-scheduler"
     dest: /usr/local/bin
     owner: root
     group: root
@@ -13,11 +13,16 @@
 
 - name: Configure the Kubernetes Scheduler
   copy:
-    src: "{{ ca_kubeconfig }}/kube-scheduler.kubeconfig"
+    src: "{{ r_ca_kubeconfig }}/kube-scheduler.kubeconfig"
     dest: /etc/kubernetes/kube-scheduler.conf
     owner: root
     group: root
     mode: '0644'
+
+
+#
+# これが問題？
+#
 - template:
     src: kube-scheduler.yaml
     dest: /etc/kubernetes/config

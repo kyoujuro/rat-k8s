@@ -1,5 +1,5 @@
 - copy:
-    src: /mnt/bin/kube-proxy
+    src: "{{ r_k8s_binary }}/kube-proxy"
     dest: /usr/local/bin
     owner: root
     group: root
@@ -7,8 +7,7 @@
 
 - name: Configure the Kubernetes Proxy
   copy:
-    src: /mnt/kubeconfig/kube-proxy.kubeconfig
-    #dest: /var/lib/kube-proxy/kubeconfig
+    src: "{{ r_ca_kubeconfig }}/kube-proxy.kubeconfig"
     dest: /etc/kubernetes/kube-proxy.conf
     owner: root
     group: root
@@ -17,11 +16,11 @@
 
 - template:
     src: kube-proxy-config.yaml
-    #dest: /var/lib/kube-proxy
     dest: /etc/kubernetes/config/
     owner: root
     group: root
     mode: '0644'
+
 - template:
     src: kube-proxy.service
     dest: /etc/systemd/system

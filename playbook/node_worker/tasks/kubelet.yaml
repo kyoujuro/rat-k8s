@@ -1,5 +1,5 @@
 - copy:
-    src: /mnt/bin/kubelet
+    src: "{{ r_k8s_binary }}/kubelet"
     dest: /usr/local/bin
     owner: root
     group: root
@@ -7,32 +7,28 @@
 
 - name: Configure the Kubelet
   copy:
-    src: "/mnt/ca/{{ ansible_facts.hostname }}-key.pem"
-    #dest: /var/lib/kubelet
+    src: "{{ r_ca_home2 }}/{{ ansible_facts.hostname }}-key.pem"
     dest: /etc/kubernetes/pki
     owner: root
     group: root
     mode: '0600'
     remote_src: yes
 - copy:
-    src: "/mnt/ca/{{ ansible_facts.hostname }}.pem"
-    #dest: /var/lib/kubelet
+    src: "{{ r_ca_home2 }}/{{ ansible_facts.hostname }}.pem"
     dest: /etc/kubernetes/pki    
     owner: root
     group: root
     mode: '0600'
     remote_src: yes
 - copy:
-    src: "/mnt/kubeconfig/{{ ansible_facts.hostname }}.kubeconfig"
-    #dest: /var/lib/kubelet/kubeconfig
+    src: "{{ r_ca_kubeconfig }}/{{ ansible_facts.hostname }}.kubeconfig"
     dest: /etc/kubernetes/node.conf
     owner: root
     group: root
     mode: '0600'
     remote_src: yes
 - copy: 
-    src: /mnt/ca/ca.pem
-    #dest: /var/lib/kubernetes
+    src: "{{ r_ca_home2 }}/ca.pem"
     dest: /etc/kubernetes/pki
     owner: root
     group: root
@@ -40,7 +36,6 @@
     remote_src: yes
 - template:
     src: kubelet-config.yaml
-    #dest: /var/lib/kubelet
     dest: /etc/kubernetes/config
     owner: root
     group: root

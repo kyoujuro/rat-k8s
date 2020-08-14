@@ -1,4 +1,4 @@
-- name: Downloading cri-containerd  
+- name: copy rbac yamls to bootnode
   template:
     src: rbac-kubelet.yaml
     dest: /home/vagrant/rbac-kubelet.yaml
@@ -13,19 +13,19 @@
     mode: '0644'
 - wait_for:
     timeout: 100
-- name: RBAC for Kubelet Authorization
+- name: apply rbac manifests
   shell: |
-    kubectl apply --kubeconfig /mnt/kubeconfig/admin.kubeconfig -f rbac-kubelet.yaml
+    kubectl apply --kubeconfig {{ ca_kubeconfig }}/admin.kubeconfig -f rbac-kubelet.yaml
   args:
     chdir: /home/vagrant
   become: true
-  become_user: vagrant
+  #become_user: vagrant
 - shell: |
-    kubectl apply --kubeconfig /mnt/kubeconfig/admin.kubeconfig -f rbac-kubelet-rolebinding.yaml
+    kubectl apply --kubeconfig {{ ca_kubeconfig }}/admin.kubeconfig -f rbac-kubelet-rolebinding.yaml
   args:
     chdir: /home/vagrant
   become: true
-  become_user: vagrant
+  #become_user: vagrant
 
 
 #- copy:

@@ -1,8 +1,16 @@
 - include_vars: /vagrant/playbook/vars/main.yaml
+
+- name: mkdir /opt/cni/bin/
+  file:
+    path: /opt/cni/bin/
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
   
 - name: Configure CNI Networking
   unarchive:
-    src: /mnt/download/cni-plugins-linux-amd64-{{ cni_plugins }}.tgz
+    src: "{{ r_download_dir }}/cni-plugins-linux-amd64-{{ cni_plugins }}.tgz"
     dest: /opt/cni/bin/
     owner: root
     group: root
@@ -11,14 +19,14 @@
 
 - name: install containerd
   unarchive:
-    src: /mnt/download/containerd-{{ containerd_version }}.linux-amd64.tar.gz
+    src: "{{ r_download_dir }}/containerd-{{ containerd_version }}.linux-amd64.tar.gz"
     dest: /usr/local
     owner: root
     group: root
     mode: '0755'
 
 - copy:
-    src: /mnt/download/runc.amd64
+    src: "{{ r_download_dir }}/runc.amd64"
     dest: /usr/local/bin/runc
     owner: root
     group: root
@@ -57,7 +65,7 @@
     
 ########
 - unarchive:
-    src: /mnt/download/crictl-{{ crictl_version }}-linux-amd64.tar.gz
+    src: "{{ r_download_dir }}/crictl-{{ crictl_version }}-linux-amd64.tar.gz"
     dest: /usr/local/bin
     owner: root
     group: root

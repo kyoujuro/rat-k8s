@@ -1,5 +1,5 @@
 - copy:
-    src: /mnt/bin/kubectl
+    src: "{{ r_k8s_binary }}/kubectl"
     dest: /usr/local/bin
     owner: root
     group: root

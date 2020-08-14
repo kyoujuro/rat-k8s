@@ -80,6 +80,8 @@
   gather_facts: true
   become: true
   roles:
+    - etcd
+    - node_master
     - role: net_bridge
       when: pod_network == "bridge"
     - role: net_flannel
@@ -89,8 +91,6 @@
     #      
     - role: node_worker
       when: pod_network == "flannel" or pod_network == "calico"
-    - etcd      
-    - node_master
   tasks:
     - include_tasks: tasks/kubeconfig_setup.yml
 
@@ -126,7 +126,7 @@
       when: pod_network == "flannel"
     - role: net_calico
       when: pod_network == "calico" 
-    - node_worker
+    - node_worker    
 
 #########################################
 #

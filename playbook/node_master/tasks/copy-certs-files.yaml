@@ -1,60 +1,60 @@
 - name: Copy CA Cert, Server Cert, Client Cert
   copy:
-    src: "{{ ca_home2 }}/ca.pem"
+    src: "{{ r_ca_home2 }}/ca.pem"
     dest: /etc/kubernetes/pki/ca.crt
     owner: root
     group: root
     mode: '0600'
 - copy:
-    src: "{{ ca_home2 }}/ca-key.pem"
+    src: "{{ r_ca_home2 }}/ca-key.pem"
     dest: /etc/kubernetes/pki/ca.key
     owner: root
     group: root
     mode: '0600'
 - copy:
-    src: "{{ ca_home2 }}/kubernetes.pem"
+    src: "{{ r_ca_home2 }}/kubernetes.pem"
     dest: /etc/kubernetes/pki/apiserver.crt
     owner: root
     group: root
     mode: '0600'
 - copy:
-    src: "{{ ca_home2 }}/kubernetes-key.pem"
+    src: "{{ r_ca_home2 }}/kubernetes-key.pem"
     dest: /etc/kubernetes/pki/apiserver.key
     owner: root
     group: root
     mode: '0600'
 
 #-----------------------
-- name: Copy ETCD CA Cert
-  copy:
-    src: "{{ ca_home2 }}-etcd/etcd-ca.pem"
-    dest: /etc/kubernetes/pki/etcd/ca.crt
-    owner: root
-    group: root
-    mode: '0600'
-- copy:
-    src: "{{ ca_home2 }}/kubernetes.pem"
-    dest: /etc/kubernetes/pki/apiserver-etcd-client.crt
-    owner: root
-    group: root
-    mode: '0600'
-- copy:
-    src: "{{ ca_home2 }}/kubernetes-key.pem"
-    dest: /etc/kubernetes/pki/apiserver-etcd-client.key
-    owner: root
-    group: root
-    mode: '0600'
+#- name: Copy ETCD CA Cert
+#  copy:
+#    src: "{{ r_ca_home2 }}-etcd/etcd-ca.pem"
+#    dest: /etc/kubernetes/pki/etcd/ca.crt
+#    owner: root
+#    group: root
+#    mode: '0600'
+#- copy:
+#    src: "{{ r_ca_home2 }}/kubernetes.pem"
+#    dest: /etc/kubernetes/pki/apiserver-etcd-client.crt
+#    owner: root
+#    group: root
+#    mode: '0600'
+#- copy:
+#    src: "{{ r_ca_home2 }}/kubernetes-key.pem"
+#    dest: /etc/kubernetes/pki/apiserver-etcd-client.key
+#    owner: root
+#    group: root
+#    mode: '0600'
 
 #-----------------------
 - name: Deploy the apiserver-kubelet-client cert
   copy:
-    src: "{{ ca_home2 }}/kubernetes.pem"
+    src: "{{ r_ca_home2 }}/kubernetes.pem"
     dest: /etc/kubernetes/pki/apiserver-kubelet-client.crt
     owner: root
     group: root
     mode: '0600'
 - copy:
-    src: "{{ ca_home2 }}/kubernetes-key.pem"
+    src: "{{ r_ca_home2 }}/kubernetes-key.pem"
     dest: /etc/kubernetes/pki/apiserver-kubelet-client.key
     owner: root
     group: root
@@ -62,19 +62,19 @@
 #-----------------------
 - name: Deploy the front-proxy-client cert
   copy:
-    src: "{{ ca_home2 }}-front-proxy/front-proxy-client.pem"
+    src: "{{ r_ca_home2 }}-front-proxy/front-proxy-client.pem"
     dest: /etc/kubernetes/pki/front-proxy-client.crt
     owner: root
     group: root
     mode: '0600'
 - copy:
-    src: "{{ ca_home2 }}-front-proxy/front-proxy-client-key.pem"
+    src: "{{ r_ca_home2 }}-front-proxy/front-proxy-client-key.pem"
     dest: /etc/kubernetes/pki/front-proxy-client.key
     owner: root
     group: root
     mode: '0600'
 - copy:
-    src: "{{ ca_home2 }}-front-proxy/front-proxy-ca.pem"
+    src: "{{ r_ca_home2 }}-front-proxy/front-proxy-ca.pem"
     dest: /etc/kubernetes/pki/front-proxy-ca.crt
     owner: root
     group: root
@@ -82,13 +82,13 @@
 
 - name: Deploy service account cert
   copy:
-    src: "{{ ca_home2 }}/service-account.pem"
+    src: "{{ r_ca_home2 }}/service-account.pem"
     dest: /etc/kubernetes/pki/service-account.pem
     owner: root
     group: root
     mode: '0600'
 - copy:
-    src: "{{ ca_home2 }}/service-account-key.pem"
+    src: "{{ r_ca_home2 }}/service-account-key.pem"
     dest: /etc/kubernetes/pki/service-account.key
     owner: root
     group: root
@@ -96,7 +96,7 @@
 
 - name: Deploy encryption-config.yaml
   copy:
-    src: "{{ ca_kubeconfig }}/encryption-config.yaml"
+    src: "{{ r_ca_kubeconfig }}/encryption-config.yaml"
     dest: /var/lib/kubernetes
     owner: root
     group: root

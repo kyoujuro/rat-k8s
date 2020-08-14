@@ -1,0 +1,62 @@
+#
+# K8sコンポーネント配置に必要なディレクトリを作成
+#
+#- name: Setup Kubernetes Dirs
+#  hosts: masters
+#  become: true
+#  tasks:
+#    - include_tasks: tasks/setup_k8s_dirs.yml
+
+#
+# 証明書をbootnodeのNFSサーバー上に準備
+#
+- name: Download software packeges
+  hosts: masters
+  become: true  
+  roles:
+    - bootnode    
+    - cert_setup
+
+# 
+# etcd クラスタとマスターノードのセットアップ
+#   etcdサーバーはマスターノード上に配置
+#   クラスタネットワークすなわちノード間通信の選択により設定が変わる
+#     * 仮想環境の専用ネットワークをブリッジで繋ぐ方法 
+#     * flannelでオーバーレイで繋ぐ方法
+#
+- name: Configure etcd on masters
+  hosts: masters
+  gather_facts: true
+  become: true
+  roles:
+    - etcd      
+    - node_master
+    - node_worker    
+  tasks:
+    - include_tasks: tasks/kubeconfig_setup.yml
+    
+# 
+#  RBAC for Kubelet Authorization
+#
+- name: Configure RBAC
+  hosts: masters
+  gather_facts: true
+  become: true
+  #become_user: vagrant
+  tasks:
+    - include_tasks: tasks/config_rbac_kubelet.yml
+    - include_tasks: tasks/kubeconfig_setup.yml
+
+#
+# モニタリングセットアップ
+# CoreDNSセットアップ
+#
+#- name: K8s Monitoring setup
+#  hosts: msaters
+#  gather_facts: true
+#  become: true
+#  roles:
+#    - addon_coredns
+#    - addon_metrics-server
+#    - addon_dashboard
+

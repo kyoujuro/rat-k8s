@@ -23,7 +23,7 @@
     - libseccomp2
 
 - unarchive:
-    src: "{{ download_dir }}/cri-containerd-{{ containerd_version }}.linux-amd64.tar.gz"
+    src: "{{ r_download_dir }}/cri-containerd-{{ containerd_version }}.linux-amd64.tar.gz"
     dest: /
 - file:
     path:  /etc/containerd

@@ -3,11 +3,11 @@
 ##
 ##
 - debug: msg="custom_kubernetes = {{ custom_kubernetes }}"
-
+- debug: msg="{{ r_k8s_binary }}/kube-apiserver"
 
 - name: copy kube-apiserver
   copy:
-    src: "{{ k8s_bin }}/kube-apiserver"
+    src: "{{ r_k8s_binary }}/kube-apiserver"
     dest: /usr/local/bin
     owner: root
     group: root
@@ -16,7 +16,7 @@
 
 - name: copy kubectl
   copy:
-    src: "{{ k8s_bin }}/kubectl"
+    src: "{{ r_k8s_binary }}/kubectl"
     dest: /usr/local/bin
     owner: root
     group: root
@@ -25,7 +25,7 @@
 
 - name: copy admin.kubeconfig
   copy:
-    src: "{{ ca_kubeconfig }}/admin.kubeconfig"
+    src: "{{ r_ca_kubeconfig }}/admin.kubeconfig"
     dest: /etc/kubernetes/kube-apiserver.conf
     owner: root
     group: root

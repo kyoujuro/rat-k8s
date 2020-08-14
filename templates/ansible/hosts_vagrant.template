@@ -74,11 +74,41 @@ ka_backup_frontend_ip=__ELB_IP_BACKUP__/32
 
 
 ############ from main.yaml
-ca_home=/mnt/ca
-etcd_ca_home=/mnt/ca-etcd
-proxy_ca_home=/mnt/ca-front-proxy
-kubeconfig=/mnt/kubeconfig
+
+
+#ca_home=/mnt/ca
+#etcd_ca_home=/mnt/ca-etcd
+#proxy_ca_home=/mnt/ca-front-proxy
+#kubeconfig=/mnt/kubeconfig
 mode=new
+
+
+### bootnode
+work_dir         =  /srv/k8s  
+#work_dir        =  /vagrant/work_tmp
+download_dir     =  {{ work_dir }}/download
+internal_subnet  = "172.16.2.0/24"
+ca_home2         = {{ work_dir }}/ca
+ca_etcd_home     = {{ work_dir }}/ca-etcd
+ca_front_proxy   = {{ work_dir }}/ca-front-proxy
+ca_kubeconfig    = {{ work_dir }}/kubeconfig
+
+host_list_etcd   = 10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local 
+host_list_k8sapi = 10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local
+
+#r_work_dir       = {{ work_dir }}
+r_work_dir       = /mnt
+r_download_dir   = {{ r_work_dir }}/download
+r_ca_home2       = {{ r_work_dir }}/ca
+r_ca_etcd_home   = {{ r_work_dir }}/ca-etcd
+r_ca_front_proxy = {{ r_work_dir }}/ca-front-proxy
+r_ca_kubeconfig  = {{ r_work_dir }}/kubeconfig
+r_k8s_binary     = {{ r_work_dir }}/bin
+
+
+#
+# 
+#
 
 KUBERNETES_PUBLIC_ADDRESS=__API_SERVER_IPADDR__
 
