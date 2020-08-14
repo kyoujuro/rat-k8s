@@ -29,9 +29,10 @@
   gather_facts: true
   become: true
   roles:
-    - etcd      
+    - etcd
+    - net_bridge
     - node_master
-    - node_worker    
+    - node_worker  
   tasks:
     - include_tasks: tasks/kubeconfig_setup.yml
     
@@ -42,8 +43,9 @@
   hosts: masters
   gather_facts: true
   become: true
-  #become_user: vagrant
   tasks:
+    - wait_for:
+        timeout: 60
     - include_tasks: tasks/config_rbac_kubelet.yml
     - include_tasks: tasks/kubeconfig_setup.yml
 
@@ -51,12 +53,12 @@
 # モニタリングセットアップ
 # CoreDNSセットアップ
 #
-#- name: K8s Monitoring setup
-#  hosts: msaters
-#  gather_facts: true
-#  become: true
-#  roles:
-#    - addon_coredns
-#    - addon_metrics-server
-#    - addon_dashboard
+- name: K8s Monitoring setup
+  hosts: msaters
+  gather_facts: true
+  become: true
+  roles:
+    - addon_coredns
+    - addon_metrics-server
+    - addon_dashboard
 

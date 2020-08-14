@@ -1,4 +1,6 @@
-
+#
+# mkdir directory for kubernetes
+#
 
 - name: mkdir for download
   file:
@@ -40,4 +42,20 @@
     group: vagrant
     mode:  '0755'
 
+#
+# mkdir directory for cni
+#
+- name: start configuration
+  file:
+    path: /etc/cni/net.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /opt/cni/bin
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
 
