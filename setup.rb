@@ -22,7 +22,9 @@ $cnt = {
   "mlb"     => 0,
   "mon"     => 0
 }
-    
+
+$file_list = []
+
 ##
 ## YAML環境ファイルの読み込み
 ##  グローバル変数 $conf、
@@ -92,9 +94,10 @@ def create_bridge_conf()
       range_end = sprintf("%d.%d.%d.%d", n[0],n[1],n[2],253)
       gateway   = sprintf("%d.%d.%d.%d", n[0],n[1],n[2],254)
 
-      filename = sprintf("playbook/net_bridge/templates/10-bridge.conf.%s", x['name'])
+      ofn = sprintf("playbook/net_bridge/templates/10-bridge.conf.%s", x['name'])
       File.open("templates/playbook/10-bridge.conf.template", "r") do |f|
-        File.open(filename, "w") do |w|
+        $file_list.push(ofn)
+        File.open(ofn, "w") do |w|
           #w.write $insert_msg # JSON形式なのでコメントが書けない
           f.each_line { |line|
             if line =~ /^__SET_CONFIG__/
@@ -169,7 +172,7 @@ def create_static_network_route()
         tfn = "templates/playbook/net_bridge_iptables.yaml.template"
       end
       ofn = sprintf("playbook/net_bridge/tasks/static-route-%s.yaml",x['name'])
-
+      $file_list.push(ofn)
       File.open(tfn, "r") do |f|
         File.open(ofn, "w") do |w|
           w.write $insert_msg
@@ -200,6 +203,7 @@ def create_ubuntu_static_routing()
   tfn = "templates/playbook/net_bridge_static-route.yaml.template"
   ofn = "playbook/net_bridge/tasks/static-route.yaml"
   File.open(tfn, "r") do |f|
+    $file_list.push(ofn)
     File.open(ofn, "w") do |w|
       w.write $insert_msg
       w.write sprintf("### Template file is %s\n",tfn)
@@ -237,7 +241,9 @@ end
 ## playbook/base_linux/templates/hosts.j2
 ##
 def create_hosts_file()
-  File.open("playbook/base_linux/templates/hosts.j2", "w") do |w|
+  ofn = "playbook/base_linux/templates/hosts.j2"
+  $file_list.push(ofn)
+  File.open(ofn, "w") do |w|
     w.write $insert_msg
     w.write sprintf("%-20s %-16s %-20s\n","127.0.0.1", "localhost", "localhost.localdomain")
     $vm_config_array.each do |val|
@@ -274,6 +280,7 @@ def vars_nodelist()
 
   tfn = "templates/playbook/var-main.yaml.template"
   ofn = "playbook/vars/main.yaml"
+  $file_list.push(ofn)
   File.open(tfn, "r") do |f|
     File.open(ofn, "w") do |w|
       w.write $insert_msg
@@ -306,7 +313,7 @@ end
 ## Ansibleインベントリ・テンプレート #1  hosts_vagrant
 ##
 ##
-def output_ansible_inventory0(ifn,sw)
+def output_ansible_inventory0(ofn,sw)
   counter_master  = 0
   counter_node    = 0
   counter_proxy   = 0
@@ -315,9 +322,9 @@ def output_ansible_inventory0(ifn,sw)
   counter_elb     = 0
 
   tfn = "templates/ansible/hosts_vagrant.template"
-  File.open(tfn, "r") do |f|    
-    File.open(ifn, "w") do |w|
-
+  File.open(tfn, "r") do |f|
+    $file_list.push(ofn)
+    File.open(ofn, "w") do |w|
       w.write $insert_msg
       w.write sprintf("#\n### Template file is %s\n#\n", tfn)
       
@@ -454,9 +461,10 @@ def coredns_config()
   end
 
   tfn = "templates/playbook/coredns-configmap.yaml.template"
-  ifn = "playbook/addon_coredns/templates/coredns-configmap.yaml"
+  ofn = "playbook/addon_coredns/templates/coredns-configmap.yaml"
+  $file_list.push(ofn)  
   File.open(tfn, "r") do |f|
-    File.open(ifn, "w") do |w|
+    File.open(ofn, "w") do |w|
       w.write $insert_msg
       w.write sprintf("### Template file is %s\n",tfn)
       f.each_line { |line|
@@ -476,8 +484,10 @@ end
 ## Set role to node
 ##
 def set_node_role()
-  
-  File.open("playbook/tasks/role_worker.yaml", "w") do |w|
+
+  ofn = "playbook/tasks/role_worker.yaml"
+  $file_list.push(ofn)  
+  File.open(ofn, "w") do |w|
     w.write $insert_msg
     w.write <<EOF
 - name: Set node role
@@ -512,8 +522,9 @@ end
 ## Set role to node
 ##
 def set_role_added_node()
-
-  File.open("playbook/tasks/role_worker_add.yaml", "w") do |w|
+  ofn = "playbook/tasks/role_worker_add.yaml"
+  $file_list.push(ofn)
+  File.open(ofn, "w") do |w|
     w.write $insert_msg
     w.write <<EOF
 - name: Set role to added node
@@ -607,8 +618,11 @@ def kube_apiserver_service()
   host_list = host_list("master",1,2379)
 
   tfn = "templates/playbook/kube-apiserver.service.j2.template"
+  ofn = "playbook/node_master/templates/kube-apiserver.service.j2"
+  $file_list.push(ofn)
+  
   File.open(tfn, "r") do |f|  
-    File.open("playbook/node_master/templates/kube-apiserver.service.j2", "w") do |w|
+    File.open(ofn , "w") do |w|
       w.write $insert_msg
       w.write sprintf("### Template file is %s\n",tfn)
       f.each_line { |line|
@@ -634,9 +648,10 @@ def etcd_service()
 
   host_list = coredns_host_ip_list()
   tfn = "templates/playbook/etcd.service.j2.template"
-  
+  ofn = "playbook/etcd/templates/etcd.service.j2"
+  $file_list.push(ofn)
   File.open(tfn, "r") do |f|  
-    File.open("playbook/etcd/templates/etcd.service.j2", "w") do |w|
+    File.open(ofn, "w") do |w|
       w.write $insert_msg
       w.write sprintf("### Template file is %s\n",tfn)
       f.each_line { |line|
@@ -648,7 +663,6 @@ def etcd_service()
       }
     end
   end
-  
 end
 
 ##
@@ -667,8 +681,10 @@ def etcd_yaml()
              + (host_list("mlb",0,0).length == 0 ? "" : "," + host_list("mlb",0,0)) \
              + (host_list("mlb",1,0).length == 0 ? "" : "," + host_list("mlb",1,0)) \
              + ",10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local"
-    
-  File.open("playbook/cert_setup/vars/main.yaml", "w") do |w|
+
+  ofn = "playbook/cert_setup/vars/main.yaml"
+  $file_list.push(ofn)  
+  File.open(ofn, "w") do |w|
     w.write sprintf("host_list_etcd: %s\n",list_all)
   end
 end
@@ -690,8 +706,9 @@ def k8s_cert()
              + ",10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local"
   
   #printf("\n証明書対象リスト %s\n", list_all)
-
-  File.open("playbook/cert_setup/vars/main.yaml", "a") do |w|
+  ofn = "playbook/cert_setup/vars/main.yaml"
+  $file_list.push(ofn)  
+  File.open(ofn, "a") do |w|
     w.write sprintf("host_list_k8sapi: %s\n",list_all)
   end
 end
@@ -711,8 +728,11 @@ def haproxy_cfg()
   end
 
   tfn = "templates/playbook/haproxy.cfg.j2.template"
+  ofn = "playbook/haproxy/templates/haproxy_internal.cfg.j2"
+  $file_list.push(ofn)
+  
   File.open(tfn, "r") do |f|
-    File.open("playbook/haproxy/templates/haproxy_internal.cfg.j2", "w") do |w|
+    File.open(ofn, "w") do |w|
       w.write $insert_msg
       w.write sprintf("### Template file is %s\n",tfn)
       f.each_line { |line|
@@ -733,7 +753,9 @@ end
 ##
 def haproxy_front_cfg()
 
-  cfg_file = "playbook/haproxy/templates/haproxy_frontend.cfg.j2"
+  ofn = "playbook/haproxy/templates/haproxy_frontend.cfg.j2"
+  tfn = "templates/playbook/haproxy_frontend.cfg.j2.template"  
+
   server_list_node = ""
   server_list_api = ""  
   $vm_config_array.each do |val|
@@ -749,9 +771,10 @@ def haproxy_front_cfg()
     end
   end
   
-  tfn = "templates/playbook/haproxy_frontend.cfg.j2.template"
+  $file_list.push(ofn)  
+  
   File.open(tfn, "r") do |f|
-    File.open(cfg_file, "w") do |w|
+    File.open(ofn, "w") do |w|
       w.write $insert_msg
       w.write sprintf("### Template file is %s\n",tfn)
       f.each_line { |line|
@@ -772,8 +795,10 @@ end
 ##
 def create_storage_node_taint(server_list)
   tfn = "templates/playbook/set_taint_label_for_storage.yaml.template"
+  ofn = "playbook/tasks/role_storage.yaml"
   File.open(tfn, "r") do |f|
-    File.open("playbook/tasks/role_storage.yaml", "w") do |w|
+    $file_list.push(ofn)    
+    File.open(ofn, "w") do |w|
       w.write $insert_msg
       w.write sprintf("### Template file is %s\n",tfn)
       f.each_line { |line|
@@ -790,8 +815,9 @@ end
 ##
 ##
 ##
-def append_ansible_inventory(file)
-  File.open(file, "a") do |w|
+def append_ansible_inventory(ofn)
+  $file_list.push(ofn)  
+  File.open(ofn, "a") do |w|
     w.write sprintf("\n")
     w.write sprintf("proxy_node=%s\n", $exist_proxy_node)
     w.write sprintf("storage_node=%s\n", $exist_storage_node)
@@ -823,6 +849,7 @@ def node_label_task()
   end
 
   File.open(tfn, "r") do |f|
+    $file_list.push(ofn)    
     File.open(ofn, "w") do |w|
       w.write $insert_msg
       w.write sprintf("### Template file is %s\n",tfn)
@@ -900,8 +927,10 @@ if __FILE__ == $0
   step_start("Vagrantfileの書き出し")
   linenum = 1
   tfn = "templates/vagrant/Vagrantfile.template"
+  ofn = "Vagrantfile"
+  $file_list.push(ofn)  
   File.open(tfn, "r") do |f|
-    File.open("Vagrantfile", "w") do |w|
+    File.open(ofn, "w") do |w|
       w.write $insert_msg
       w.write sprintf("#\n")      
       w.write sprintf("### Template file is %s\n",tfn)
@@ -1016,4 +1045,6 @@ if __FILE__ == $0
   end
 end 
 
- 	
+printf("\n *** 書き出したファイルのリスト *** \n")
+puts $file_list 
+printf("*** End of list ***\n")
