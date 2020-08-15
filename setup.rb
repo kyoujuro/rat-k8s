@@ -2,6 +2,12 @@
 # coding: utf-8
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+#
+# 起動前にモジュールを追加しておく
+# $ sudo gem install mb_string
+#
+
+
 
 require 'mb_string'
 require 'yaml'
