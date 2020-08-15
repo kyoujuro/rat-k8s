@@ -18,7 +18,7 @@ pipeline  {
         stage('cluster config') {
             steps {
                   sh 'ls -al'
-                  sh './setup.rb -f cluster-config/minimal.yaml'
+                  sh './setup.rb -f cluster-config/standard-calico.yaml'
 	    }
         }
         stage('クラスタ起動') {
@@ -54,7 +54,7 @@ pipeline  {
         }
         stage('k8sクラスタ TEST-2') {
             steps {
-                sh 'sleep 300'	    	    
+                sh 'sleep 100'	    	    
 		sh 'kubectl get pod --all-namespaces -o wide --kubeconfig kubeconfig'
 		sh 'kubectl describe pod --all-namespaces --kubeconfig kubeconfig'		
             }
