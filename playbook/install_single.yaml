@@ -54,7 +54,7 @@
 # CoreDNSセットアップ
 #
 - name: K8s Monitoring setup
-  hosts: msaters
+  hosts: masters
   gather_facts: true
   become: true
   roles:
