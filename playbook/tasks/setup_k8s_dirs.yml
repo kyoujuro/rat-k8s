@@ -1,6 +1,8 @@
 #
 # Kubernetesのデーモン用
 #
+- debug: msg="{{ ansible_facts }}"
+
 - name: Create kubernetes directorys
   file:
     path: /var/lib/kubernetes

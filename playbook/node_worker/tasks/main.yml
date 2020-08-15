@@ -3,6 +3,7 @@
 #  ワーカーノードのセットアップ
 #
 #
+#- debug: msg="{{ ansible_facts.hostname }}"
 
 ## ワーカーノードのディレクトリ作成
 - name: setup directory for worker node

@@ -29,7 +29,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.11.11"
+    private_ip: "172.16.11.21"
     public_ip: "192.168.1.101"
     #pod_network: "10.244.0.0/24"    
     role: "master"
