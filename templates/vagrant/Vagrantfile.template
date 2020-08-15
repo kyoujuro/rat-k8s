@@ -48,7 +48,7 @@ Vagrant.configure("2") do |config|
                             group: "vagrant", mount_options: ["dmode=700", "fmode=700"]
 
       v.vm.provision "ansible_local" do |ansible|
-        ansible.playbook       = "./playbook/" + spec[:playbook]
+        ansible.playbook       = "playbook/" + spec[:playbook]
         ansible.install_mode   = "pip3"
         #ansible.version        = "2.9.11"
         ansible.verbose        = false
@@ -60,7 +60,7 @@ Vagrant.configure("2") do |config|
       v.vm.provision "shell", inline: <<-SHELL
         if [ "bootnode" == `/bin/hostname` ]
         then
-          su vagrant -c "cd /vagrant && ansible-playbook -i hosts_k8s playbook/install_k8s.yml"
+          su vagrant -c "cd /vagrant && ansible-playbook -i hosts_k8s playbook/install_k8s.yaml"
         fi
       SHELL
     end
