@@ -61,6 +61,8 @@ Vagrant.configure("2") do |config|
         if [ "bootnode" == `/bin/hostname` ]; then
           su vagrant -c "cd /vagrant && ansible -i hosts_k8s all -m ping"	
           su vagrant -c "cd /vagrant && ansible-playbook -i hosts_k8s playbook/install_k8s.yaml"
+        elif [ "master" == `/bin/hostname` ]; then
+          su vagrant -c "cd /vagrant && ansible-playbook -i hosts_k8s playbook/install_single.yaml"	
         fi
       SHELL
     end

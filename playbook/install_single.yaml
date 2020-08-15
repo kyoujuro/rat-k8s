@@ -61,4 +61,5 @@
     - addon_coredns
     - addon_metrics-server
     - addon_dashboard
-
+  tasks:
+    - debug: msg="export KUBECONFIG=./kubeconfig"    

@@ -18,6 +18,7 @@ $domain = nil
 $exist_proxy_node = nil
 $exist_storage_node = nil
 $mode = nil
+$single_node = nil
 
 $cnt = {
   "master"  => 0,
@@ -326,6 +327,8 @@ def output_ansible_inventory0(ofn,sw)
   counter_storage = 0
   counter_mlb     = 0
   counter_elb     = 0
+  counter_boot    = 0
+  counter_sum     = 0   
 
   tfn = "templates/ansible/hosts_vagrant.template"
   File.open(tfn, "r") do |f|
@@ -343,16 +346,25 @@ def output_ansible_inventory0(ofn,sw)
 
           if x['name'] =~ /^node*/
             counter_node += 1
+            counter_sum += 1
           elsif x['name'] =~ /^master*/
             counter_master += 1
+            counter_sum += 1            
           elsif x['name'] =~ /^proxy*/
             counter_proxy += 1
+            counter_sum += 1            
           elsif x['name'] =~ /^storage*/
             counter_storage += 1
+            counter_sum += 1            
           elsif x['name'] =~ /^mlb*/
             counter_mlb += 1
+            counter_sum += 1            
           elsif x['name'] =~ /^elb*/
             counter_elb += 1
+            counter_sum += 1            
+          elsif x['name'] =~ /^bootnode/
+            counter_boot += 1
+            counter_sum += 1
           end
           if sw == 0
             w.write sprintf("%-20s  %s\n", x['name'], "ansible_connection=local")
@@ -369,8 +381,18 @@ def output_ansible_inventory0(ofn,sw)
       $cnt['storage'] = counter_storage
       $cnt['mlb']     = counter_mlb
       $cnt['elb']     = counter_elb
+      $cnt['boot']    = counter_boot
+
+      # ノード合計値
+      $single_node = ( counter_sum == 1)
+      if $single_node
+        $cnt['master'] = 0
+        counter_master = 0        
+      end
       
       w.write "\n\n"
+
+      # 文字列マッチでテンプレートを置換
       f.each_line { |line|
         if line =~ /^node\[1:/
           w.write sprintf("node[1:%d]\n",counter_node)
@@ -397,6 +419,18 @@ def output_ansible_inventory0(ofn,sw)
             w.write sprintf("custom_kubernetes=true\n")
           else
             w.write sprintf("custom_kubernetes=false\n")
+          end
+
+        elsif line =~ /__WORK_DIR__/
+          if counter_boot == 0
+            w.write line.gsub(/__WORK_DIR__/, '{{ work_dir }}')
+          else
+            w.write line.gsub(/__WORK_DIR__/, '/mnt')
+          end
+
+        elsif line =~ /__SINGLE_NODE__/
+          if counter_sum == 1
+            w.write line.gsub(/__SINGLE_NODE__/, 'master')
           end
           
         elsif line =~ /__POD_NETWORK__/
@@ -829,6 +863,8 @@ def append_ansible_inventory(ofn)
     w.write sprintf("storage_node=%s\n", $exist_storage_node)
     w.write sprintf("domain=%s\n", $domain)
     w.write sprintf("internal_subnet=%s\n", $conf['private_ip_subnet'])
+    w.write sprintf("domain=%s\n", $domain)
+    w.write sprintf("single_node=%s\n", $single_node)
     w.write sprintf("\n")    
   end
 end
