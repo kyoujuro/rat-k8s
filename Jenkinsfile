@@ -18,7 +18,8 @@ pipeline  {
         stage('cluster config') {
             steps {
                   sh 'ls -al'
-                  sh './setup.rb -f cluster-config/standard-calico.yaml'
+                  //sh './setup.rb -f cluster-config/standard-calico.yaml'
+		  sh './setup.rb -f cluster-config/standard-flannel.yaml'
 	    }
         }
         stage('クラスタ起動') {
