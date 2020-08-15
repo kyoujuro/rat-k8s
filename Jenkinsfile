@@ -29,10 +29,9 @@ pipeline  {
                         sh 'printenv'
 		        sh 'pwd'	       
 		        sh 'vagrant up'
-                    }
-	            catch(error) {
+                    } catch(Exception e) {		    
    	                sh './cleanup.sh'
-                        throw
+			//throw
 	            }
                     finally {
           	         echo '成功時も失敗時も実行されます'
