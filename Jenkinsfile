@@ -21,6 +21,7 @@ pipeline  {
         stage('クラスタ起動') {
             steps {
   	       sh 'ls -al'
+  	       sh 'pwd'	       
                sh 'vagrant up'
                sh './cleanup.sh'
 	    }
