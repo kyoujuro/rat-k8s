@@ -4,11 +4,14 @@
     dest: /home/vagrant/coredns.yaml
     owner: vagrant
     group: vagrant
+    mode: 0644
+
 - template:
     src: coredns-configmap.yaml
     dest: /home/vagrant/coredns-configmap.yaml
     owner: vagrant
     group: vagrant
+    mode: 0644
 
 - command: kubectl apply -f coredns-configmap.yaml
   become_user: vagrant
