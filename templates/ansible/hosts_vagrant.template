@@ -52,8 +52,6 @@ shared_fs=/vagrant
 cluster_admin=vagrant
 
 # CNI
-#pod_network=flannel
-#pod_network=bridge
 pod_network=__POD_NETWORK__
 
 # CNI Flannel version
@@ -72,22 +70,14 @@ ka_primary_frontend_ip=__ELB_IP_PRIMALY__/32
 ka_backup_frontend_ip=__ELB_IP_BACKUP__/32
 
 
-
 ############ from main.yaml
 
-
-#ca_home=/mnt/ca
-#etcd_ca_home=/mnt/ca-etcd
-#proxy_ca_home=/mnt/ca-front-proxy
-#kubeconfig=/mnt/kubeconfig
 mode=new
-
 
 ### bootnode
 work_dir         =  /srv/k8s  
 #work_dir        =  /vagrant/work_tmp
 download_dir     =  {{ work_dir }}/download
-#internal_subnet  = "172.16.2.0/24"
 ca_home2         = {{ work_dir }}/ca
 ca_etcd_home     = {{ work_dir }}/ca-etcd
 ca_front_proxy   = {{ work_dir }}/ca-front-proxy
@@ -109,9 +99,11 @@ kubernetes_dashborad_ver  = v2.0.0-beta6
 kubernetes_metrics_server = v0.3.6
 keepalived_version        = 2.0.15
 calico_version            = v3.14.1
-#
+
 # 
 #
 
 KUBERNETES_PUBLIC_ADDRESS=__API_SERVER_IPADDR__
 
+#
+#
