@@ -670,7 +670,11 @@ def kube_apiserver_service()
           #puts host_list
           w.write line.gsub(/__ETCD_LIST__/, host_list)
         elsif line =~ /__APISERVER_COUNT__/
-          w.write line.gsub(/__APISERVER_COUNT__/, sprintf("%d", $cnt['master']))
+          api_server_count = 1
+          if $cnt['master'] > 0
+            api_server_count = $cnt['master']
+          end
+          w.write line.gsub(/__APISERVER_COUNT__/, sprintf("%d", api_server_count))
         else
           w.write line
         end
