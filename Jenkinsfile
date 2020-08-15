@@ -19,7 +19,7 @@ pipeline  {
         }
         stage('cluster config') {
             steps {
-                dir (work_dir) 
+                dir (work_dir) {
                     sh 'ls -al'
                     sh './setup.rb -f cluster-config/minimal.yaml'
                 }
@@ -45,6 +45,6 @@ pipeline  {
                 sh './cleanup.sh'
             }
         }
-        
     }
 }
+
