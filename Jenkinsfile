@@ -4,7 +4,7 @@ pipeline  {
             label('hibiki')
         }
     }
-    stages {
+    node {
         stage('Clone sources') {
             steps {
                 git url: 'https://github.com/takara9/rat-k8s',
