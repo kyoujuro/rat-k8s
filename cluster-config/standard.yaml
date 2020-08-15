@@ -38,7 +38,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.7.11"
     storage:
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     comment: "Master node #1"
     
   - name: "master2"
@@ -47,7 +47,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.7.12"
     storage:
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     comment: "Master node #2"
     
   - name: "master3"
@@ -56,7 +56,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.7.13"
     storage:
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     comment: "Master node #3"
   
   - name: "mlb1"
@@ -65,7 +65,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.7.21"
     storage:
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     comment: "Internal Master Loadbalancer #1"
 
   - name: "mlb2"
@@ -74,7 +74,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.7.22"
     storage:
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     comment: "Internal Master Loadbalancer #2"
 
   - name: "proxy1"
@@ -86,7 +86,7 @@ vm_spec:
     pod_network: "10.244.241.0/24"    
     storage:
     role: "proxy"      
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     comment: "Frontend Master Loadbalancer #1"
 
   - name: "proxy2"
@@ -98,7 +98,7 @@ vm_spec:
     pod_network: "10.244.242.0/24"    
     storage:
     role: "proxy"      
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     comment: "Frontend Backup Loadbalancer #2"
 
 
@@ -108,7 +108,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.7.31"
     storage:
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     pod_network: "10.244.1.0/24"
     role: "worker"
     comment:  "Worker node #1"
@@ -119,7 +119,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.7.32"
     storage:
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     pod_network: "10.244.2.0/24"
     role: "worker"    
     comment: "Worker node #2"
@@ -130,7 +130,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.7.33"
     storage:
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     pod_network: "10.244.3.0/24"
     role: "worker"
     comment: "Worker node #3"
@@ -141,7 +141,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.7.34"
     storage:
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     pod_network: "10.244.4.0/24"
     role: "worker"
     comment: "Worker node #4"
@@ -151,6 +151,6 @@ vm_spec:
     memory: 1024
     box: "ubuntu/bionic64"
     private_ip: "172.16.7.10"
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     comment: "Bootstap node"
 

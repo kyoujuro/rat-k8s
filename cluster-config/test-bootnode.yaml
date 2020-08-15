@@ -37,6 +37,6 @@ vm_spec:
     memory: 1024
     box: "ubuntu/bionic64"    
     private_ip: "172.16.2.10"
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     comment: "Bootstap node" 
 

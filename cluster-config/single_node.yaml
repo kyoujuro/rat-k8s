@@ -13,7 +13,7 @@ kubernetes_version: 1.18.2
 kubernetes_custom: false
 
 ### K8s cluster/pod network CNI plugin
-pod_network: bridge
+pod_network: flannel
 
 ### Cluster Network
 private_ip_subnet: 172.16.2.0/24
@@ -25,16 +25,16 @@ kube_apiserver_vip: 172.16.2.11
 
 ### Virtual Machine Spec
 vm_spec:
-  - name: "master1"
+  - name: "node10vk"
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip:  "172.16.2.11"
+    private_ip:  "172.16.2.211"
     public_ip:   "192.168.1.211"
     pod_network: "10.244.1.0/24"    
     storage:
-    playbook: "setup_linux.yml"
-    comment: "Master node #1"
+    playbook: "setup_linux.yaml"
+    comment: "Edge node #1"
     
 
 

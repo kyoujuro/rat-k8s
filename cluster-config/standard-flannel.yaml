@@ -31,7 +31,7 @@ vm_spec:
     private_ip: "172.16.6.11"
     public_ip: "192.168.1.96"    
     role: "master"
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     comment: "Master node #1"
 
   - name: "node1"
@@ -39,7 +39,7 @@ vm_spec:
     memory: 1024
     box: "ubuntu/bionic64"
     private_ip: "172.16.6.31"
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     pod_network: "10.244.1.0/24"
     role: "worker"
     comment:  "Worker node #1"
@@ -49,7 +49,7 @@ vm_spec:
     memory: 1024
     box: "ubuntu/bionic64"
     private_ip: "172.16.6.32"
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     pod_network: "10.244.2.0/24"
     role: "worker"
     comment:  "Worker node #2"
@@ -59,6 +59,6 @@ vm_spec:
     memory: 1024
     box: "ubuntu/bionic64"    
     private_ip: "172.16.6.10"
-    playbook: "setup_linux.yml"
+    playbook: "setup_linux.yaml"
     comment: "Bootstap node" 
 
