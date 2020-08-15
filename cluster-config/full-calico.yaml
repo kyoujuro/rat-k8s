@@ -4,8 +4,9 @@
 bridge_if: "eno1"
 
 ### Kubernetes version
-kubernetes_version: 1.18.6
+kubernetes_version: 1.18.2
 kubernetes_custom: false
+kubernetes_dashborad_ver: v2.0.0-beta6
 
 ### K8s cluster/pod network CNI plugin
 #pod_network: bridge
@@ -13,22 +14,23 @@ kubernetes_custom: false
 pod_network: calico
 
 ### flannel_version if you choice flannel
-flannel_version: v0.12.0
+#flannel_version: v0.12.0
 
 ### Cluster Network
-private_ip_subnet: 172.16.10.0/24
+private_ip_subnet: 172.16.3.0/24
 public_ip_subnet:  192.168.1.0/24
 
 ### Internal Load Balancer
-kube_apiserver_vip: 172.16.10.23
+kube_apiserver_vip: 172.16.3.23
 ka_primary_internal_host: mlb1
 ka_backup_internal_host: mlb2
 
 ### Frontend Load Balancer
-front_proxy_vip: 192.168.1.210
+front_proxy_vip: 192.168.1.93
 ka_primary_frontend_host: elb1
 ka_backup_frontend_host: elb2
 
+### DOMAIN
 domain: example.com
 
 ### Master, Worker, Internal/Frontend Loadbalancer and bootnode
@@ -37,7 +39,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.11"
+    private_ip: "172.16.3.11"
     storage:
     playbook: "setup_linux.yaml"
     comment: "Master node #1"
@@ -46,7 +48,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.12"
+    private_ip: "172.16.3.12"
     storage:
     playbook: "setup_linux.yaml"
     comment: "Master node #2"
@@ -55,7 +57,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.13"
+    private_ip: "172.16.3.13"
     storage:
     playbook: "setup_linux.yaml"
     comment: "Master node #3"
@@ -64,7 +66,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.21"
+    private_ip: "172.16.3.21"
     storage:
     playbook: "setup_linux.yaml"
     comment: "Internal Master Loadbalancer #1"
@@ -73,7 +75,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.22"
+    private_ip: "172.16.3.22"
     storage:
     playbook: "setup_linux.yaml"
     comment: "Internal Master Loadbalancer #2"
@@ -82,8 +84,8 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.26"
-    public_ip: "192.168.1.208"
+    private_ip: "172.16.3.31"
+    public_ip: "192.168.1.131"
     pod_network: "10.244.241.0/24"    
     storage:
     role: "proxy"      
@@ -94,19 +96,20 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.27"
-    public_ip: "192.168.1.209"
+    private_ip: "172.16.3.32"
+    public_ip: "192.168.1.132"
     pod_network: "10.244.242.0/24"    
     storage:
     role: "proxy"      
     playbook: "setup_linux.yaml"
     comment: "Frontend Backup Loadbalancer #2"
 
+
   - name: "node1"
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.31"
+    private_ip: "172.16.3.41"
     storage:
     playbook: "setup_linux.yaml"
     pod_network: "10.244.1.0/24"
@@ -117,7 +120,7 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.32"
+    private_ip: "172.16.3.42"
     storage:
     playbook: "setup_linux.yaml"
     pod_network: "10.244.2.0/24"
@@ -128,7 +131,7 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.33"
+    private_ip: "172.16.3.43"
     storage:
     playbook: "setup_linux.yaml"
     pod_network: "10.244.3.0/24"
@@ -139,7 +142,7 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.34"
+    private_ip: "172.16.3.44"
     storage:
     playbook: "setup_linux.yaml"
     pod_network: "10.244.4.0/24"
@@ -150,11 +153,11 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.61"
+    private_ip: "172.16.3.51"
     storage:
     - 80
     playbook: "setup_linux.yaml"
-    pod_network: "10.244.231.0/24"
+    pod_network: "10.244.11.0/24"
     role: "storage"
     node_label:
     - app: rook-ceph-mds
@@ -164,11 +167,11 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.62"
+    private_ip: "172.16.3.52"
     storage:
     - 80
     playbook: "setup_linux.yaml"
-    pod_network: "10.244.232.0/24"
+    pod_network: "10.244.12.0/24"
     role: "storage"
     node_label:
     - app: rook-ceph-mds
@@ -178,11 +181,11 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.63"
+    private_ip: "172.16.3.53"
     storage:
     - 80
     playbook: "setup_linux.yaml"
-    pod_network: "10.244.233.0/24"
+    pod_network: "10.244.13.0/24"
     role: "storage" 
     node_label:
     - app: rook-ceph-mds
@@ -191,7 +194,7 @@ vm_spec:
   - name: "bootnode"
     cpu: 1
     memory: 1024
-    private_ip: "172.16.10.10"
+    private_ip: "172.16.3.1"
     box: "ubuntu/bionic64"
     playbook: "setup_linux.yaml"    
     comment: "Bootstap node" 
