@@ -19,15 +19,9 @@ pipeline  {
             }
         }
         stage('クラスタ起動') {
-            try {
-                sh 'ls -al'
-                sh 'vagrant up'
-            }
-            catch (exc) {
-                echo 'Something failed'
-                sh './cleanup.sh'
-                throw
-            }
+	    sh 'ls -al'
+            sh 'vagrant up'
+            sh './cleanup.sh'
         }
         stage('クラスタ状態') {
             steps {
