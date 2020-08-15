@@ -31,7 +31,7 @@ pipeline  {
 		        sh 'vagrant up'
                     } catch(Exception e) {		    
    	                sh './cleanup.sh'
-			//throw
+			error '問題発生したので異常終了'
 	            }
                     finally {
           	         echo '成功時も失敗時も実行されます'
@@ -39,9 +39,17 @@ pipeline  {
 	        }
 	    }
         }
-        stage('クラスタ状態') {
+        stage('クラスタ状態チェック') {
             steps {
                 sh 'vagrant status'
+            }
+        }
+        stage('k8sクラスタ TEST-1') {
+            steps {
+                sh 'kubectl get cluster-info -o wide --kubeconfig kubeconfig'	    
+                sh 'kubectl get node -o wide --kubeconfig kubeconfig'
+		sh 'kubectl get namespace -o wide --kubeconfig kubeconfig'
+		sh 'kubectl get pod --all-namespaces --kubeconfig kubeconfig'		
             }
         }
         stage('クリーンナップ') {
