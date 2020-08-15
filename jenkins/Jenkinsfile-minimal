@@ -18,7 +18,7 @@ pipeline  {
         stage('cluster config') {
             steps {
                   sh 'ls -al'
-		  sh './setup.rb -f cluster-config/standard-minimal.yaml'
+		  sh './setup.rb -f cluster-config/standard-mini.yaml'
 	    }
         }
         stage('クラスタ起動') {
