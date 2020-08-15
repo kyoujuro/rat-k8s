@@ -18,7 +18,7 @@ flannel_version: v0.12.0
 private_ip_subnet: 172.16.7.0/24
 public_ip_subnet:  192.168.1.0/24
 
-kube_apiserver_vip: 172.16.7.11
+kube_apiserver_vip: 172.16.7.21
 domain: example.com
 
 
@@ -28,7 +28,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.11"
+    private_ip: "172.16.7.21"
     public_ip: "192.168.1.97"    
     role: "master"
     playbook: "setup_linux.yaml"
@@ -40,7 +40,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.7.31"
     playbook: "setup_linux.yaml"
-    pod_network: "10.244.1.0/24"
+    #pod_network: "10.244.1.0/24"
     role: "worker"
     comment:  "Worker node #1"
 
@@ -50,7 +50,7 @@ vm_spec:
     box: "ubuntu/bionic64"
     private_ip: "172.16.7.32"
     playbook: "setup_linux.yaml"
-    pod_network: "10.244.2.0/24"
+    #pod_network: "10.244.2.0/24"
     role: "worker"
     comment:  "Worker node #2"
     
