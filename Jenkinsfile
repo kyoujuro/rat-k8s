@@ -27,8 +27,9 @@ pipeline  {
         }
         stage('クラスタ起動') {
             steps {
-               dir (work_dir) {	    	    
+               dir (work_dir) {
                    sh 'ls -al'
+		   sh 'printenv'
                    sh 'pwd'	       
                    sh 'vagrant up'
                    sh './cleanup.sh'
