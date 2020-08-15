@@ -56,7 +56,7 @@ pipeline  {
             steps {
                 sh 'sleep 300'	    	    
 		sh 'kubectl get pod --all-namespaces -o wide --kubeconfig kubeconfig'
-		sh 'kubectl describe pod --all-namespaces -o wide --kubeconfig kubeconfig'		
+		sh 'kubectl describe pod --all-namespaces --kubeconfig kubeconfig'		
             }
         }
 	
