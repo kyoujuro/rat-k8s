@@ -23,12 +23,22 @@ pipeline  {
         }
         stage('クラスタ起動') {
             steps {
-                   sh 'ls -al'
-		   sh 'printenv'
-                   sh 'pwd'	       
-                   sh 'vagrant up'
-                   sh './cleanup.sh'
-           }
+		script {
+		    try {
+			sh 'ls -al'
+                        sh 'printenv'
+		        sh 'pwd'	       
+		        sh 'vagrant up'
+                    }
+	            catch(error) {
+   	                sh './cleanup.sh'
+                        throw
+	            }
+                    finally {
+          	         echo '成功時も失敗時も実行されます'
+	            }
+	        }
+	    }
         }
         stage('クラスタ状態') {
             steps {
