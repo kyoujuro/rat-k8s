@@ -52,6 +52,14 @@ pipeline  {
 		sh 'kubectl get pod --all-namespaces -o wide --kubeconfig kubeconfig'		
             }
         }
+        stage('k8sクラスタ TEST-2') {
+            steps {
+                sh 'sleep 300'	    	    
+		sh 'kubectl get pod --all-namespaces -o wide --kubeconfig kubeconfig'
+		sh 'kubectl describe pod --all-namespaces -o wide --kubeconfig kubeconfig'		
+            }
+        }
+	
         stage('クリーンナップ') {
             steps {
                 sh './cleanup.sh'
