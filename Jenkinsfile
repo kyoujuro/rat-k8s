@@ -19,9 +19,11 @@ pipeline  {
             }
         }
         stage('クラスタ起動') {
-	    sh 'ls -al'
-            sh 'vagrant up'
-            sh './cleanup.sh'
+            steps {
+  	       sh 'ls -al'
+               sh 'vagrant up'
+               sh './cleanup.sh'
+	    }
         }
         stage('クラスタ状態') {
             steps {
