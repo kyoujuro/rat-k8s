@@ -341,9 +341,10 @@ def output_ansible_inventory0(ofn,sw)
       $vm_config_array.each do |val|
         x = eval(val)
         if x['name'] == "bootnode"
+          counter_boot += 1
+          counter_sum += 1          
           w.write sprintf("%-20s %s\n", x['name'], "ansible_connection=local")
         else
-
           if x['name'] =~ /^node*/
             counter_node += 1
             counter_sum += 1
@@ -362,9 +363,6 @@ def output_ansible_inventory0(ofn,sw)
           elsif x['name'] =~ /^elb*/
             counter_elb += 1
             counter_sum += 1            
-          elsif x['name'] =~ /^bootnode/
-            counter_boot += 1
-            counter_sum += 1
           end
           if sw == 0
             w.write sprintf("%-20s  %s\n", x['name'], "ansible_connection=local")
