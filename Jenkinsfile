@@ -46,10 +46,10 @@ pipeline  {
         }
         stage('k8sクラスタ TEST-1') {
             steps {
-                sh 'kubectl get cluster-info -o wide --kubeconfig kubeconfig'	    
+                sh 'kubectl cluster-info --kubeconfig kubeconfig'	    
                 sh 'kubectl get node -o wide --kubeconfig kubeconfig'
 		sh 'kubectl get namespace -o wide --kubeconfig kubeconfig'
-		sh 'kubectl get pod --all-namespaces --kubeconfig kubeconfig'		
+		sh 'kubectl get pod --all-namespaces -o wide --kubeconfig kubeconfig'		
             }
         }
         stage('クリーンナップ') {
