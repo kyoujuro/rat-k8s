@@ -1,7 +1,10 @@
 #
-# Kubeletのクライアント証明書
-#    The Kubelet Client Certificates
-#    ノードの数だけ作成する
+# Kubeletのクライアント証明書を作成
+# The Kubelet Client Certificates
+#
+#  この後半のkubeconfigを作成するために
+#  クライアントノードのホスト名とIPアドレスから証明書を作成する。
+#  そのため、クラスタのワーカーノードの数だけ作成しなければならない。
 #
 - name: Kubelet Client Certificates
   template:
@@ -32,7 +35,14 @@
 
 
 #
+# Kubeletの構成ファイル作成
 # kubelet Kubernetes Configuration File
+#
+#  ノードに配置されるkubeletが、kube-apiserverと接続できるために
+#  それぞれのノードに専用に作成され配布されなければならない。
+#
+#  この構成ファイルには、KubernetesクラスタのプライベートCA証明書
+#  同CAによって署名されたクライアント証明書が付与される
 #
 - name: Ensure kubeconfig Home directory
   file:
