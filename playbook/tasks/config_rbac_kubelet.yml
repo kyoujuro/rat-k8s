@@ -15,13 +15,13 @@
 
 - name: apply rbac manifests
   shell: |
-    kubectl apply --kubeconfig {{ ca_kubeconfig }}/admin.kubeconfig -f rbac-kubelet.yaml
+    kubectl apply --kubeconfig {{ r_ca_kubeconfig }}/admin.kubeconfig -f rbac-kubelet.yaml
   args:
     chdir: /home/vagrant
   become: true
 
 - shell: |
-    kubectl apply --kubeconfig {{ ca_kubeconfig }}/admin.kubeconfig -f rbac-kubelet-rolebinding.yaml
+    kubectl apply --kubeconfig {{ r_ca_kubeconfig }}/admin.kubeconfig -f rbac-kubelet-rolebinding.yaml
   args:
     chdir: /home/vagrant
   become: true
