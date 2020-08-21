@@ -16,11 +16,11 @@ kubernetes_custom: false
 pod_network: bridge
 
 ### Cluster Network
-private_ip_subnet: 172.16.1.0/24
+private_ip_subnet: 172.16.11.0/24
 public_ip_subnet:  192.168.1.0/24
 
 ## マスターか内部LBのIPをセットする
-kube_apiserver_vip: 172.16.1.211
+kube_apiserver_vip: 172.16.11.3
 
 
 ### Virtual Machine Spec
@@ -29,7 +29,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip:  "172.16.1.211"
+    private_ip:  "172.16.11.3"
     #public_ip:   "192.168.1.201"
     pod_network: "10.244.1.0/24"    
     storage:
