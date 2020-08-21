@@ -54,7 +54,7 @@ pipeline  {
           steps {
             script {
               try {
-                sh 'ping -c 3 172.16.1.211'
+                sh 'ping -c 3 172.16.11.3'
                 sh 'sleep 30' 		
                 sh 'kubectl cluster-info --kubeconfig kubeconfig'
                 sh 'kubectl get node -o wide --kubeconfig kubeconfig'
