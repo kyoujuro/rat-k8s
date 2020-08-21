@@ -54,6 +54,8 @@ pipeline  {
           steps {
             script {
               try {
+                sh 'ping -c 3 172.16.1.211'
+                sh 'sleep 30' 		
                 sh 'kubectl cluster-info --kubeconfig kubeconfig'
                 sh 'kubectl get node -o wide --kubeconfig kubeconfig'
                 sh 'kubectl get namespace -o wide --kubeconfig kubeconfig'
@@ -69,7 +71,7 @@ pipeline  {
           steps {
             script {
               try {
-                sh 'sleep 100'	    	    
+                sh 'sleep 60' 
                 sh 'kubectl get pod --all-namespaces -o wide --kubeconfig kubeconfig'
                 sh 'kubectl describe pod --all-namespaces --kubeconfig kubeconfig'		
               } catch(Exception e) {		    
