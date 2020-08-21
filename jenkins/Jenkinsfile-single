@@ -22,44 +22,63 @@ pipeline  {
 	    }
         }
         stage('クラスタ起動') {
-            steps {
-		script {
-		    try {
-			sh 'ls -al'
-                        sh 'printenv'
-		        sh 'pwd'	       
-		        sh 'vagrant up'
-                    } catch(Exception e) {		    
-   	                sh './cleanup.sh'
-			error '問題発生したので異常終了'
-	            }
-                    finally {
-          	         echo '成功時も失敗時も実行されます'
-	            }
-	        }
-	    }
+          steps {
+            script {
+              try {
+                sh 'ls -al'
+                sh 'printenv'
+                sh 'pwd'	       
+                sh 'vagrant up'
+              } catch(Exception e) {		    
+                sh './cleanup.sh'
+                error '問題発生したので異常終了'
+              } finally {
+                echo 'finish build step a k8s cluster'
+              }
+            }
+          }
         }
         stage('クラスタ状態チェック') {
-            steps {
+          steps {
+            script {
+              try {
                 sh 'vagrant status'
+              } catch(Exception e) {		    
+                sh './cleanup.sh'
+                error '問題発生したので異常終了'
+              }
             }
+          }
         }
         stage('k8sクラスタ TEST-1') {
-            steps {
-                sh 'kubectl cluster-info --kubeconfig kubeconfig'	    
+          steps {
+            script {
+              try {
+                sh 'kubectl cluster-info --kubeconfig kubeconfig'
                 sh 'kubectl get node -o wide --kubeconfig kubeconfig'
-		sh 'kubectl get namespace -o wide --kubeconfig kubeconfig'
-		sh 'kubectl get pod --all-namespaces -o wide --kubeconfig kubeconfig'		
+                sh 'kubectl get namespace -o wide --kubeconfig kubeconfig'
+                sh 'kubectl get pod --all-namespaces -o wide --kubeconfig kubeconfig'
+              } catch(Exception e) {		    
+                sh './cleanup.sh'
+                error '問題発生したので異常終了'
+              }
             }
+          }
         }
         stage('k8sクラスタ TEST-2') {
-            steps {
+          steps {
+            script {
+              try {
                 sh 'sleep 100'	    	    
-		sh 'kubectl get pod --all-namespaces -o wide --kubeconfig kubeconfig'
-		sh 'kubectl describe pod --all-namespaces --kubeconfig kubeconfig'		
+                sh 'kubectl get pod --all-namespaces -o wide --kubeconfig kubeconfig'
+                sh 'kubectl describe pod --all-namespaces --kubeconfig kubeconfig'		
+              } catch(Exception e) {		    
+                sh './cleanup.sh'
+                error '問題発生したので異常終了'
+              }
             }
+          }
         }
-	
         stage('クリーンナップ') {
             steps {
                 sh './cleanup.sh'
@@ -67,4 +86,6 @@ pipeline  {
         }
     }
 }
+
+
 

@@ -1,0 +1,85 @@
+#
+# Kubeletのクライアント証明書を作成
+# The Kubelet Client Certificates
+#
+#  この後半のkubeconfigを作成するために
+#  クライアントノードのホスト名とIPアドレスから証明書を作成する。
+#  そのため、クラスタのワーカーノードの数だけ作成しなければならない。
+#
+- name: Kubelet Client Certificates
+  template:
+    src: node-csr.json.j2
+    dest: "{{ ca_home2 }}/{{ item.name }}-csr.json"
+    owner: vagrant
+    group: vagrant
+    mode: '0644'
+  loop: "{{ nodes }}"
+
+- shell: |
+    if [ ! -f "{{ item.name }}.pem" ]; then
+      cfssl gencert \
+        -ca=ca.pem \
+        -ca-key=ca-key.pem \
+        -config=ca-config.json \
+        -hostname="{{ item.name }},{{ item.node_ip }}" \
+        -profile=kubernetes \
+        "{{ item.name }}-csr.json" | cfssljson -bare "{{ item.name }}"
+    fi
+  args:
+    chdir: "{{ ca_home2 }}"
+    executable: /bin/bash    
+  loop: "{{ nodes }}"
+
+- file:
+    path: "{{ ca_home2 }}/{{ item.name }}-key.pem"
+    mode: '0644'
+  loop: "{{ nodes }}"
+
+
+#
+# Kubeletの構成ファイル作成
+# kubelet Kubernetes Configuration File
+#
+#  ノードに配置されるkubeletが、kube-apiserverと接続できるために
+#  それぞれのノードに専用に作成され配布されなければならない。
+#
+#  この構成ファイルには、KubernetesクラスタのプライベートCA証明書
+#  同CAによって署名されたクライアント証明書が付与される
+#
+- name: Ensure kubeconfig Home directory
+  file:
+    path: "{{ ca_kubeconfig }}"
+    state: directory
+    owner: vagrant
+    group: vagrant
+
+- shell: |
+    if [ ! -f "{{ item.name }}.kubeconfig" ]; then    
+      kubectl config set-cluster kubernetes \
+        --certificate-authority=ca.pem \
+        --embed-certs=true \
+        --server=https://{{ KUBERNETES_PUBLIC_ADDRESS }}:6443 \
+        --kubeconfig={{ ca_kubeconfig }}/{{ item.name }}.kubeconfig
+
+      kubectl config set-credentials system:node:{{ item.name }} \
+        --client-certificate={{ item.name }}.pem \
+        --client-key={{ item.name }}-key.pem \
+        --embed-certs=true \
+        --kubeconfig={{ ca_kubeconfig }}/{{ item.name }}.kubeconfig
+
+      kubectl config set-context default \
+        --cluster=kubernetes \
+        --user=system:node:{{ item.name }} \
+        --kubeconfig={{ ca_kubeconfig }}/{{ item.name }}.kubeconfig
+
+      kubectl config use-context default --kubeconfig={{ ca_kubeconfig }}/{{ item.name }}.kubeconfig
+    fi
+  args:
+    chdir: "{{ ca_home2 }}"
+    executable: /bin/bash    
+  loop: "{{ nodes }}"
+
+- file:
+    path: "{{ ca_kubeconfig }}/{{ item.name }}.kubeconfig"
+    mode: '0644'
+  loop: "{{ nodes }}"
