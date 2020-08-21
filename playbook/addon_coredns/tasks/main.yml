@@ -14,11 +14,11 @@
     mode: 0644
 
 - command: kubectl apply -f coredns-configmap.yaml
-  become_user: vagrant
+  #become_user: vagrant
   args:
     chdir: /home/vagrant
 
 - command: kubectl apply -f coredns.yaml
-  become_user: vagrant
+  #become_user: vagrant
   args:
     chdir: /home/vagrant
