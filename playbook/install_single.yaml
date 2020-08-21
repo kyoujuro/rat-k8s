@@ -55,9 +55,9 @@
 #
 - name: K8s Monitoring setup
   hosts: masters
-  gather_facts: true
-  become: true
-  become_user: vagrant  
+  #gather_facts: true
+  #become: true
+  #become_user: vagrant  
   roles:
     - addon_coredns
     - addon_metrics-server
