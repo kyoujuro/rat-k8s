@@ -194,7 +194,7 @@ vm_spec:
   - name: "bootnode"
     cpu: 1
     memory: 1024
-    private_ip: "172.16.3.1"
+    private_ip: "172.16.3.2"
     box: "ubuntu/bionic64"
     playbook: "setup_linux.yaml"    
     comment: "Bootstap node" 
