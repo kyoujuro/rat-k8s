@@ -18,7 +18,7 @@ pipeline  {
         stage('cluster config') {
             steps {
                   sh 'ls -al'
-		  sh './setup.rb -f cluster-config/single-node.yaml'
+		  sh './setup.rb -p auto -f cluster-config/single-node.yaml'
 	    }
         }
         stage('クラスタ起動') {
