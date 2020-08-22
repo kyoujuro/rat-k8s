@@ -45,9 +45,11 @@ def read_yaml_config(file)
   i = 10
   begin
     $conf = YAML.load_file(file)
-    cnf = "vm_spec = [\n"
     $conf.class
-    $domain = $conf['domain']  
+    $domain = $conf['domain']
+
+    #################################################
+    cnf = "vm_spec = [\n"    
     $conf.each do |key1, val1|
       # VMスペックの読み込み
       if val1.class == Array and key1 == "vm_spec"
@@ -68,6 +70,8 @@ def read_yaml_config(file)
       end    
     end
     return cnf + "]\n"
+    #################################################
+    
   rescue
     return ""
   end
@@ -1157,6 +1161,7 @@ if __FILE__ == $0
   step_start("コンフィグファイルの読み取り")
   vm_config = read_yaml_config($config_yaml)
   step_end( vm_config.length > 0 ? 0 : 1 )
+
   if $mode == "test"
     puts vm_config
     exit!
@@ -1168,8 +1173,11 @@ if __FILE__ == $0
     overwrite_node_ip()
     overwrite_vip_ip()
     step_end(0)
+    vm_config = "vm_spec = " \
+    + $vm_config_array.to_s.gsub('=>', ':').to_s.gsub('\\', '').to_s.gsub('"{', '{').to_s.gsub('}"', '}')    
   end
-  
+
+
   ## テンプレートを読み込んで、Vagrantfileを生成
   step_start("Vagrantfileの書き出し")
   linenum = 1
@@ -1187,7 +1195,7 @@ if __FILE__ == $0
         if line =~ /^__VM_CONFIG__/
           w.write vm_config
         else
-          w.write line        
+          w.write line
         end
       }
     end
