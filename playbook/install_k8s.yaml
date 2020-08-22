@@ -195,9 +195,9 @@
   hosts: bootnode
   gather_facts: true
   become: true
-  tasks:
-    - wait_for:
-        timeout: 30
+  #tasks:
+  #  - wait_for:
+  #      timeout: 30
   roles:
     - addon_coredns
     - addon_metrics-server
