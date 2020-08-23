@@ -47,5 +47,8 @@
 - name: Enable HTTP Health Checks
   include_tasks: start_health_check.yaml
 
-
-
+## 
+## enable a remote ssh
+##
+- name: sshkey for root
+  include_tasks: setup_sshkey.yaml

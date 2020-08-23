@@ -26,6 +26,11 @@
 - name: Install kubelet
   include_tasks: kubelet.yaml
 
+## 
+## enable a remote ssh
+##
+- name: sshkey for root
+  include_tasks: setup_sshkey.yaml
 
 
 
