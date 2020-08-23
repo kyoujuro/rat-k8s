@@ -448,7 +448,11 @@ def create_hosts_file()
     w.write sprintf("%-20s %-16s %-20s\n","127.0.0.1", "localhost", "localhost.localdomain")
     $vm_config_array.each do |val|
       x = eval(val)
-      w.write sprintf("%-20s %-16s %-20s\n",x['private_ip'], x['name'], x['name'] + "." + $domain)
+      if x['private_ip'].nil? == false
+        w.write sprintf("%-20s %-16s %-20s\n",x['private_ip'], x['name'], x['name'] + "." + $domain)
+      elsif x['public_ip'].nil? == false
+        w.write sprintf("%-20s %-16s %-20s\n",x['public_ip'], x['name'], x['name'] + "." + $domain)
+      end
     end
   end
 end
@@ -490,11 +494,16 @@ def vars_nodelist()
         if line =~ /^__AUTO_CONFIG__*/
           $vm_config_array.each do |val|
             x = eval(val)
-            if x.has_key?('public_ip')
+            if x.has_key?('public_ip') and x.has_key?('private_ip')
               w.write sprintf("  - { name: %-10s, pub_ip: %-15s, pri_ip: %-15s }\n",
                               "'" + x['name'] + "'",
                               "'" + x['public_ip'] + "'",
                               "'" + x['private_ip'] + "'")
+            elsif x.has_key?('public_ip')
+              # 本当は pub_ip だが、便宜上 pri_ip として書き出す
+              w.write sprintf("  - { name: %-10s, pri_ip: %-15s }\n",
+                              "'" + x['name'] + "'",
+                              "'" + x['public_ip'] + "'")
             else
               w.write sprintf("  - { name: %-10s, pri_ip: %-15s }\n",
                               "'" + x['name'] + "'",
@@ -795,18 +804,28 @@ def host_list(hostname,sw,op)
     x = eval(val)
     if x['name'] =~ /^#{hostname}*/
       w = ""
+      
       if sw == 0
         w = x['name']
+
       elsif sw == 1
-        w = x['private_ip']
+        # Private IPが設定されない場合 Public IPを利用
+        if x['private_ip'].nil? == true
+          w = x['public_ip']
+        else
+          w = x['private_ip']
+        end
+        
       elsif sw == 2
         if x['public_ip'].nil? == false
           w = x['public_ip']
         end
       end
+      
       if op > 0
         w = "https://" + w + sprintf(":%d",op)
       end
+
       if n == 0
         host_list = w
       else
