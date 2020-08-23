@@ -56,12 +56,7 @@
     owner: root
     group: root
     mode: '0755'
-- template:
-    src: cni-conf.json
-    dest: /etc/kube-flannel
-    owner: root
-    group: root
-    mode: '0644'
+
 - template:
     src: net-conf.json
     dest: /etc/kube-flannel
