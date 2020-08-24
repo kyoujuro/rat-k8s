@@ -3,4 +3,4 @@
   become: true  
   roles:
     - node_edge
-    - role: net_flannel
+    - net_flannel

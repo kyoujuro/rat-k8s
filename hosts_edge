@@ -19,11 +19,11 @@ ca_etcd_home     = {{ work_dir }}/ca-etcd
 ca_front_proxy   = {{ work_dir }}/ca-front-proxy
 ca_kubeconfig    = {{ work_dir }}/kubeconfig
 
+cert_download    = /home/ubuntu
 r_work_dir       = {{ work_dir }}
 r_download_dir   = {{ r_work_dir }}/download
-r_ca_home2       = {{ r_work_dir }}/ca
-r_ca_etcd_home   = {{ r_work_dir }}/ca-etcd
-r_ca_front_proxy = {{ r_work_dir }}/ca-front-proxy
-r_ca_kubeconfig  = {{ r_work_dir }}/kubeconfig
+r_ca_home2       = {{ cert_download }}
+r_ca_kubeconfig  = {{ cert_download }}
 r_k8s_binary     = {{ r_work_dir }}/bin
+
 
