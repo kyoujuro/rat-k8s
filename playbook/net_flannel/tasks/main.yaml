@@ -15,7 +15,7 @@
 
 - name: Configure CNI Networking
   unarchive:
-    src: /mnt/download/cni-plugins-linux-amd64-{{ cni_plugins }}.tgz
+    src: /mnt/download/cni-plugins-linux-{{ cpu_arch }}-{{ cni_plugins }}.tgz
     dest: /opt/cni/bin/
     owner: root
     group: root
@@ -37,7 +37,7 @@
     group: root
     mode: '0755'
 - copy:
-    src: /mnt/download/flanneld
+    src: "{{ r_work_dir }}/download/flanneld"
     dest: /opt/bin
     owner: root
     group: root
