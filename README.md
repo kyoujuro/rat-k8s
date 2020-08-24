@@ -100,9 +100,11 @@ vagrant destroy -f
 
 以下に全ノードとの疎通テスト、K8sインストール、ストレージマウントのコマンドを列挙する
 
+
+## bootnodeからのマニュアルインストール
+
 * ansible -i hosts_k8s all -m ping
 * ansible-playbook -i hosts_k8s playbook/install_k8s.yml
-
 
 
 ## メモ ノード追加手順
@@ -125,25 +127,8 @@ vagrant destroy -f
 * kubectl get no で３ノード目の追加を確認
 
 
-## メモ エッジノードの追加
+## ノードのIPアドレスとpingが通らない時の対処法
 
-* sudo vi /etc/hosts ノードのエントリ追加
-* playbook/vars/main.yaml にノード追加
-* hosts_k8s にノード追加
-* エッジノードの証明書を作成 add-vk-node.yaml
-  ansible-playbook -i hosts_k8s playbook/add-vk-node.yaml
-* kubeconfigのコピー
+* ip route で問題のサブネットと vboxnetのインタフェース番号を確認
+* VBoxManage hostonlyif remove vboxnet37 などで番号を指定して削除
 
-
-#!/bin/bash
-# VM Host IP
-export VKUBELET_POD_IP=192.168.33.10
-export APISERVER_CERT_LOCATION="/etc/virtual-kubelet/client.crt"
-export APISERVER_KEY_LOCATION="/etc/virtual-kubelet/client.key"
-export KUBELET_PORT="10250"
-export KUBERNETES_SERVICE_PORT="8443"
-
-# minikube Host IP
-export KUBERNETES_SERVICE_HOST=192.168.99.105
-cd bin
-./virtual-kubelet --provider cri --kubeconfig ../admin.conf
