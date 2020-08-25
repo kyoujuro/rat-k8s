@@ -18,6 +18,12 @@
     owner: root
     group: root
     mode: '0755'
+- file:
+    path: /etc/kubernetes/pki
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
 
 - file:
     path: /var/run/kubernetes
