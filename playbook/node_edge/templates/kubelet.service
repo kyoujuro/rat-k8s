@@ -7,7 +7,7 @@ Requires=containerd.service
 [Service]
 ExecStart=/usr/local/bin/kubelet \
   --config=/etc/kubernetes/config/kubelet-config.yaml \
-  --container-runtime=remote \
+  --container-runtime=docker \
   --container-runtime-endpoint=unix:///var/run/containerd/containerd.sock \
   --image-pull-progress-deadline=2m \
   --kubeconfig=/etc/kubernetes/node.conf \

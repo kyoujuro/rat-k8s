@@ -29,7 +29,7 @@
   when: regi_check_kube_apiserver.stat.exists == false
 
   
-- name: Copy kubernetes binary to nfs
+- name: Copy kubernetes binary 
   shell: |
     cp -fr {{ download_dir }}/kubernetes/server/bin/* {{ work_dir }}/bin
     chmod -R 0755 {{ work_dir }}/bin
