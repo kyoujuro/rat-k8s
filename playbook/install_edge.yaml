@@ -1,3 +1,18 @@
+#
+# エッジノードセットアップ用
+#
+#  このプレイブックを実行する前に bootnode で以下のコマンドを実行する必要がある。
+#
+#  　ansible-playbook -i hosts_k8s playbook/install_new_node.yml 
+#
+#  詳しくは install_new_node.yml を参照ください。
+#
+#  事前設定完了後、
+#  以下のコマンドでエッジノードに docker,containerd,kubelet,kube-proxyを導入する。
+#
+#    sudo ansible-playbook -i hosts_edge playbook/install_edge.yaml
+#
+
 - name: install edge node
   hosts: all
   become: true  
