@@ -1,0 +1,61 @@
+#
+# mkdir directory for kubernetes
+#
+
+- name: mkdir for download
+  file:
+    path: "{{ work_dir }}"
+    state: directory
+    owner: "{{ node_user }}"
+    group: "{{ node_group }}"
+    mode: '0755'
+
+- name: mkdir for k8s bin
+  file:
+    path: "{{ work_dir }}/bin"
+    state: directory
+    owner: "{{ node_user }}"
+    group: "{{ node_group }}"
+    mode: '0755'
+
+- name: mkdir for ssh keys
+  file:
+    path: "{{ work_dir }}/keys"
+    state: directory
+    owner: "{{ node_user }}"
+    group: "{{ node_group }}"
+    mode: '0755'
+
+- name: mkdir kubeconfig
+  file:
+    path: "{{ work_dir }}/kubeconfig"
+    state: directory
+    owner: "{{ node_user }}"
+    group: "{{ node_group }}"
+    mode:  '0755'
+
+- name: mkdir download
+  file:
+    path: "{{ work_dir }}/download"
+    state: directory
+    owner: "{{ node_user }}"
+    group: "{{ node_group }}"
+    mode:  '0755'
+
+#
+# mkdir directory for cni
+#
+- name: start configuration
+  file:
+    path: /etc/cni/net.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+- file:
+    path: /opt/cni/bin
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+

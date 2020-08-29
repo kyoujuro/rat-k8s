@@ -1,0 +1,21 @@
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+authentication:
+  anonymous:
+    enabled: true
+  webhook:
+    enabled: true
+  x509:
+    clientCAFile: "/etc/kubernetes/pki/ca.pem"
+authorization:
+  mode: Webhook
+clusterDomain: "cluster.local"
+clusterDNS:
+  - "10.32.0.10"
+podCIDR:    "10.244.0.0/16"
+resolvConf: "/run/systemd/resolve/resolv.conf"
+runtimeRequestTimeout: "15m"
+tlsCertFile:       "/etc/kubernetes/pki/{{ ansible_facts.hostname }}.pem"
+tlsPrivateKeyFile: "/etc/kubernetes/pki/{{ ansible_facts.hostname }}-key.pem"
+
+

@@ -1,0 +1,30 @@
+raspi92               ansible_connection=local
+
+
+[all:vars]
+
+containerd_version  = "1.2.13"
+crictl_version      = "v1.15.0"
+runc_version        = "v1.0.0-rc8"
+cni_plugins         = "v0.8.2"
+kubernetes_version  = "v1.18.2"
+pod_network         = "flannel"
+flannel_version     = "v0.12.0"
+cpu_arch            = "arm64"
+iface               = "wlan0"
+
+work_dir         =  /srv/k8s  
+download_dir     = {{ work_dir }}/download
+ca_home2         = {{ work_dir }}/ca
+ca_etcd_home     = {{ work_dir }}/ca-etcd
+ca_front_proxy   = {{ work_dir }}/ca-front-proxy
+ca_kubeconfig    = {{ work_dir }}/kubeconfig
+
+cert_download    = /home/ubuntu
+r_work_dir       = {{ work_dir }}
+r_download_dir   = {{ r_work_dir }}/download
+r_ca_home2       = {{ cert_download }}
+r_ca_kubeconfig  = {{ cert_download }}
+r_k8s_binary     = {{ r_work_dir }}/bin
+
+

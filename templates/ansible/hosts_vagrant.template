@@ -101,6 +101,7 @@ kubernetes_dashborad_ver  = v2.0.0-beta6
 kubernetes_metrics_server = v0.3.6
 keepalived_version        = 2.0.15
 calico_version            = v3.14.1
+cpu_arch                  = amd64
 
 # 
 #

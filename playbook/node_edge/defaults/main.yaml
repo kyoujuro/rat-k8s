@@ -1,0 +1,18 @@
+work_dir         : /srv/k8s
+download_dir     : "{{ work_dir }}/download"
+r_work_dir       : "{{ work_dir }}"
+r_k8s_binary     : "{{ r_work_dir }}/bin"
+r_ca_kubeconfig  : "{{ r_work_dir }}/kubeconfig"
+r_ca_home2       : "{{ r_work_dir }}/ca"
+
+cpu_arch         : "arm64"
+cni_plugins      : "v0.8.2"
+containerd_version : "1.2.13"
+crictl_version   : "v1.15.0"
+#docker_version   : "18.06.3~ce~3-0~ubuntu"
+docker_version   : "5:18.09.9~3-0~ubuntu-bionic"
+
+node_user  : "ubuntu"
+node_group : "ubuntu"
+
+

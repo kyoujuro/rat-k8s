@@ -1,0 +1,37 @@
+#
+# KUBERNETES BINARY to NFS export dir on bootnode
+#
+
+#
+# register: r_k8s_bin の設定と変数が混ざると予想外の動きになる。
+#
+- name: Downloading Kubernetes binary
+  stat:
+    path: "{{ download_dir }}/kubernetes-server-linux-{{ cpu_arch }}.tar.gz"
+  register: regi_k8s_bin
+
+- get_url:
+    url: https://dl.k8s.io/{{ kubernetes_version }}/kubernetes-server-linux-{{ cpu_arch }}.tar.gz
+    dest: "{{ download_dir }}"
+    mode: '0644'
+  when: regi_k8s_bin.stat.exists == false
+
+
+- name: Check unarchive 
+  stat:
+    path: "{{ download_dir }}/kubernetes/server/bin/kube-apiserver"
+  register: regi_check_kube_apiserver
+
+  
+- unarchive:
+    src:  "{{ download_dir }}/kubernetes-server-linux-{{ cpu_arch }}.tar.gz"
+    dest: "{{ download_dir }}"
+  when: regi_check_kube_apiserver.stat.exists == false
+
+  
+- name: Copy kubernetes binary 
+  shell: |
+    cp -fr {{ download_dir }}/kubernetes/server/bin/* {{ work_dir }}/bin
+    chmod -R 0755 {{ work_dir }}/bin
+
+  

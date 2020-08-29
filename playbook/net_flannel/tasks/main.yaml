@@ -1,5 +1,5 @@
 - copy:
-    src: "/mnt/kubeconfig/{{ ansible_facts.hostname }}.kubeconfig"
+    src: "{{ r_ca_kubeconfig }}/{{ ansible_facts.hostname }}.kubeconfig"
     dest: /etc/kubernetes/node.conf
     owner: root
     group: root
@@ -7,7 +7,7 @@
     remote_src: yes
 
 - unarchive:
-    src: /mnt/download/crictl-{{ crictl_version }}-linux-amd64.tar.gz
+    src: "{{ r_download_dir }}/crictl-{{ crictl_version }}-linux-{{ cpu_arch }}.tar.gz"
     dest: /usr/local/bin
     owner: root
     group: root
@@ -15,7 +15,7 @@
 
 - name: Configure CNI Networking
   unarchive:
-    src: /mnt/download/cni-plugins-linux-amd64-{{ cni_plugins }}.tgz
+    src: "{{ r_download_dir }}/cni-plugins-linux-{{ cpu_arch }}-{{ cni_plugins }}.tgz"
     dest: /opt/cni/bin/
     owner: root
     group: root
@@ -37,7 +37,7 @@
     group: root
     mode: '0755'
 - copy:
-    src: /mnt/download/flanneld
+    src: "{{ r_work_dir }}/download/flanneld"
     dest: /opt/bin
     owner: root
     group: root

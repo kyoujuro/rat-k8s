@@ -1,0 +1,15 @@
+#
+# CONTAINERD
+#
+- name: Downloading containerd
+  stat:
+    path: "{{ download_dir }}/containerd-{{ containerd_version }}.linux-{{ cpu_arch }}.tar.gz"
+  register: regi_containerd
+
+- get_url:
+    url: https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}.linux-{{ cpu_arch }}.tar.gz
+    dest: "{{ download_dir }}"
+    mode: '0644'
+  when: regi_containerd.stat.exists == false
+
+
