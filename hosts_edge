@@ -1,4 +1,4 @@
-raspi91               ansible_connection=local
+raspi92               ansible_connection=local
 
 
 [all:vars]
