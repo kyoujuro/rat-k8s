@@ -3,6 +3,18 @@
 echo "VMの削除"
 vagrant destroy -f
 
+if [ -f hosts_k8s ]; then
+# Subnetの削除
+SUBNET=`grep internal_subnet hosts_k8s | sed "s/internal_subnet=//"`
+VBOX_IF=`ip route |grep $SUBNET |awk '{ print $3 }'`
+VBOX_NET_STATUS=`ip route |grep $SUBNET |awk '{ print $10 }'`
+
+if [ $VBOX_NET_STATUS == "linkdown" ]; then
+    echo "VBOXネットワークの削除"    
+    VBoxManage hostonlyif remove $VBOX_IF
+fi
+fi
+
 ls templates/playbook > /tmp/playbook.txt
 sed s/.template// /tmp/playbook.txt > /tmp/file_list.txt
 
