@@ -11,7 +11,8 @@ git clone --single-branch --branch release-1.3 https://github.com/rook/rook.git
 ディレクトリを移動
 
 ~~~
-cd rook/cluster/examples/kubernetes/ceph/
+x cd rook/cluster/examples/kubernetes/ceph/
+cd manifests/rook-ceph/ceph
 ~~~
 
 次のマニフェストを適用することで、ROOK-CEPHの機能を起動できる。
@@ -67,14 +68,6 @@ rook-discover-t66sm                                  Running     storage1
 
 ~~~
 $ ssh storage1 sudo lsblk -f
-NAME                                                                                                 FSTYPE      LABEL           UUID                                   MOUNTPOINT
-sda                                                                                                                                                                     
-└─sda1                                                                                               ext4        cloudimg-rootfs 6ff622cc-497e-49df-964f-3e554089a0ce   /
-sdb                                                                                                  iso9660     cidata          2020-03-25-16-15-26-00                 
-sdc                                                                                                  LVM2_member                 Bn34HR-YFk8-eqpJ-2jdf-aAPz-1MlQ-eWzJrB 
-└─ceph--a08f5248--7095--48e7--be74--816f03ca425e-osd--data--867d0bf1--4ae9--4226--b91a--1a014d96b3af                                                                    
-sdd                                                                                                  LVM2_member                 NK964A-UxE0-QrVJ-2WSE-wvWF-72S9-FAkWLy 
-└─ceph--c1f45e9a--cd5f--4284--abb1--5febe0369777-osd--data--4bc31e9f--e9e8--4530--bfe8--9a9b288325bb    
 ~~~
 
 
@@ -94,9 +87,11 @@ $ kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o jsonpath="{['d
 5yUC5QKKqA
 ~~~
 
-フル構成の場合、プロキシノードのノードポートからアクセスが可能になる。
 
-https://192.168.1.98:30443/ https://192.168.1.99:30443/
+
+フル構成(full-calico.yaml)の場合、プロキシノードのノードポートからアクセスが可能になる。
+
+https://192.168.1.131:30443/ https://192.168.1.132:30443/
 
 
 

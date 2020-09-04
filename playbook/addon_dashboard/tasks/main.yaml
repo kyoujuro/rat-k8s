@@ -15,6 +15,15 @@
     regexp: '^  name: kubernetes-dashboard'
     replace: '  name: cluster-admin'
 
+- name: Insert nodePort
+  blockinfile:
+    path: /home/vagrant/recommended.yaml
+    insertafter: "      targetPort: 8443"
+    block: |2
+            nodePort: 30445
+        type: NodePort
+
+      
 - name: Deploy Dashboard UI
   become_user: vagrant
   command: kubectl apply -f /home/vagrant/recommended.yaml

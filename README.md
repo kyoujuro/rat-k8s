@@ -167,4 +167,20 @@ git clone したディレクトリで、以下にノードを追加する。
 * kubectl get node でエッジノードの参加を確認
 
 
+## Dashboad UIへのアクセス方法
+
+トークンの表示
+
+~~~
+kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret |grep kubernetes-dashboard-toke\
+> n-* | awk '{print $1}') |awk '$1=="token:"{print $2}'
+~~~
+
+フル構成の場合
+https://192.168.1.131:30445/#/login
+
+
+
+
+
 
