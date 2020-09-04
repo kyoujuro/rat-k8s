@@ -158,6 +158,8 @@ kubectl patch storageclass rook-ceph-block  -p '{"metadata": {"annotations":{"st
 
 ## Cephファイルシステムの利用
 
+`manifest/rook-ceph/ceph`の下
+
 ~~~
 kubectl apply -f filesystem.yaml
 ~~~
