@@ -1,20 +1,12 @@
 #
-# K8sコンポーネント配置に必要なディレクトリを作成
+# テスト用
 #
-#
-# 証明書をbootnodeのNFSサーバー上に準備
-#
-- name: Internal HA-PROXY install
-  hosts:
-  - mlbs
-  vars:
-    lb_pos: "Internal"
+- name: K8s helm setup
+  hosts: bootnode
   gather_facts: true
   become: true
-  become_user: root
-  become_method: sudo
   roles:
-    - haproxy
-    - keepalived
-
+    #- addon_helm3
+    #- addon_promethus
+    - addon_grafana
 

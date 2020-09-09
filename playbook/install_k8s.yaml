@@ -188,8 +188,11 @@
     - include_tasks: tasks/proxy_del_manifest.yaml
 
 #
-# モニタリングセットアップ
-# CoreDNSセットアップ
+# アドオン機能のインストール
+#   Helm
+#   CoreDNS
+#   Metrics Server
+#　 Dashboard
 #
 - name: K8s Monitoring setup
   hosts: bootnode
@@ -199,6 +202,7 @@
   #  - wait_for:
   #      timeout: 30
   roles:
+    - addon_helm3    
     - addon_coredns
     - addon_metrics-server
     - addon_dashboard
@@ -218,4 +222,15 @@
       - proxy_node == "true"
     - debug: msg="export KUBECONFIG=`pwd`/kubeconfig"
 
+#
+# テスト
+# 有効化して動作させるには、Rook-Ceph が導入されている必要がある
+#
+#- name: K8s helm setup
+#  hosts: bootnode
+#  gather_facts: true
+#  become: true
+#  roles:
+#    - addon_promethus
+#    - addon_grafana
       

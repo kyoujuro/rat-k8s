@@ -1,0 +1,68 @@
+##
+## Install kube-state-metrics 
+##
+
+- name: check kube-state-metrics
+  stat:
+    path: '/home/vagrant/kube-state-metrics/README.md'
+  register: regi_kube_state_metrics
+
+- name: git clone kube-state-metrics
+  become_user: "{{ user_name }}"
+  git:
+    repo: 'https://github.com/kubernetes/kube-state-metrics'
+    version: release-1.9
+    dest: "/home/{{ user_name }}/kube-state-metrics"
+    #mode: '0644'
+    #owner: "{{ user_name }}"
+    #group: "{{ user_name }}"
+  when: regi_kube_state_metrics.stat.exists == false
+
+- name: apply kube-state-metrics 
+  become_user: "{{ user_name }}"
+  shell: |
+        kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=USER-MAIL-ADDRESS
+        kubectl apply -f examples/standard/
+  args:
+    chdir: "/home/{{ user_name }}/kube-state-metrics"
+
+
+
+#
+# Promethuse のインストール
+#
+- name: install Promethuse step-1
+  become_user: "{{ user_name }}"
+  shell: |
+    kubectl create namespace prometheus
+    helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+    ##helm inspect values stable/prometheus > prometheus-values.yaml
+    helm inspect values prometheus-community/prometheus > prometheus-values.yaml
+
+  args:
+    chdir: "/home/{{ user_name }}"
+
+#
+# 設定編集
+#
+
+#
+# Helm インストール
+#
+- name: install Promethuse step-3
+  become_user: "{{ user_name }}"
+  shell: |
+    ##helm install prometheus --namespace prometheus -f prometheus-values.yaml stable/prometheus
+    helm install prometheus --namespace prometheus -f prometheus-values.yaml prometheus-community/prometheus
+  register: results_helm
+  args:
+    chdir: "/home/{{ user_name }}"
+
+- debug: msg="stdout  = {{ results_helm.stdout_lines }}"
+
+
+- local_action: copy content="{{  results_helm.stdout_lines }}" dest="/home/{{ user_name }}/helm_promethus_results"
+  become_user: "{{ user_name }}"
+
+
+  

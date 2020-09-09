@@ -18,6 +18,7 @@
                      - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
   become_user: vagrant
 
+  
 - name: Deploy Metrics Server
   command: kubectl apply -f {{ download_dir }}/components.yaml
   become_user: vagrant

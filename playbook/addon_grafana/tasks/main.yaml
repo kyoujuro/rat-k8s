@@ -1,0 +1,46 @@
+#
+# Grafana のインストール
+#
+- name: install Grafana step-1
+  become_user: "{{ user_name }}"
+  shell: |
+    helm repo add grafana https://grafana.github.io/helm-charts
+    helm inspect values grafana/grafana > grafana-values.yaml
+  args:
+    chdir: "/home/{{ user_name }}"
+
+#
+# 設定値の編集
+#
+- name: install Grafana step-2.1
+  replace:
+    path: "/home/{{ user_name }}/grafana-values.yaml"
+    after: 'service:'
+    regexp: '^  type: ClusterIP'
+    replace: '  type: NodePort'
+- name: install Grafana step-2.2
+  blockinfile:
+    path: "/home/{{ user_name }}/grafana-values.yaml"
+
+    insertafter: '  targetPort: 3000'
+    block: |2
+        nodePort: 30000
+
+#
+# Helm インストール
+#
+- name: install Promethuse step-3
+  become_user: "{{ user_name }}"
+  shell: |
+    helm install grafana --namespace prometheus -f grafana-values.yaml grafana/grafana
+  register: results_helm
+  args:
+    chdir: "/home/{{ user_name }}"
+
+- debug: msg="stdout  = {{ results_helm.stdout_lines }}"
+- local_action: copy content="{{  results_helm.stdout_lines }}" dest="/home/{{ user_name }}/helm_promethus_results"
+  become_user: "{{ user_name }}"
+
+
+
+  
