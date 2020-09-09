@@ -226,11 +226,14 @@
 # テスト
 # 有効化して動作させるには、Rook-Ceph が導入されている必要がある
 #
-#- name: K8s helm setup
-#  hosts: bootnode
-#  gather_facts: true
-#  become: true
-#  roles:
-#    - addon_promethus
-#    - addon_grafana
-      
+- name: K8s helm setup
+  hosts: bootnode
+  gather_facts: true
+  become: true
+  roles:
+    - role: addon_rook_ceph
+      when: sw_rook_ceph == "yes"
+    - role: addon_promethus
+      when: sw_promethus == "yes"
+    - role: addon_grafana
+      when: sw_grafana == "yes"

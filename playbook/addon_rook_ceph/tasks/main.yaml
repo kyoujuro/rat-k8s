@@ -29,9 +29,48 @@
     chdir: "/home/{{ user_name }}/rook/cluster/examples/kubernetes/ceph"
 - local_action: copy content="{{  results_rook_operator.stdout_lines }}" dest="/home/{{ user_name }}/results_rook_operator"
 
-- wait_for:
-    timeout: 300
-  
+#
+# Ceph Cluset 起動まで待つ
+#
+- name: wait to complete of stating ceph
+  become_user: "{{ user_name }}"
+  shell: |
+    while true;
+    do 
+      RUNNING=$(kubectl get po -n rook-ceph |grep Running |wc -l)
+      if [ $RUNNING -gt 36 ]; then
+        exit 0
+      else
+        sleep 10
+      fi
+    done
+  args:
+    chdir: "/home/{{ user_name }}/rook/cluster/examples/kubernetes/ceph"
+
+
+#
+# Ceph Dashboard の設定 　nodeport 番号の固定化
+#
+- name: edit dashboard-external-https.yaml
+  blockinfile:
+    path: "/home/{{ user_name }}/rook/cluster/examples/kubernetes/ceph/dashboard-external-https.yaml"
+    insertafter: '    targetPort: 8443'
+    block: |2
+          nodePort: 30002
+
+#
+# Ceph のパススワード
+#
+- name: save ceph dashboard password
+  become_user: "{{ user_name }}"
+  shell: |
+    kubectl -n rook-ceph get secret rook-ceph-dashboard-password -o jsonpath="{['data']['password']}" | base64 --decode && echo
+  register: results_rook_ceph_passwd
+  args:
+    chdir: "/home/{{ user_name }}"
+- local_action: copy content="{{  results_rook_ceph_passwd.stdout_lines }}" dest="/home/{{ user_name }}/passwd_ceph_dashboard"
+  become_user: "{{ user_name }}"
+
 #
 # Rook-Cephインストール Dashboard
 #
@@ -39,7 +78,7 @@
   become_user: "{{ user_name }}"
   shell: |
     kubectl apply -f dashboard-external-https.yaml
-  register: results_rook-ui
+  register: results_rook_ui
   args:
     chdir: "/home/{{ user_name }}/rook/cluster/examples/kubernetes/ceph"
 - local_action: copy content="{{  results_rook_ui.stdout_lines }}" dest="/home/{{ user_name }}/results_rook_operator"

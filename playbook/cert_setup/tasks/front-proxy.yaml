@@ -24,11 +24,16 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
+- name: check existing front-proxy-ca.pem
+  stat:
+    path: "{{ ca_front_proxy }}/front-proxy-ca.pem"
+  register: file_front_proxy_ca
 - shell: |
     cfssl gencert -initca front-proxy-ca-csr.json | cfssljson -bare front-proxy-ca
   args:
     chdir: "{{ ca_front_proxy }}"
-
+  when: file_front_proxy_ca.stat.exists == false
+    
 - name: Front-proxy Client Certificate
   template:
     src: front-proxy-client-csr.json
@@ -36,6 +41,11 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
+- name: check existing front-proxy-client.pem
+  stat:
+    path: "{{ ca_front_proxy }}/front-proxy-client.pem"
+  register: file_front_proxy_client
+    
 - shell: |
     cfssl gencert \
       -ca=front-proxy-ca.pem \
@@ -45,7 +55,7 @@
     front-proxy-client-csr.json | cfssljson -bare front-proxy-client
   args:
     chdir: "{{ ca_front_proxy }}"
-
+  when: file_front_proxy_client.stat.exists == false
 
 
 - name: chmod 0644 front-proxy-ca-key.pem

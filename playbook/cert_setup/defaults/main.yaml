@@ -3,7 +3,7 @@ ca_home2:       "{{ work_dir }}/ca"
 ca_etcd_home:   "{{ work_dir }}/ca-etcd"
 ca_front_proxy: "{{ work_dir }}/ca-front-proxy"
 ca_kubeconfig:  "{{ work_dir }}/kubeconfig"
-
+user_name:      vagrant
 
 host_list_etcd:   10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local 
 host_list_k8sapi: 10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local

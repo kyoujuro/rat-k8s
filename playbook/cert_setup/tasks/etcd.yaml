@@ -25,11 +25,15 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
+- name: check existing etcd-ca.pem
+  stat:
+    path: "{{ ca_etcd_home }}/etcd-ca.pem"
+  register: file_etcd_ca
 - shell: |
     cfssl gencert -initca etcd-ca-csr.json | cfssljson -bare etcd-ca
   args:
     chdir: "{{ ca_etcd_home }}"
-
+  when: file_etcd_ca.stat.exists == false
 
 #
 # ETCD サーバー証明書
@@ -41,6 +45,10 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
+- name: check existing etcd-server.pem
+  stat:
+    path: "{{ ca_etcd_home }}/etcd-server.pem"
+  register: file_etcd_server
 - shell: |
     cfssl gencert \
       -ca=etcd-ca.pem \
@@ -51,7 +59,8 @@
     etcd-csr.json | cfssljson -bare etcd-server
   args:
     chdir: "{{ ca_etcd_home }}"
-
+  when: file_etcd_server.stat.exists == false
+  
 #
 # ETCD ピア証明書
 #
@@ -62,6 +71,10 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
+- name: check existing etcd-peer.pem
+  stat:
+    path: "{{ ca_etcd_home }}/etcd-peer.pem"
+  register: file_etcd_peer
 - shell: |
     cfssl gencert \
       -ca=etcd-ca.pem \
@@ -72,7 +85,7 @@
     etcd-peer-csr.json | cfssljson -bare etcd-peer
   args:
     chdir: "{{ ca_etcd_home }}"
-
+  when: file_etcd_peer.stat.exists == false
 
 
 - name: chmod 0644 etcd-ca-key.pem

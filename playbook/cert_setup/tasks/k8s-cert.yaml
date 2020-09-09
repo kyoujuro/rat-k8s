@@ -21,10 +21,15 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
+- name: check existing ca.pem
+  stat:
+    path: "{{ ca_home2 }}/ca.pem"
+  register: file_ca
 - shell: |
     cfssl gencert -initca ca-csr.json | cfssljson -bare ca
   args:
     chdir: "{{ ca_home2 }}"
+  when: file_ca.stat.exists == false
 
 #
 # kubectl の管理者用クライアント証明書
@@ -37,6 +42,10 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
+- name: check existing admin.pem
+  stat:
+    path: "{{ ca_home2 }}/admin.pem"
+  register: file_admin
 - shell: |
     cfssl gencert \
       -ca=ca.pem \
@@ -46,7 +55,7 @@
     admin-csr.json | cfssljson -bare admin
   args:
     chdir: "{{ ca_home2 }}"
-
+  when: file_admin.stat.exists == false
 
 # 
 # Controller-Manager のクライアント証明書
@@ -59,6 +68,10 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
+- name: check existing kube-controller-manager.pem
+  stat:
+    path: "{{ ca_home2 }}/kube-controller-manager.pem"
+  register: file_kube_controller_manager
 - shell: |
     cfssl gencert \
       -ca=ca.pem \
@@ -68,7 +81,7 @@
     kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager    
   args:
     chdir: "{{ ca_home2 }}"
-
+  when: file_kube_controller_manager.stat.exists == false
 
 
 #
@@ -82,6 +95,10 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
+- name: check existing kube-proxy.pem
+  stat:
+    path: "{{ ca_home2 }}/kube-proxy.pem"
+  register: file_kube_proxy
 - shell: |
     cfssl gencert \
       -ca=ca.pem \
@@ -91,7 +108,7 @@
     kube-proxy-csr.json | cfssljson -bare kube-proxy
   args:
     chdir: "{{ ca_home2 }}"
-
+  when: file_kube_proxy.stat.exists == false
 
 # 
 # スケジューラーのクライアント証明書
@@ -104,6 +121,10 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
+- name: check existing kube-scheduler.pem
+  stat:
+    path: "{{ ca_home2 }}/kube-scheduler.pem"
+  register: file_kube_scheduler
 - shell: |
     cfssl gencert \
       -ca=ca.pem \
@@ -113,7 +134,7 @@
     kube-scheduler-csr.json | cfssljson -bare kube-scheduler
   args:
     chdir: "{{ ca_home2 }}"
-
+  when: file_kube_scheduler.stat.exists == false
 #
 # APIサーバーのサーバー証明書
 #   The Kubernetes API Server Certificate
@@ -125,6 +146,10 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
+- name: check existing kubernetes.pem
+  stat:
+    path: "{{ ca_home2 }}/kubernetes.pem"
+  register: file_kubernetes
 - shell: |
     cfssl gencert \
       -ca=ca.pem \
@@ -135,7 +160,8 @@
     kubernetes-csr.json | cfssljson -bare kubernetes
   args:
     chdir: "{{ ca_home2 }}"
-
+  when: file_kubernetes.stat.exists == false
+    
 #
 # サービスアカウントの公開鍵ペア
 #   The Service Account Key Pair
@@ -147,6 +173,10 @@
     owner: vagrant
     group: vagrant
     mode: '0644'
+- name: check existing service-account.pem
+  stat:
+    path: "{{ ca_home2 }}/service-account.pem"
+  register: file_service_account
 - shell: |
     cfssl gencert \
       -ca=ca.pem \
@@ -157,7 +187,7 @@
      service-account-csr.json | cfssljson -bare service-account
   args:
     chdir: "{{ ca_home2 }}"
-
+  when: file_service_account.stat.exists == false
 
 
 - name: chmod 0644 admin-key.pem
