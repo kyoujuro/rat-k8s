@@ -23,12 +23,42 @@
   shell: |
     kubectl apply -f common.yaml
     kubectl apply -f operator.yaml
-    kubectl apply -f cluster.yaml
-  register: results_rook_operator
+  register: results_rook_operator1
   args:
     chdir: "/home/{{ user_name }}/rook/cluster/examples/kubernetes/ceph"
-- local_action: copy content="{{  results_rook_operator.stdout_lines }}" dest="/home/{{ user_name }}/results_rook_operator"
 
+#
+# cluster.yaml が存在することを確実にするため、少し待つ
+#
+- name: waiting for starting of the rook ceph operator 
+  become_user: "{{ user_name }}"
+  shell: |
+    while true;
+    do 
+      RUNNING=$(kubectl get po -n rook-ceph |grep Running |wc -l)
+      if [ $RUNNING -gt 7 ]; then
+        exit 0
+      else
+        sleep 10
+      fi
+    done
+  args:
+    chdir: "/home/{{ user_name }}/rook/cluster/examples/kubernetes/ceph"
+
+    
+#
+# Rook-Cephインストール ROOK Operator & Ceph Cluster 2
+#
+- name: install Rook-Ceph step-4
+  become_user: "{{ user_name }}"
+  shell: |
+    kubectl apply -f cluster.yaml
+  register: results_rook_operator2
+  args:
+    chdir: "/home/{{ user_name }}/rook/cluster/examples/kubernetes/ceph"
+- local_action: copy content="{{  results_rook_operator2.stdout_lines }}" dest="/home/{{ user_name }}/results_rook_operator"
+
+  
 #
 # Ceph Cluset 起動まで待つ
 #
