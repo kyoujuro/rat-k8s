@@ -1080,7 +1080,10 @@ def append_ansible_inventory(ofn)
     w.write sprintf("domain=%s\n", $domain)
     w.write sprintf("internal_subnet=%s\n", $conf['private_ip_subnet'])
     w.write sprintf("domain=%s\n", $domain)
-    w.write sprintf("single_node=%s\n", $single_node)
+    w.write sprintf("single_node=%s\n",  $single_node)
+    w.write sprintf("sw_rook_ceph=%s\n", $conf['sw_rook_ceph'] == "yes" ? "yes" : "no")
+    w.write sprintf("sw_promethus=%s\n", $conf['sw_promethus'] == "yes" ? "yes" : "no")
+    w.write sprintf("sw_grafana=%s\n",   $conf['sw_grafana'] == "yes" ? "yes" : "no")        
     w.write sprintf("\n")    
   end
 end
