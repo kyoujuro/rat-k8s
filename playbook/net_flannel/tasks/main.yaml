@@ -1,3 +1,26 @@
+#
+# Flannel のダウンロードと展開
+#
+- name: Download Flannel 
+  stat:
+    path: "{{ download_dir }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz"
+  register: regi_flannel
+  when: flannel_version is defined 
+
+- get_url:
+    url: https://github.com/coreos/flannel/releases/download/{{ flannel_version }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz
+    dest: "{{ download_dir }}"
+    mode: '0644'
+  when: flannel_version is defined and regi_flannel.stat.exists == false
+
+- unarchive:
+    src:  "{{ download_dir }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz"
+    dest: "{{ download_dir }}"
+  when: flannel_version is defined 
+
+#
+# 
+#
 - copy:
     src: "{{ r_ca_kubeconfig }}/{{ ansible_facts.hostname }}.kubeconfig"
     dest: /etc/kubernetes/node.conf
@@ -6,6 +29,7 @@
     mode: '0600'
     remote_src: yes
 
+### Contained へ移動する
 - unarchive:
     src: "{{ r_download_dir }}/crictl-{{ crictl_version }}-linux-{{ cpu_arch }}.tar.gz"
     dest: /usr/local/bin

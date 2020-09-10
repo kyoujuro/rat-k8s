@@ -17,7 +17,7 @@
 
 - include_tasks: dl_addon_etcd.yaml
 #- include_tasks: dl_addon_coredns.yaml
-- include_tasks: dl_addon_flannel.yaml
+#- include_tasks: dl_addon_flannel.yaml
 - include_tasks: dl_addon_keepalived.yaml
 
 
