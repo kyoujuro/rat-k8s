@@ -3,30 +3,29 @@
 - name: Download Dashboard Manifest
   get_url:
     url: "https://raw.githubusercontent.com/kubernetes/dashboard/{{ kubernetes_dashborad_ver }}/aio/deploy/recommended.yaml"
-    dest: /home/vagrant/
+    dest: /home/vagrant/kubernetes-dashboard.yaml
     mode: '0644'
     owner: vagrant
     group: vagrant
 
 - name: Change Dashboard RBAC
   replace:
-    path: /home/vagrant/recommended.yaml
+    path: /home/vagrant/kubernetes-dashboard.yaml
     after: '  kind: ClusterRole'
     regexp: '^  name: kubernetes-dashboard'
     replace: '  name: cluster-admin'
 
 - name: Insert nodePort
   blockinfile:
-    path: /home/vagrant/recommended.yaml
+    path: /home/vagrant/kubernetes-dashboard.yaml
     insertafter: "      targetPort: 8443"
     block: |2
             nodePort: 30445
         type: NodePort
 
-      
 - name: Deploy Dashboard UI
   become_user: vagrant
-  command: kubectl apply -f /home/vagrant/recommended.yaml
+  command: kubectl apply -f /home/vagrant/kubernetes-dashboard.yaml
 
 - name: setup kubeconfig
   become_user: vagrant    

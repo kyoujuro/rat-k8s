@@ -1,28 +1,74 @@
+#
+# 設定ファイルのコピー
+#
+#- name: Clone CoreDNS 
+#  stat:
+#    path: "{{ download_dir }}/coredns/README.md"
+#  register: file_coredns
+#
+#- git:
+#    repo: https://github.com/coredns/deployment
+#    version: v1.7.0
+#    dest: "{{ download_dir }}/coredns"
+#    force: yes
+#    update: yes
+#  when: file_coredns.stat.exists == false  
+
+# ダウンロード CoreDNS
+#   CoreDNS のソースコードは取得するが
+#   使用していない。
+#
+#- name: Downloading CoreDNS
+#  stat:
+#    path: "{{ download_dir }}/coredns_1.7.0_linux_amd64.tgz"
+#  register: file_coredns_tgz
+#
+#- get_url:
+#    url: "https://github.com/coredns/coredns/releases/download/v1.7.0/coredns_1.7.0_linux_amd64.tgz"
+#    dest: "{{ download_dir }}"
+#    mode: '0644'
+#  when: file_coredns_tgz.stat.exists == false
+
+  
+#
+# CoreDNSのマニフェストをコピー
+#
 - name: Deploy CoreDNS
   template:
     src: coredns.yaml
-    dest: /home/vagrant/coredns.yaml
-    owner: vagrant
-    group: vagrant
+    dest: "/home/{{ user_name }}/coredns.yaml"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
     mode: 0644
 
+#
+# CoreDNSに登録するノードのIPアドレスリストをConfigMapへ登録
+#  setup.rb による生成ファイル
+#
 - template:
     src: coredns-configmap.yaml
-    dest: /home/vagrant/coredns-configmap.yaml
-    owner: vagrant
-    group: vagrant
+    dest: "/home/{{ user_name }}/coredns-configmap.yaml"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
     mode: 0644
 
+#
+# CoreDNS のコンフィグマップ設定
+#
 - name: kubectl apply -f coredns-configmap.yaml
   shell: |
     kubectl apply -f coredns-configmap.yaml
-  become_user: vagrant
+  become_user: "{{ user_name }}"
   args:
-    chdir: /home/vagrant
+    chdir: "/home/{{ user_name }}"
 
+#
+# CoreDNSのデプロイ
+#
 - name: apply kubectl apply -f coredns.yaml
   shell: |
     kubectl apply -f coredns.yaml
-  become_user: vagrant
+  become_user: "{{ user_name }}"
   args:
-    chdir: /home/vagrant
+    chdir: "/home/{{ user_name }}"
+    
