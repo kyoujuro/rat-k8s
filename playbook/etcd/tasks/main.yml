@@ -1,3 +1,24 @@
+#
+# Download Etcd 
+#
+- name: Downloading etcd
+  stat:
+    path: "{{ r_download_dir }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+  register: regi_etcd
+
+- get_url:
+    url: https://github.com/etcd-io/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz
+    dest: "{{ r_download_dir }}"
+    mode: '0644'
+  when: regi_etcd.stat.exists == false
+
+- unarchive:
+    src:  "{{ r_download_dir }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+    dest: "{{ r_download_dir }}"
+
+#
+# Config Etcd 
+#
 - name: Setup environment for etcd
   file:
     path: /etc/kubernetes/pki/etcd

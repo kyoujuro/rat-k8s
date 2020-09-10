@@ -15,10 +15,10 @@
 - include_tasks: dl_crictl.yaml
 - include_tasks: dl_runc.yaml
 
-- include_tasks: dl_addon_etcd.yaml
+#- include_tasks: dl_addon_etcd.yaml
 #- include_tasks: dl_addon_coredns.yaml
 #- include_tasks: dl_addon_flannel.yaml
-- include_tasks: dl_addon_keepalived.yaml
+#- include_tasks: dl_addon_keepalived.yaml
 
 
 # ノード設定ツールのインストール

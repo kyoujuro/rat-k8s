@@ -6,7 +6,7 @@
     url: "https://github.com/kubernetes-sigs/metrics-server/releases/download/{{ kubernetes_metrics_server }}/components.yaml"
     dest: "{{ download_dir }}"
     mode: '0644'
-  become_user: vagrant    
+  #become_user: vagrant    
 
 - name: add a new line
   blockinfile:
@@ -16,7 +16,7 @@
            # added lines
                      - --kubelet-insecure-tls
                      - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
-  become_user: vagrant
+  #become_user: vagrant
 
   
 - name: Deploy Metrics Server

@@ -5,8 +5,8 @@
   file:
     path: "{{ ca_front_proxy }}"
     state: directory
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
 
 #
 # Front Proxy CAの作成
@@ -15,14 +15,14 @@
   template:  
     src: front-proxy-ca-config.json
     dest: "{{ ca_front_proxy }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - template:
     src: front-proxy-ca-csr.json
     dest: "{{ ca_front_proxy }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - name: check existing front-proxy-ca.pem
   stat:
@@ -38,8 +38,8 @@
   template:
     src: front-proxy-client-csr.json
     dest: "{{ ca_front_proxy }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - name: check existing front-proxy-client.pem
   stat:

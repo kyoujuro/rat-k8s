@@ -18,9 +18,9 @@
 - name: Download software packeges
   hosts:
   - bootnode
-  become: true  
+  become: true
   roles:
-    - bootnode    
+    - bootnode
     - cert_setup
 
 - name: Mount NFS server (bootnode)
@@ -198,9 +198,6 @@
   hosts: bootnode
   gather_facts: true
   become: true
-  #tasks:
-  #  - wait_for:
-  #      timeout: 30
   roles:
     - addon_helm3    
     - addon_coredns

@@ -10,8 +10,8 @@
   template:
     src: instance-csr.json.j2
     dest: "{{ ca_home2 }}/{{ item.name }}-csr.json"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
   loop: "{{ nodes }}"
 - shell: |
@@ -48,8 +48,8 @@
   file:
     path: "{{ ca_kubeconfig }}"
     state: directory
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
 
 - shell: |
     if [ ! -f "{{ item.name }}.kubeconfig" ]; then    

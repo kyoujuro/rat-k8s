@@ -1,1 +1,2 @@
-iface   :  enp0s8
+iface     :  enp0s8
+user_name :  vagrant

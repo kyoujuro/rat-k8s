@@ -1,3 +1,4 @@
+
 #
 # mlb1 と mlb2 の間で代表アドレスを設定する
 #
@@ -30,9 +31,23 @@
   when:
     - lb_pos == "Frontend"
 
-
 - shell: netplan apply
 
+
+#
+# KeepAlived
+#
+- name: Downloading keepalived
+  stat:
+    path: "{{ r_download_dir }}/keepalived-2.0.15.tar.gz"
+  register: regi_keepalived
+
+- get_url:
+    url: https://www.keepalived.org/software/keepalived-2.0.15.tar.gz
+    dest: "{{ r_download_dir }}"
+    mode: '0644'
+  when: regi_keepalived.stat.exists == false	
+  
 - unarchive:
     src: "{{ r_download_dir }}/keepalived-{{ keepalived_version }}.tar.gz"
     dest: /home/vagrant

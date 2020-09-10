@@ -3,19 +3,19 @@
 #
 - name: Download Flannel 
   stat:
-    path: "{{ download_dir }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz"
+    path: "{{ r_download_dir }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz"
   register: regi_flannel
   when: flannel_version is defined 
 
 - get_url:
     url: https://github.com/coreos/flannel/releases/download/{{ flannel_version }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz
-    dest: "{{ download_dir }}"
+    dest: "{{ r_download_dir }}"
     mode: '0644'
   when: flannel_version is defined and regi_flannel.stat.exists == false
 
 - unarchive:
-    src:  "{{ download_dir }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz"
-    dest: "{{ download_dir }}"
+    src:  "{{ r_download_dir }}/flannel-{{ flannel_version }}-linux-amd64.tar.gz"
+    dest: "{{ r_download_dir }}"
   when: flannel_version is defined 
 
 #

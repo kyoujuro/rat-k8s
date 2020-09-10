@@ -6,8 +6,8 @@
   file:
     path: "{{ ca_etcd_home }}"
     state: directory
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
 
 #
 # ETCD CAの作成
@@ -16,14 +16,14 @@
   template:  
     src: etcd-ca-config.json
     dest: "{{ ca_etcd_home }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - template:
     src: etcd-ca-csr.json
     dest: "{{ ca_etcd_home }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - name: check existing etcd-ca.pem
   stat:
@@ -42,8 +42,8 @@
   template:
     src: etcd-csr.json
     dest: "{{ ca_etcd_home }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - name: check existing etcd-server.pem
   stat:
@@ -68,8 +68,8 @@
   template:
     src: etcd-peer-csr.json
     dest: "{{ ca_etcd_home }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - name: check existing etcd-peer.pem
   stat:

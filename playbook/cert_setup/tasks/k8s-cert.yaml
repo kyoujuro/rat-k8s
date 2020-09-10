@@ -2,8 +2,8 @@
   file:
     path: "{{ ca_home2 }}"
     state: directory
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
 
 #
 # Kubernetes CAの作成
@@ -12,14 +12,14 @@
   template:  
     src: ca-config.json
     dest: "{{ ca_home2 }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - template:
     src: ca-csr.json
     dest: "{{ ca_home2 }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - name: check existing ca.pem
   stat:
@@ -39,8 +39,8 @@
   template:
     src: admin-csr.json
     dest: "{{ ca_home2 }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - name: check existing admin.pem
   stat:
@@ -65,8 +65,8 @@
   template:
     src: kube-controller-manager-csr.json
     dest: "{{ ca_home2 }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - name: check existing kube-controller-manager.pem
   stat:
@@ -92,8 +92,8 @@
   template:
     src: kube-proxy-csr.json
     dest: "{{ ca_home2 }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - name: check existing kube-proxy.pem
   stat:
@@ -118,8 +118,8 @@
   template:
     src: kube-scheduler-csr.json
     dest: "{{ ca_home2 }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - name: check existing kube-scheduler.pem
   stat:
@@ -143,8 +143,8 @@
   template:
     src: kubernetes-csr.json
     dest: "{{ ca_home2 }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - name: check existing kubernetes.pem
   stat:
@@ -170,8 +170,8 @@
   template:
     src: service-account-csr.json
     dest: "{{ ca_home2 }}"
-    owner: vagrant
-    group: vagrant
+    owner: root
+    group: root
     mode: '0644'
 - name: check existing service-account.pem
   stat:
