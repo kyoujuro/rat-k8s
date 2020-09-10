@@ -58,8 +58,9 @@
   gather_facts: true
   become: true
   roles:
+    - addon_helm3     
     - addon_coredns
     - addon_metrics-server
     - addon_dashboard
   tasks:
-    - debug: msg="export KUBECONFIG=./kubeconfig"    
+    - debug: msg="export KUBECONFIG=`pwd`/kubeconfig"
