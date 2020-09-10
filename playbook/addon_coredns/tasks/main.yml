@@ -61,7 +61,7 @@
   become_user: "{{ user_name }}"
   args:
     chdir: "/home/{{ user_name }}"
-
+    executable: /bin/bash
 #
 # CoreDNSのデプロイ
 #
@@ -71,4 +71,4 @@
   become_user: "{{ user_name }}"
   args:
     chdir: "/home/{{ user_name }}"
-    
+    executable: /bin/bash
