@@ -82,6 +82,8 @@
   roles:
     - etcd
     - node_master
+    - role: runtime_containerd
+      when: pod_network == "flannel" or pod_network == "calico"
     - role: node_worker
       when: pod_network == "flannel" or pod_network == "calico"
     - role: net_bridge
@@ -119,7 +121,8 @@
   gather_facts: true
   become: true
   roles:
-    - node_worker    
+    - runtime_containerd
+    - node_worker
     - role: net_bridge
       when: pod_network == "bridge"
     - role: net_flannel

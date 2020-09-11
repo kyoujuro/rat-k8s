@@ -1,28 +1,3 @@
-#
-# Containerd のダウンロードとインストール
-#
-- debug: msg="{{ ansible_facts.hostname }}"
-#- include_tasks: mkdir_for_download.yaml
-
-#
-# mkdir directory for cni
-#  flannel などのプラグインの設定ファイルが入る
-#
-- name: start configuration
-  file:
-    path: /etc/cni/net.d
-    state: directory
-    owner: root
-    group: root
-    mode: '0755'
-
-# 必要なコードのダウンロード
-- include_tasks: dl_cni_plugin.yaml
-- include_tasks: dl_containerd.yaml
-- include_tasks: dl_cri_containerd.yaml
-- include_tasks: dl_crictl.yaml
-- include_tasks: dl_runc.yaml
-
 - include_vars: /vagrant/playbook/vars/main.yaml
 
 - name: mkdir /opt/cni/bin/
@@ -89,10 +64,10 @@
     timeout: 30
     
 ########
-#- unarchive:
-#    src: "{{ r_download_dir }}/crictl-{{ crictl_version }}-linux-amd64.tar.gz"
-#    dest: /usr/local/bin
-#    owner: root
-#    group: root
-#    mode: '0755'
+- unarchive:
+    src: "{{ r_download_dir }}/crictl-{{ crictl_version }}-linux-amd64.tar.gz"
+    dest: /usr/local/bin
+    owner: root
+    group: root
+    mode: '0755'
 ########

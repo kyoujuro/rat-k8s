@@ -10,8 +10,8 @@
   include_tasks: create_dir_worker.yaml
 
 ## Containerd のセットアップ
-- name: Install Containerd
-  include_tasks: containerd.yaml
+#- name: Install Containerd
+#  include_tasks: containerd.yaml
 
 
 ## kubectl インストール
