@@ -30,6 +30,10 @@
   become: true
   roles:
     - etcd
+    - role: runtime_containerd
+      when: container_runtime == "containerd"
+    - role: runtime_docker
+      when: container_runtime == "docker"
     - net_bridge
     - node_master
     - node_worker  

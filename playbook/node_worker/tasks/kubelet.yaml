@@ -34,19 +34,32 @@
     group: root
     mode: '0600'
     remote_src: yes
+
 - template:
     src: kubelet-config.yaml
     dest: /etc/kubernetes/config
     owner: root
     group: root
     mode: '0644'
-- template:
+
+- name: copy kubelet.service for containerd
+  template:
     src: kubelet.service
-    dest: /etc/systemd/system
+    dest: /etc/systemd/system/kubelet.service
     owner: root
     group: root
     mode: '0644'
-
+  when: container_runtime == "containerd"
+  
+- name: copy kubelet.service for docker
+  template:
+    src: kubelet.service_for_docker
+    dest: /etc/systemd/system/kubelet.service
+    owner: root
+    group: root
+    mode: '0644'
+  when: container_runtime == "docker"
+    
 - systemd:
     name: kubelet
     state: started

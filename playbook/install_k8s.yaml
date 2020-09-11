@@ -81,9 +81,11 @@
   become: true
   roles:
     - etcd
-    - node_master
     - role: runtime_containerd
-      when: pod_network == "flannel" or pod_network == "calico"
+      when: container_runtime == "containerd" and pod_network != "bridge"
+    - role: runtime_docker
+      when: container_runtime == "docker" and pod_network != "bridge"
+    - node_master
     - role: node_worker
       when: pod_network == "flannel" or pod_network == "calico"
     - role: net_bridge
@@ -121,7 +123,10 @@
   gather_facts: true
   become: true
   roles:
-    - runtime_containerd
+    - role: runtime_containerd
+      when: container_runtime == "containerd" and pod_network != "bridge"
+    - role: runtime_docker
+      when: container_runtime == "docker" and pod_network != "bridge"
     - node_worker
     - role: net_bridge
       when: pod_network == "bridge"
@@ -149,6 +154,7 @@
     - wait_for:
         timeout: 20
     # ワーカーノードにロール設定
+
     - include_tasks: tasks/role_worker.yaml
     #- include_tasks: tasks/add-node-label.yaml
   roles:
@@ -237,3 +243,5 @@
       when: sw_promethus == "yes"
     - role: addon_grafana
       when: sw_grafana == "yes"
+  tasks:
+    - debug: msg="export KUBECONFIG=`pwd`/kubeconfig"

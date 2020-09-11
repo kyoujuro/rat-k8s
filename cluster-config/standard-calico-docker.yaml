@@ -3,12 +3,13 @@
 #bridge_if: "en0: Wi-Fi (Wireless)"
 bridge_if: "eno1"
 
+
 ### Container Runtime
-container_runtime:  containerd
-#container_runtime:  docker
+#container_runtime:  containerd
+container_runtime:  docker
 docker_version:     "5:18.09.9~3-0~ubuntu-bionic"
-cni_plugins:        "v0.8.2"
 containerd_version: "1.2.13"
+cni_plugins:        "v0.8.2"
 crictl_version:     "v1.15.0"
 
 ### Kubernetes version
@@ -16,17 +17,19 @@ kubernetes_version: 1.18.2
 kubernetes_custom: false
 
 ### K8s cluster/pod network CNI plugin
-pod_network: bridge
+#pod_network: bridge
 #pod_network: flannel
+pod_network: calico
+
 
 ### flannel_version if you choice flannel
 flannel_version: v0.12.0
 
 ### Cluster Network
-private_ip_subnet: 172.16.9.0/24
+private_ip_subnet: 172.16.8.0/24
 public_ip_subnet:  192.168.1.0/24
 
-kube_apiserver_vip: 172.16.9.21
+kube_apiserver_vip: 172.16.8.21
 domain: example.com
 
 
@@ -36,8 +39,9 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.9.21"
-    public_ip: "192.168.1.99"    
+    private_ip: "172.16.8.21"
+    public_ip: "192.168.1.98"
+    #pod_network: "10.244.0.0/24"    
     role: "master"
     playbook: "setup_linux.yaml"
     comment: "Master node #1"
@@ -46,9 +50,9 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.9.31"
+    private_ip: "172.16.8.31"
     playbook: "setup_linux.yaml"
-    pod_network: "10.244.1.0/24"
+    #pod_network: "10.244.1.0/24"
     role: "worker"
     comment:  "Worker node #1"
 
@@ -56,9 +60,9 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.9.32"
+    private_ip: "172.16.8.32"
     playbook: "setup_linux.yaml"
-    pod_network: "10.244.2.0/24"
+    #pod_network: "10.244.2.0/24"
     role: "worker"
     comment:  "Worker node #2"
     
@@ -66,7 +70,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"    
-    private_ip: "172.16.9.10"
+    private_ip: "172.16.8.10"
     playbook: "setup_linux.yaml"
     comment: "Bootstap node" 
 

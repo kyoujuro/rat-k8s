@@ -1069,7 +1069,7 @@ def create_storage_node_taint(server_list)
 end
 
 ##
-##
+## Ansible Inventory に変数を追加する
 ##
 def append_ansible_inventory(ofn)
   $file_list.push(ofn)  
@@ -1084,7 +1084,17 @@ def append_ansible_inventory(ofn)
     w.write sprintf("sw_rook_ceph=%s\n", $conf['sw_rook_ceph'] == "yes" ? "yes" : "no")
     w.write sprintf("sw_promethus=%s\n", $conf['sw_promethus'] == "yes" ? "yes" : "no")
     w.write sprintf("sw_grafana=%s\n",   $conf['sw_grafana'] == "yes" ? "yes" : "no")        
-    w.write sprintf("\n")    
+    w.write sprintf("\n")
+
+    if $conf['container_runtime'].nil?
+      $conf['container_runtime'] = "containerd"
+    end
+    w.write sprintf("container_runtime=%s\n", $conf['container_runtime'])
+    w.write sprintf("docker_version=%s\n", $conf['docker_version'])
+    w.write sprintf("containerd_version=%s\n", $conf['containerd_version'])
+    w.write sprintf("cni_plugins=%s\n", $conf['cni_plugins'])
+    w.write sprintf("crictl_version=%s\n", $conf['crictl_version'])    
+    w.write sprintf("\n")
   end
 end
 

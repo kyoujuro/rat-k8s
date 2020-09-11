@@ -3,17 +3,30 @@
 #bridge_if: "en0: Wi-Fi (Wireless)"
 bridge_if: "eno1"
 
+### Container Runtime
+container_runtime:  containerd
+#container_runtime:  docker
+docker_version:     "5:18.09.9~3-0~ubuntu-bionic"
+cni_plugins:        "v0.8.2"
+containerd_version: "1.2.13"
+crictl_version:     "v1.15.0"
+
+
 ### Kubernetes version
 kubernetes_version: 1.18.2
 kubernetes_custom: false
+
 
 ### K8s cluster/pod network CNI plugin
 #pod_network: bridge
 #pod_network: flannel
 pod_network: calico
 
+
 ### flannel_version if you choice flannel
 flannel_version: v0.12.0
+
+
 
 ### Cluster Network
 private_ip_subnet: 172.16.8.0/24
