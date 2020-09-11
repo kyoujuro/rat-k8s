@@ -35,5 +35,5 @@
   args:
     chdir: "/home/{{ user_name }}"
   become_user: "{{ user_name }}"
-  become_method: su
+  become_method: sudo
 
