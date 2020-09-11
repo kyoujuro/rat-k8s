@@ -28,13 +28,12 @@
     owner: root
     group: root
     mode: '0755'
-
+    
 - name: install helm repository
   shell: |
     helm repo add stable https://kubernetes-charts.storage.googleapis.com/
   args:
     chdir: "/home/{{ user_name }}"
-  become: true
   become_user: "{{ user_name }}"
-  become_method: sudo
+  become_method: su
 

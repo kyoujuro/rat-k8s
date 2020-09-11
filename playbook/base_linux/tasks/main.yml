@@ -1,3 +1,9 @@
+- name: vagrant user add root group
+  user:
+    name: vagrant
+    groups: root
+    append: yes
+
 #####
 - name: Install Ubuntu package
   apt:

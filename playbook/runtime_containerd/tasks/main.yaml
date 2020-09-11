@@ -1,0 +1,5 @@
+#
+# Containerd のダウンロードとインストール
+#
+
+- debug: msg="{{ ansible_facts.hostname }}"

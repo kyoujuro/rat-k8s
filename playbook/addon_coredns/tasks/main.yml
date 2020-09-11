@@ -59,9 +59,11 @@
   shell: |
     kubectl apply -f coredns-configmap.yaml
   become_user: "{{ user_name }}"
+  become_method: sudo
   args:
     chdir: "/home/{{ user_name }}"
     executable: /bin/bash
+
 #
 # CoreDNSのデプロイ
 #
@@ -69,6 +71,7 @@
   shell: |
     kubectl apply -f coredns.yaml
   become_user: "{{ user_name }}"
+  become_method: sudo 
   args:
     chdir: "/home/{{ user_name }}"
     executable: /bin/bash

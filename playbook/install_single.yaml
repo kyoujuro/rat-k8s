@@ -56,7 +56,8 @@
 - name: K8s Monitoring setup
   hosts: masters
   gather_facts: true
-  become: true
+  #become_user: vagrant
+  become: true  
   roles:
     - addon_helm3     
     - addon_coredns

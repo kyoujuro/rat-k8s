@@ -1,12 +1,33 @@
 #
 # テスト用
 #
-- name: K8s helm setup
-  hosts: bootnode
+
+#
+# モニタリングセットアップ
+# CoreDNSセットアップ
+#
+- name: K8s Monitoring setup
+  hosts: masters
   gather_facts: true
-  become: true
+  #become: true
   roles:
-    #- addon_helm3
-    #- addon_promethus
-    #- addon_grafana
+    - addon_helm3     
+    - addon_coredns
+    - addon_metrics-server
+    - addon_dashboard
+  tasks:
+    - debug: msg="export KUBECONFIG=`pwd`/kubeconfig"
+
+
+#
+#
+#
+#- name: K8s helm setup
+#  hosts: bootnode
+#  gather_facts: true
+#  become: true
+#  roles:
+#    #- addon_helm3
+#    #- addon_promethus
+#    #- addon_grafana
     

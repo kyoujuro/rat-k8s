@@ -8,7 +8,7 @@
     state: directory
     owner: root
     group: root
-    mode: '0755'
+    mode: '0775'
 
 - name: mkdir for k8s bin
   file:
@@ -16,7 +16,7 @@
     state: directory
     owner: root
     group: root
-    mode: '0755'
+    mode: '0775'
 
 - name: mkdir for ssh keys
   file:
@@ -24,7 +24,7 @@
     state: directory
     owner: root
     group: root
-    mode: '0755'
+    mode: '0775'
 
 - name: mkdir kubeconfig
   file:
@@ -32,7 +32,7 @@
     state: directory
     owner: root
     group: root
-    mode:  '0755'
+    mode:  '0775'
 
 - name: mkdir download
   file:
@@ -40,7 +40,7 @@
     state: directory
     owner: root
     group: root
-    mode:  '0755'
+    mode:  '0775'
 
 #
 # mkdir directory for cni
