@@ -59,7 +59,16 @@
     group: root
     mode: '0644'
   when: container_runtime == "docker"
-    
+
+- name: copy kubelet.service for cri-o
+  template:
+    src: kubelet.service_for_cri-o
+    dest: /etc/systemd/system/kubelet.service
+    owner: root
+    group: root
+    mode: '0644'
+  when: container_runtime == "cri-o"
+  
 - systemd:
     name: kubelet
     state: started

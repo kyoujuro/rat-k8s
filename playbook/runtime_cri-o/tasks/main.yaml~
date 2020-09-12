@@ -1,0 +1,68 @@
+#
+# mkdir directory for cni
+#  flannel などのプラグインの設定ファイルが入る
+#
+- name: start configuration
+  file:
+    path: /etc/cni/net.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: mkdir /opt/cni/bin/
+  file:
+    path: /opt/cni/bin/
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: mkdir /etc/crio/crio.conf.d
+  file:
+    path: /etc/crio/crio.conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+    
+- include_tasks: dl_cni_plugin.yaml
+- include_tasks: dl_crictl.yaml
+
+- name: add registry 
+  shell: |
+    echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ linux_os }}/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+    echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ cri_version }}/{{ linux_os }}/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:{{ cri_version }}.list
+    curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:{{ cri_version }}/{{ linux_os }}/Release.key | apt-key add -
+    curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ linux_os }}/Release.key | apt-key add -
+  args:
+    chdir: "/home/{{ user_name }}"
+
+
+- name: set config
+  template:
+    src: crio.conf
+    dest: /etc/crio/crio.conf.d/crio.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+    
+- name: Install crio
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+    - cri-o
+    - cri-o-runc
+
+
+    
+
+    
+
+
+

@@ -20,28 +20,7 @@ elb[1:2]
 
 [all:vars]
 
-# Choice Container runtime is Docker or Containerd ?
-#container_engine="docker-ce"
-#container_engine="containerd"
 
-# Docker package version
-#docker_version_ubuntu="=18.06.1~ce~3-0~ubuntu"
-#docker_version_centos="18.06.3.ce-3.el7"
-
-# Containerd version
-containerd_version="1.2.13"
-
-# crictl version 
-crictl_version="v1.15.0"
-
-# runc version
-runc_version="v1.0.0-rc8"
-
-# Etcd version
-etcd_version="v3.4.0"
-
-# CNI Plugin
-cni_plugins="v0.8.2"
 
 # Kubernetes package version
 __KUBERNETES_VERSION__
@@ -97,6 +76,8 @@ r_ca_front_proxy = {{ r_work_dir }}/ca-front-proxy
 r_ca_kubeconfig  = {{ r_work_dir }}/kubeconfig
 r_k8s_binary     = {{ r_work_dir }}/bin
 
+
+
 kubernetes_dashborad_ver  = v2.0.0-beta6
 kubernetes_metrics_server = v0.3.6
 keepalived_version        = 2.0.15
@@ -105,6 +86,9 @@ cpu_arch                  = amd64
 
 # 
 #
+# Etcd version
+etcd_version="v3.4.0"
+
 
 KUBERNETES_PUBLIC_ADDRESS=__API_SERVER_IPADDR__
 

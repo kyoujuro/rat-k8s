@@ -86,6 +86,9 @@
       when: container_runtime == "containerd" and pod_network != "bridge"
     - role: runtime_docker
       when: container_runtime == "docker" and pod_network != "bridge"
+    - role: runtime_cri-o
+      when: container_runtime == "cri-o" and pod_network != "bridge"
+      
     # K8sコントロールプレーンのモジュールを導入
     - node_master
     # ネットワークを設定 Calicoは別途導入
@@ -134,6 +137,8 @@
       when: container_runtime == "containerd"
     - role: runtime_docker
       when: container_runtime == "docker"
+    - role: runtime_cri-o
+      when: container_runtime == "cri-o"
     # ネットワークを設定 Calicoはの場合は別途導入
     - node_worker
     - role: net_bridge

@@ -1093,7 +1093,8 @@ def append_ansible_inventory(ofn)
     w.write sprintf("docker_version=%s\n", $conf['docker_version'])
     w.write sprintf("containerd_version=%s\n", $conf['containerd_version'])
     w.write sprintf("cni_plugins=%s\n", $conf['cni_plugins'])
-    w.write sprintf("crictl_version=%s\n", $conf['crictl_version'])    
+    w.write sprintf("crictl_version=%s\n", $conf['crictl_version'])
+    w.write sprintf("cri_version=%s\n", $conf['cri_version'])        
     w.write sprintf("\n")
   end
 end

@@ -1,0 +1,26 @@
+[Unit]
+Description=Kubernetes Kubelet
+Documentation=https://github.com/kubernetes/kubernetes
+After=crio.service
+Requires=crio.service
+
+[Service]
+ExecStart=/usr/local/bin/kubelet \
+  --config=/etc/kubernetes/config/kubelet-config.yaml \
+  --container-runtime=remote \
+  --container-runtime-endpoint=unix:///var/run/crio/crio.sock \
+  --image-pull-progress-deadline=2m \
+  --kubeconfig=/etc/kubernetes/node.conf \
+  --network-plugin=cni \
+  --register-node=true \
+  --anonymous-auth=true \
+  --pod-manifest-path=/etc/kubelet.d \
+  --cgroup-driver="systemd" \
+  --v=2
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+
