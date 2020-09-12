@@ -25,6 +25,24 @@
 - include_tasks: dl_cni_plugin.yaml
 - include_tasks: dl_crictl.yaml
 
+##
+## master1 でダウンロードが完了したら、master2以降の待機をリリースする
+##
+- name: Touch the same file, but add/remove some permissions
+  file:
+    path: "{{ r_download_dir }}/cni_plugin_start.lock"
+    state: touch
+    mode: u+rw,g-wx,o-rwx  
+  when: ansible_facts.hostname is match("master1")
+
+##
+## master1 でダウンロードが完了するまで待つ
+##
+- name: Wait until the lock file is removed
+  wait_for:
+    path: "{{ r_download_dir }}/cni_plugin_start.lock"
+    state: present
+  
 - name: Configure CNI Networking
   unarchive:
     src: "{{ r_download_dir }}/cni-plugins-linux-amd64-{{ cni_plugins }}.tgz"

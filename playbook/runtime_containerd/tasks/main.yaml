@@ -23,6 +23,24 @@
 - include_tasks: dl_crictl.yaml
 - include_tasks: dl_runc.yaml
 
+##
+## master1 でダウンロードが完了したら、master2以降の待機をリリースする
+##
+- name: Touch the same file, but add/remove some permissions
+  file:
+    path: "{{ r_download_dir }}/containerd_start.lock"
+    state: touch
+    mode: u+rw,g-wx,o-rwx  
+  when: ansible_facts.hostname is match("master1")
+  
+##
+## master1 でダウンロードが完了するまで待つ
+##
+- name: Wait until the lock file is removed
+  wait_for:
+    path: "{{ r_download_dir }}/containerd_start.lock"
+    state: present
+  
 - include_vars: /vagrant/playbook/vars/main.yaml
 
 - name: mkdir /opt/cni/bin/

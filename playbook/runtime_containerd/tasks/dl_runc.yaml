@@ -4,11 +4,15 @@
 - name: Downloading runc
   stat:
     path: "{{ r_download_dir }}/runc.amd64"
+  when: ansible_facts.hostname is match("master1")    
   register: regi_runc
 
 - get_url:
-    url: https://github.com/opencontainers/runc/releases/download/{{ runc_version }}/runc.amd64
+    url: "https://github.com/opencontainers/runc/releases/download/{{ runc_version }}/runc.amd64"
     dest: "{{ r_download_dir }}"
     mode: '0644'
-  when: regi_runc.stat.exists == false
+  when:
+    - ansible_facts.hostname is match("master1")
+    - regi_runc.stat.exists == false
+
 

@@ -84,6 +84,10 @@ keepalived_version        = 2.0.15
 calico_version            = v3.14.1
 cpu_arch                  = amd64
 
+# CNI Plugin
+cni_plugins="v0.8.2"
+
+
 # 
 #
 # Etcd version

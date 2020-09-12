@@ -4,12 +4,16 @@
 - name: Downloading cni-plugins
   stat:
     path: "{{ r_download_dir }}/cni-plugins-linux-amd64-{{ cni_plugins }}.tgz"
+  when: ansible_facts.hostname is match("master1")    
   register: regi_cni
 
 - get_url:
-    url: https://github.com/containernetworking/plugins/releases/download/{{ cni_plugins }}/cni-plugins-linux-amd64-{{ cni_plugins }}.tgz
+    url: "https://github.com/containernetworking/plugins/releases/download/{{ cni_plugins }}/cni-plugins-linux-amd64-{{ cni_plugins }}.tgz"
     dest: "{{ r_download_dir }}"
     mode: '0644'
-  when: regi_cni.stat.exists == false
+  when:
+    - ansible_facts.hostname is match("master1")
+    - regi_cni.stat.exists == false
+
 
 

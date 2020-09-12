@@ -1,21 +1,43 @@
 #
 # Download Etcd 
 #
+
 - name: Downloading etcd
   stat:
     path: "{{ r_download_dir }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
+  when: ansible_facts.hostname is match("master1")
   register: regi_etcd
-
+  
 - get_url:
     url: https://github.com/etcd-io/etcd/releases/download/{{ etcd_version }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz
     dest: "{{ r_download_dir }}"
     mode: '0644'
-  when: regi_etcd.stat.exists == false
+  when: ansible_facts.hostname is match("master1") and regi_etcd.stat.exists == false
 
 - unarchive:
     src:  "{{ r_download_dir }}/etcd-{{ etcd_version }}-linux-amd64.tar.gz"
     dest: "{{ r_download_dir }}"
+  when: ansible_facts.hostname is match("master1")
 
+##
+## master1 でダウンロードが完了したら、master2以降の待機をリリースする
+##
+- name: Touch the same file, but add/remove some permissions
+  file:
+    path: "{{ r_download_dir }}/etcd_start.lock"
+    state: touch
+    mode: u+rw,g-wx,o-rwx  
+  when: ansible_facts.hostname is match("master1")
+  
+##
+## master1 でダウンロードが完了するまで待つ
+##
+- name: Wait until the lock file is removed
+  wait_for:
+    path: "{{ r_download_dir }}/etcd_start.lock"
+    state: present
+  when: ansible_facts.hostname is match("master[2-9]")
+  
 #
 # Config Etcd 
 #

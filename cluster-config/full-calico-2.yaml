@@ -3,6 +3,18 @@
 #bridge_if: "en0: Wi-Fi (Wireless)"
 bridge_if: "eno1"
 
+
+### Container Runtime
+container_runtime:  containerd
+#container_runtime:  docker
+#container_runtime:  cri-o
+docker_version:     "5:18.09.9~3-0~ubuntu-bionic"
+containerd_version: "1.2.13"
+cni_plugins:        "v0.8.2"
+crictl_version:     "v1.15.0"
+cri_version:        "1.17"
+
+
 ### Kubernetes version
 kubernetes_version: 1.18.2
 kubernetes_custom: false
