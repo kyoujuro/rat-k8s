@@ -2,9 +2,38 @@
 # Docker CE のインストール
 #
 
+#
+# mkdir directory for cni
+#  flannel などのプラグインの設定ファイルが入る
+#
+- name: start configuration
+  file:
+    path: /etc/cni/net.d
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: mkdir /opt/cni/bin/
+  file:
+    path: /opt/cni/bin/
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
 - include_tasks: dl_cni_plugin.yaml
 - include_tasks: dl_crictl.yaml
 
+- name: Configure CNI Networking
+  unarchive:
+    src: "{{ r_download_dir }}/cni-plugins-linux-amd64-{{ cni_plugins }}.tgz"
+    dest: /opt/cni/bin/
+    owner: root
+    group: root
+    mode: '0755'
+
+  
 - name: Install a list of packages
   apt:
     name: "{{ packages }}"

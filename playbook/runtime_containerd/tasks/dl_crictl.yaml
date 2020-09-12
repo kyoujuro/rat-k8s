@@ -12,5 +12,12 @@
     mode: '0644'
   when: regi_crictl.stat.exists == false
 
+- template:
+    src: crictl.yaml
+    dest: /etc/crictl.yaml
+    owner: root
+    group: root
+    mode: '0644'
+  
 
 

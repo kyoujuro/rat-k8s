@@ -87,12 +87,4 @@
     enabled: yes
 - wait_for:
     timeout: 30
-    
-########
-#- unarchive:
-#    src: "{{ r_download_dir }}/crictl-{{ crictl_version }}-linux-amd64.tar.gz"
-#    dest: /usr/local/bin
-#    owner: root
-#    group: root
-#    mode: '0755'
-########
+

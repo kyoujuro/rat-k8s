@@ -81,11 +81,14 @@
   become: true
   roles:
     - etcd
+    # コンテナランタイムを選択してインストール
     - role: runtime_containerd
       when: container_runtime == "containerd" and pod_network != "bridge"
     - role: runtime_docker
       when: container_runtime == "docker" and pod_network != "bridge"
+    # K8sコントロールプレーンのモジュールを導入
     - node_master
+    # ネットワークを設定 Calicoは別途導入
     - role: node_worker
       when: pod_network == "flannel" or pod_network == "calico"
     - role: net_bridge
@@ -93,6 +96,7 @@
     - role: net_flannel
       when: pod_network == "flannel"
   tasks:
+    # kubectlコマンドをログインシェルから使えるように設定する
     - include_tasks: tasks/kubeconfig_setup.yml
       
 # 
@@ -108,7 +112,9 @@
     # 処理完了まで時間を取らないと失敗する
     - wait_for:
         timeout: 100
+    # RBAC設定を追加
     - include_tasks: tasks/config_rbac_kubelet.yml
+    # kubectlコマンドをログインシェルから使えるように設定する      
     - include_tasks: tasks/kubeconfig_setup.yml
 
 #
@@ -123,10 +129,12 @@
   gather_facts: true
   become: true
   roles:
+    # コンテナランタイムを選択してインストール
     - role: runtime_containerd
-      when: container_runtime == "containerd" and pod_network != "bridge"
+      when: container_runtime == "containerd"
     - role: runtime_docker
-      when: container_runtime == "docker" and pod_network != "bridge"
+      when: container_runtime == "docker"
+    # ネットワークを設定 Calicoはの場合は別途導入
     - node_worker
     - role: net_bridge
       when: pod_network == "bridge"
@@ -154,9 +162,7 @@
     - wait_for:
         timeout: 20
     # ワーカーノードにロール設定
-
     - include_tasks: tasks/role_worker.yaml
-    #- include_tasks: tasks/add-node-label.yaml
   roles:
     # Calicoマニフェストデプロイ
     - role: net_calico

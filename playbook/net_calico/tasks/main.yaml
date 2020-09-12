@@ -3,19 +3,20 @@
 - name: copy calico-custom.yaml to local
   template:
     src: calico-custom.yaml
-    dest: /home/vagrant/calico-custom.yaml
-    owner: vagrant
-    group: vagrant
+    dest: "/home/{{ user_name }}/calico-custom.yaml"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
     mode: '0644'
 
+    
 - name: deploy calico by kubectl
   shell: |
     kubectl apply -f calico-custom.yaml
   args:
-    chdir: /home/vagrant
+    chdir: "/home/{{ user_name }}"
   when: ansible_facts.hostname is match("bootnode")
   become: true
-  become_user: vagrant
+  become_user: "{{ user_name }}"
 
 
 - name: Download calicoctl command
@@ -36,6 +37,6 @@
     export KUBECONFIG=~/.kube/config
     EOF
   args:
-    chdir: /home/vagrant
+    chdir: "/home/{{ user_name }}"
   when: ansible_facts.hostname is match("bootnode") or ansible_facts.hostname is match("master*")
 
