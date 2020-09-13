@@ -225,7 +225,7 @@
     - addon_coredns
     - addon_metrics-server
     - addon_dashboard
-
+    - addon_ingress
 #
 # Ingress コントローラーとHA-Proxyの設定
 #
