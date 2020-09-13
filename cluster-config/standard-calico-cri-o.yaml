@@ -12,7 +12,7 @@ docker_version:     "5:18.09.9~3-0~ubuntu-bionic"
 containerd_version: "1.2.13"
 cni_plugins:        "v0.8.2"
 crictl_version:     "v1.15.0"
-cri_version:        "1.17"
+crio_version:       "1.17"
 
 
 ### Kubernetes version

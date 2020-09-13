@@ -12,8 +12,7 @@ docker_version:     "5:18.09.9~3-0~ubuntu-bionic"
 containerd_version: "1.2.13"
 cni_plugins:        "v0.8.2"
 crictl_version:     "v1.15.0"
-cri_version:        "1.17"
-
+crio_version:       "1.17"
 
 ### Kubernetes version
 kubernetes_version: 1.18.2
@@ -27,10 +26,13 @@ pod_network: calico
 
 ### flannel_version if you choice flannel
 #flannel_version: v0.12.0
+calico_version: v3.14.1
 
 ### Cluster Network
 private_ip_subnet: 172.16.23.0/24
 public_ip_subnet:  192.168.1.0/24
+
+keepalived_version: 2.0.15
 
 ### Internal Load Balancer
 kube_apiserver_vip: 172.16.23.23

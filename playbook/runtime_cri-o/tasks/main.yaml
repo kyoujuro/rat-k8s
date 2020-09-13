@@ -53,8 +53,8 @@
 - name: add registry 
   shell: |
     echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ linux_os }}/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
-    echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ cri_version }}/{{ linux_os }}/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:{{ cri_version }}.list
-    curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:{{ cri_version }}/{{ linux_os }}/Release.key | apt-key add -
+    echo "deb http://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/{{ crio_version }}/{{ linux_os }}/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:{{ crio_version }}.list
+    curl -L https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable:cri-o:{{ crio_version }}/{{ linux_os }}/Release.key | apt-key add -
     curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/{{ linux_os }}/Release.key | apt-key add -
   args:
     chdir: "/home/{{ user_name }}"

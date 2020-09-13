@@ -612,14 +612,14 @@ def output_ansible_inventory0(ofn,sw)
         elsif line =~ /^elb\[1:/
           w.write sprintf("elb[1:%d]\n",counter_elb)
           
-        elsif line =~ /__KUBERNETES_VERSION__/
-          w.write sprintf("kubernetes_version=\"v%s\"\n", $conf['kubernetes_version'])
-          w.write sprintf("kubernetes_version_ubuntu=\"=%s-00\"\n", $conf['kubernetes_version'])
-          if $conf['kubernetes_custom'] == true
-            w.write sprintf("custom_kubernetes=true\n")
-          else
-            w.write sprintf("custom_kubernetes=false\n")
-          end
+        #elsif line =~ /__KUBERNETES_VERSION__/
+        #  w.write sprintf("kubernetes_version=\"v%s\"\n", $conf['kubernetes_version'])
+        #  #w.write sprintf("kubernetes_version_ubuntu=\"=%s-00\"\n", $conf['kubernetes_version'])
+        #  if $conf['kubernetes_custom'] == true
+        #    w.write sprintf("custom_kubernetes=true\n")
+        #  else
+        #    w.write sprintf("custom_kubernetes=false\n")
+        #  end
 
         elsif line =~ /__WORK_DIR__/
           if counter_boot == 0
@@ -633,18 +633,16 @@ def output_ansible_inventory0(ofn,sw)
             w.write line.gsub(/__SINGLE_NODE__/, 'master')
           end
           
-        elsif line =~ /__POD_NETWORK__/
-          w.write line.gsub(/__POD_NETWORK__/, $conf['pod_network'])
+        #elsif line =~ /__POD_NETWORK__/
+        #  w.write line.gsub(/__POD_NETWORK__/, $conf['pod_network'])
           
-        elsif line =~ /__FLANNEL_VER__/
-          if $conf['flannel_version'].nil? == false
-            w.write line.gsub(/__FLANNEL_VER__/, $conf['flannel_version'])
-          end
-          
+        #elsif line =~ /__FLANNEL_VER__/
+        #  if $conf['flannel_version'].nil? == false
+        #    w.write line.gsub(/__FLANNEL_VER__/, $conf['flannel_version'])
+        #  end
+
         elsif line =~ /__API_SERVER_IPADDR__/
           w.write line.gsub(/__API_SERVER_IPADDR__/, $conf['kube_apiserver_vip'])
-
-
           
         elsif line =~ /__MLB_IP_PRIMALY__/
           pub_ip,priv_ip = get_ip_by_host($conf['ka_primary_internal_host'])
@@ -1068,33 +1066,51 @@ def create_storage_node_taint(server_list)
   end
 end
 
+
+
 ##
 ## Ansible Inventory に変数を追加する
 ##
+def print_nn(w,param)
+  if $conf[param].nil?
+    return
+  else
+    w.write sprintf("%s = %s\n", param, $conf[param])
+  end
+end
+
 def append_ansible_inventory(ofn)
   $file_list.push(ofn)  
   File.open(ofn, "a") do |w|
     w.write sprintf("\n")
-    w.write sprintf("proxy_node=%s\n", $exist_proxy_node)
-    w.write sprintf("storage_node=%s\n", $exist_storage_node)
-    w.write sprintf("domain=%s\n", $domain)
-    w.write sprintf("internal_subnet=%s\n", $conf['private_ip_subnet'])
-    w.write sprintf("domain=%s\n", $domain)
-    w.write sprintf("single_node=%s\n",  $single_node)
-    w.write sprintf("sw_rook_ceph=%s\n", $conf['sw_rook_ceph'] == "yes" ? "yes" : "no")
-    w.write sprintf("sw_promethus=%s\n", $conf['sw_promethus'] == "yes" ? "yes" : "no")
-    w.write sprintf("sw_grafana=%s\n",   $conf['sw_grafana'] == "yes" ? "yes" : "no")        
+    print_nn(w,'cpu_arch')
+    print_nn(w,'kubernetes_version')
+    w.write sprintf("custom_kubernetes = %s\n",$conf['custom_kubernetes'] == "yes" ? "yes" : "no")
+    print_nn(w,'kubernetes_dashborad_ver')
+    print_nn(w,'kubernetes_metrics_server')
+    print_nn(w,'etcd_version')
+    print_nn(w,'keepalived_version')
+    w.write sprintf("proxy_node = %s\n", $exist_proxy_node)
+    w.write sprintf("storage_node = %s\n", $exist_storage_node)
+    print_nn(w,'domain')
+    print_nn(w,'pod_network')
+    print_nn(w,'internal_subnet')
+    w.write sprintf("single_node = %s\n",  $single_node)
+    w.write sprintf("sw_rook_ceph = %s\n", $conf['sw_rook_ceph'] == "yes" ? "yes" : "no")
+    w.write sprintf("sw_promethus = %s\n", $conf['sw_promethus'] == "yes" ? "yes" : "no")
+    w.write sprintf("sw_grafana = %s\n",   $conf['sw_grafana'] == "yes" ? "yes" : "no")        
     w.write sprintf("\n")
-
     if $conf['container_runtime'].nil?
       $conf['container_runtime'] = "containerd"
     end
-    w.write sprintf("container_runtime=%s\n", $conf['container_runtime'])
-    w.write sprintf("docker_version=%s\n", $conf['docker_version'])
-    w.write sprintf("containerd_version=%s\n", $conf['containerd_version'])
-    w.write sprintf("cni_plugins=%s\n", $conf['cni_plugins'])
-    w.write sprintf("crictl_version=%s\n", $conf['crictl_version'])
-    w.write sprintf("cri_version=%s\n", $conf['cri_version'])        
+    print_nn(w,'container_runtime')
+    print_nn(w,'docker_version')
+    print_nn(w,'containerd_version')
+    print_nn(w,'cni_plugins')
+    print_nn(w,'crictl_version')
+    print_nn(w,'crio_version')
+    print_nn(w,'calico_version')
+    print_nn(w,'flannel_version')        
     w.write sprintf("\n")
   end
 end

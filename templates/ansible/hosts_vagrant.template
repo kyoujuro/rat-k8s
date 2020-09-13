@@ -21,21 +21,14 @@ elb[1:2]
 [all:vars]
 
 
-
-# Kubernetes package version
-__KUBERNETES_VERSION__
-
-
 # Ansible & Vagrant vars
 #shared_fs=/mnt
 shared_fs=/vagrant
 cluster_admin=vagrant
 
-# CNI
-pod_network=__POD_NETWORK__
 
-# CNI Flannel version
-flannel_version=__FLANNEL_VER__
+# Kubernetes API IP address
+KUBERNETES_PUBLIC_ADDRESS=__API_SERVER_IPADDR__
 
 
 # KEEPALIVED_CONFIG INTERNAL
@@ -77,24 +70,6 @@ r_ca_kubeconfig  = {{ r_work_dir }}/kubeconfig
 r_k8s_binary     = {{ r_work_dir }}/bin
 
 
-
-kubernetes_dashborad_ver  = v2.0.0-beta6
-kubernetes_metrics_server = v0.3.6
-keepalived_version        = 2.0.15
-calico_version            = v3.14.1
-cpu_arch                  = amd64
-
-# CNI Plugin
-cni_plugins="v0.8.2"
-
-
-# 
 #
-# Etcd version
-etcd_version="v3.4.0"
-
-
-KUBERNETES_PUBLIC_ADDRESS=__API_SERVER_IPADDR__
-
-#
+# Dynamic Variales
 #
