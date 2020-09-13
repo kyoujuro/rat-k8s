@@ -23,5 +23,8 @@ vrrp_instance VI_1 {
     track_script {
         chk_haproxy
     }
+    virtual_ipaddress {                  
+       {{ kube_apiserver_vip }} dev enp0s8
+    }      
     notify_master /etc/keepalived/master.sh
 }

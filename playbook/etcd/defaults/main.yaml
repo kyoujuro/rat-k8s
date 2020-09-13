@@ -4,4 +4,4 @@ r_ca_home2:       "{{ r_work_dir }}/ca"
 r_ca_etcd_home:   "{{ r_work_dir }}/ca-etcd"
 r_ca_front_proxy: "{{ r_work_dir }}/ca-front-proxy"
 r_ca_kubeconfig:  "{{ r_work_dir }}/kubeconfig"
-
+etcd_version:  v3.4.0

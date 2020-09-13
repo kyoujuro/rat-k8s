@@ -1094,6 +1094,8 @@ def append_ansible_inventory(ofn)
     w.write sprintf("storage_node = %s\n", $exist_storage_node)
     print_nn(w,'domain')
     print_nn(w,'pod_network')
+    # private_ip_subnet = internal_subnet として代入
+    $conf['internal_subnet'] = $conf['private_ip_subnet']
     print_nn(w,'internal_subnet')
     w.write sprintf("single_node = %s\n",  $single_node)
     w.write sprintf("sw_rook_ceph = %s\n", $conf['sw_rook_ceph'] == "yes" ? "yes" : "no")

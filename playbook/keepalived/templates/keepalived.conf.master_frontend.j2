@@ -8,7 +8,7 @@ vrrp_script chk_haproxy {
     weight 2
 }
 vrrp_instance VI_1 {
-    interface enp0s8
+    interface enp0s9
     state BACKUP
     priority 100
     virtual_router_id 42
@@ -23,5 +23,8 @@ vrrp_instance VI_1 {
     track_script {
         chk_haproxy
     }
+    virtual_ipaddress {                  
+       {{ front_proxy_vip }} dev enp0s9
+    }      
     notify_master /etc/keepalived/master.sh
 }

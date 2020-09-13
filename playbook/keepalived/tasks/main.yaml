@@ -11,27 +11,27 @@
     - libssl-dev
     - build-essential
     
-- name: deploy netplan config
-  template:
-    src: 51-heepalived.yaml.j2
-    dest: /etc/netplan/51-heepalived.yaml
-    owner: root
-    group: root
-    mode: '0644'
-  when:
-    - lb_pos == "Internal"
-
-- name: deploy netplan config
-  template:
-    src: 52-heepalived.yaml.j2
-    dest: /etc/netplan/52-heepalived.yaml
-    owner: root
-    group: root
-    mode: '0644'
-  when:
-    - lb_pos == "Frontend"
-
-- shell: netplan apply
+#- name: deploy netplan config
+#  template:
+#    src: 51-heepalived.yaml.j2
+#    dest: /etc/netplan/51-heepalived.yaml
+#    owner: root
+#    group: root
+#    mode: '0644'
+#  when:
+#    - lb_pos == "Internal"
+#
+#- name: deploy netplan config
+#  template:
+#    src: 52-heepalived.yaml.j2
+#    dest: /etc/netplan/52-heepalived.yaml
+#    owner: root
+#    group: root
+#    mode: '0644'
+#  when:
+#    - lb_pos == "Frontend"
+#
+#- shell: netplan apply
 
 
 #
@@ -40,25 +40,34 @@
 - name: Downloading keepalived
   stat:
     path: "{{ r_download_dir }}/keepalived-{{ keepalived_version }}.tar.gz"
+  when:
   register: regi_keepalived
 
 - get_url:
     url: "https://www.keepalived.org/software/keepalived-{{ keepalived_version }}.tar.gz"
     dest: "{{ r_download_dir }}"
     mode: '0644'
-  when: regi_keepalived.stat.exists == false	
-  
+  when:
+    - ansible_facts.hostname is match("mlb1")    
+    - regi_keepalived.stat.exists == false
+    
 - unarchive:
     src: "{{ r_download_dir }}/keepalived-{{ keepalived_version }}.tar.gz"
     dest: /home/vagrant
-
+  when:
+    - ansible_facts.hostname is match("mlb1")
+    - regi_keepalived.stat.exists == false
+  
 - shell: |
       cd keepalived-{{ keepalived_version }}
       ./configure
       make && make install
   args:
     chdir: /home/vagrant
-
+  when:
+    - ansible_facts.hostname is match("mlb1")     
+    - regi_keepalived.stat.exists == false
+  
 - name: deploy keepalived service
   template:
     src: keepalived.service.j2
