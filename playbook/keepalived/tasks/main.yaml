@@ -11,29 +11,6 @@
     - libssl-dev
     - build-essential
     
-#- name: deploy netplan config
-#  template:
-#    src: 51-heepalived.yaml.j2
-#    dest: /etc/netplan/51-heepalived.yaml
-#    owner: root
-#    group: root
-#    mode: '0644'
-#  when:
-#    - lb_pos == "Internal"
-#
-#- name: deploy netplan config
-#  template:
-#    src: 52-heepalived.yaml.j2
-#    dest: /etc/netplan/52-heepalived.yaml
-#    owner: root
-#    group: root
-#    mode: '0644'
-#  when:
-#    - lb_pos == "Frontend"
-#
-#- shell: netplan apply
-
-
 #
 # KeepAlived
 #
@@ -41,6 +18,7 @@
   stat:
     path: "{{ r_download_dir }}/keepalived-{{ keepalived_version }}.tar.gz"
   when:
+    - ansible_facts.hostname is match("bootnode") 
   register: regi_keepalived
 
 - get_url:
@@ -48,26 +26,67 @@
     dest: "{{ r_download_dir }}"
     mode: '0644'
   when:
-    - ansible_facts.hostname is match("mlb1")    
+    - ansible_facts.hostname is match("bootnode")     
     - regi_keepalived.stat.exists == false
+
+- name: extracted  keepalived
+  stat:
+    path: "{{ r_download_dir }}/keepalived-{{ keepalived_version }}/README.md"
+  when:
+    - ansible_facts.hostname is match("bootnode") 
+  register: regi_keepalived_extra
+
     
 - unarchive:
     src: "{{ r_download_dir }}/keepalived-{{ keepalived_version }}.tar.gz"
-    dest: /home/vagrant
+    dest: "{{ r_download_dir }}"
   when:
-    - ansible_facts.hostname is match("mlb1")
-    - regi_keepalived.stat.exists == false
-  
-- shell: |
-      cd keepalived-{{ keepalived_version }}
-      ./configure
-      make && make install
+    - ansible_facts.hostname is match("bootnode") 
+    - regi_keepalived_extra.stat.exists == false
+
+- debug: msg="{{ r_download_dir }}/keepalived-{{ keepalived_version }}"
+    
+- name: Build keepalived
+  shell: |
+    ./configure
+    make
   args:
-    chdir: /home/vagrant
+    chdir: "{{ r_download_dir }}/keepalived-{{ keepalived_version }}"
   when:
-    - ansible_facts.hostname is match("mlb1")     
-    - regi_keepalived.stat.exists == false
+    - ansible_facts.hostname is match("bootnode") 
+    - regi_keepalived_extra.stat.exists == false
+
+
+##
+## bootnode で keepalived のビルドが完了したら、mlbs/elbsの待機をリリースする
+##
+- name: Touch the same file, but add/remove some permissions
+  file:
+    path: "{{ r_download_dir }}/keepalived_start.lock"
+    state: touch
+    mode: u+rw,g-wx,o-rwx  
+  when: ansible_facts.hostname is match("bootnode")
   
+##
+## bootnode でビルドが完了するまで待つ
+##
+- name: Wait until the lock file is removed
+  wait_for:
+    path: "{{ r_download_dir }}/keepalived_start.lock"
+    state: present
+  when:
+    - ansible_facts.hostname != "bootnode"
+
+    
+- shell: |
+      make install
+  args:
+    chdir: "{{ r_download_dir }}/keepalived-{{ keepalived_version }}"
+  when:
+    - ansible_facts.hostname != "bootnode"
+    
+
+    
 - name: deploy keepalived service
   template:
     src: keepalived.service.j2
@@ -75,7 +94,10 @@
     owner: root
     group: root
     mode: '0644'
+  when:
+    - ansible_facts.hostname != "bootnode"
 
+    
 - name: /etc/keepalived/keepalived.conf to master mlb
   file:
     path: /etc/keepalived
@@ -83,7 +105,10 @@
     owner: root
     group: root
     mode: '0755'
+  when:
+    - ansible_facts.hostname != "bootnode"
 
+    
 - name: /etc/keepalived/keepalived.conf to primary mlb
   template:
     src: keepalived.conf.master.j2
@@ -133,9 +158,13 @@
 - name: just force systemd to reread configs
   systemd:
     daemon_reload: yes
+  when:
+    - ansible_facts.hostname != "bootnode"
 
 - name: enable and start a keepalived
   systemd:
     name: keepalived
     state: started
     enabled: yes
+  when:
+    - ansible_facts.hostname != "bootnode"

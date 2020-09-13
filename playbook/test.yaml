@@ -21,6 +21,7 @@
 
 - name: TEST Internal HA-PROXY install
   hosts:
+  - bootnode
   - mlbs
   vars:
     lb_pos: "Internal"
@@ -33,6 +34,7 @@
 
 - name: External HA-PROXY install
   hosts:
+  - bootnode  
   - elbs
   vars:
     lb_pos: "Frontend"

@@ -40,6 +40,7 @@
 - name: Internal HA-PROXY install
   hosts:
   - mlbs
+  - bootnode
   vars:
     lb_pos: "Internal"
   gather_facts: true
@@ -57,6 +58,7 @@
 - name: External HA-PROXY install
   hosts:
   - elbs
+  - bootnode  
   vars:
     lb_pos: "Frontend"
   gather_facts: true
