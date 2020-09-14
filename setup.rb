@@ -1011,13 +1011,17 @@ def haproxy_front_cfg()
   tfn = "templates/playbook/haproxy_frontend.cfg.j2.template"  
 
   server_list_node = ""
-  server_list_api = ""  
+  server_list_api = ""
+  server_list_ingress_http = ""
+  server_list_ingress_https = ""    
   $vm_config_array.each do |val|
     x = eval(val)
     ## ワーカーノード
     if x['name'] =~ /^node*/
       if x['role'] =~ /^worker/
         server_list_node = server_list_node + sprintf("%s server %s %s:30443 check\n", "\s"*4, x['name'], x['private_ip'])
+        server_list_ingress_http = server_list_ingress_http + sprintf("%s server %s %s:31080 cookie %s check \n", "\s"*4, x['name'], x['private_ip'],x['name'])
+        server_list_ingress_https = server_list_ingress_https + sprintf("%s server %s %s:31443 cookie %s check \n", "\s"*4, x['name'], x['private_ip'],x['name'])
       end
     end
     if x['name'] =~ /^master*/
@@ -1036,6 +1040,10 @@ def haproxy_front_cfg()
           w.write server_list_node
         elsif line =~ /^__SERVER_LIST_API__/
           w.write server_list_api
+        elsif line =~ /^__SERVER_LIST_INGRESS_HTTP__/
+          w.write server_list_ingress_http
+        elsif line =~ /^__SERVER_LIST_INGRESS_HTTPS__/
+          w.write server_list_ingress_https
         else
           w.write line
         end

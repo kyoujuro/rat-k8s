@@ -49,6 +49,37 @@ backend api_servers
      default-server inter 10s fall 2
 __SERVER_LIST_API__
 
+
+frontend ingress_http
+     bind *:80
+     mode tcp
+     option tcplog
+     default_backend ingress_http
+
+backend ingress_http
+     mode tcp
+     balance roundrobin
+     option forwardfor
+     cookie SRVNAME insert     
+__SERVER_LIST_INGRESS_HTTP__
+
+
+
+frontend ingress_https
+     bind *:443
+     mode tcp
+     option tcplog
+     default_backend ingress_https
+
+backend ingress_https
+     mode tcp
+     balance roundrobin
+     option forwardfor
+     cookie SRVNAME insert     
+__SERVER_LIST_INGRESS_HTTPS__
+
+
+
 frontend apl_frontend
      bind *:80
      mode tcp

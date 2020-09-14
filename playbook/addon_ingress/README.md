@@ -16,9 +16,8 @@ https://medium.com/swlh/kubernetes-ingress-controller-overview-81abbaca19ec
 このAnsible プレイブックでは、Nginx Ingress コントローラーについて扱う
 
 
-## Todo
+elb vip 80 ポートにIngressコントローラーのHTTPポート 31080を対応づけ、elb vip 443 ポートにIngressコントローラーのHTTPSポート31443を繋いでいる。
 
-elb vip にIngressコントローラーのポートを繋いで
 coredns に Ingress のドメイン名  ingress.labs.local を設定する。
 
 

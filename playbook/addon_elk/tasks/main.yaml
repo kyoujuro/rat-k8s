@@ -1,0 +1,31 @@
+#
+# Elastiecsearch のインストール
+#
+- name: setup helm chart for Elastiecsearch step-1
+  become_user: "{{ user_name }}"
+  shell: |
+    kubectl create namespace elasticsearch
+    helm repo add elastic https://helm.elastic.co
+    helm inspect values  elastic/elasticsearch > elasticsearch-values.yaml    
+  args:
+    chdir: "/home/{{ user_name }}"
+
+#
+# 設定編集
+#
+
+#
+# Elastiecsearch デプロイ
+#
+- name: helm install Elastiecsearch step-2
+  become_user: "{{ user_name }}"
+  shell: |
+    helm install elasticsearch -n elasticsearch -f elasticsearch-values.yaml elastic/elasticsearch    
+  register: results_helm
+  args:
+    chdir: "/home/{{ user_name }}"
+
+
+
+
+  

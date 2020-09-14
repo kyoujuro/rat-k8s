@@ -21,7 +21,6 @@
 - name: install Grafana step-2.2
   blockinfile:
     path: "/home/{{ user_name }}/grafana-values.yaml"
-
     insertafter: '  targetPort: 3000'
     block: |2
         nodePort: 30000

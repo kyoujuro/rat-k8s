@@ -173,7 +173,7 @@
   roles:
     # Calicoマニフェストデプロイ
     - role: net_calico
-      when: pod_network == "calico"      
+      when: pod_network == "calico"
       
 
 # プロキシノードのコンテナランタイム初期化
@@ -216,7 +216,7 @@
 #   Metrics Server
 #　 Dashboard
 #
-- name: K8s Monitoring setup
+- name: Deploy addon for k8s
   hosts: bootnode
   gather_facts: true
   become: true
@@ -239,13 +239,12 @@
     - include_tasks: tasks/deploy-ka-vip-ingress.yaml
       when:
       - proxy_node == "true"
-    - debug: msg="export KUBECONFIG=`pwd`/kubeconfig"
 
 #
 # テスト
 # 有効化して動作させるには、Rook-Ceph が導入されている必要がある
 #
-- name: K8s helm setup
+- name: Deploy addon for k8s-2
   hosts: bootnode
   gather_facts: true
   become: true
@@ -256,5 +255,13 @@
       when: sw_promethus == "yes"
     - role: addon_grafana
       when: sw_grafana == "yes"
+    - role: addon_grafana
+      when: sw_grafana == "yes"
+    #- role: addon_elk
+    #  when: sw_elk == "yes"
+    #- role: addon_istio
+    #  when: sw_istio == "yes"
+    #- role: addon_knative
+    #  when: sw_knative == "yes"
   tasks:
     - debug: msg="export KUBECONFIG=`pwd`/kubeconfig"

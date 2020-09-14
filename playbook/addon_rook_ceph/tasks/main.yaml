@@ -112,3 +112,25 @@
   args:
     chdir: "/home/{{ user_name }}/rook/cluster/examples/kubernetes/ceph"
 - local_action: copy content="{{  results_rook_ui.stdout_lines }}" dest="/home/{{ user_name }}/results_rook_operator"
+
+#
+# Storage Classs rbd のデプロイ
+#
+- name: deploy rbd storageclass
+  become_user: "{{ user_name }}"
+  shell: |
+    kubectl apply -f storageclass.yaml
+    kubectl patch storageclass rook-ceph-block  -p '{"metadata": {"annotations":{"storageclass.kubernetes.io/is-default-class":"true"}}}'
+  args:
+    chdir: "/home/{{ user_name }}/rook/cluster/examples/kubernetes/ceph/csi/rbd"
+
+#
+# Storage Classs cephfs のデプロイ
+#
+- name: deploy cephfs storageclass
+  become_user: "{{ user_name }}"
+  shell: |
+    kubectl apply -f storageclass.yaml
+  args:
+    chdir: "/home/{{ user_name }}/rook/cluster/examples/kubernetes/ceph/csi/cephfs"
+    

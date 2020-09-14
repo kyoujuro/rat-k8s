@@ -45,3 +45,10 @@
   roles:
     - keepalived
 
+
+- name: Deploy addon for k8s-2
+  hosts: bootnode
+  gather_facts: true
+  become: true
+  roles:
+    - addon_ingress  
