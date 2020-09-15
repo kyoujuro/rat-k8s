@@ -1,0 +1,27 @@
+spec:
+  externalTrafficPolicy: Cluster
+  selector:
+    app: istio-ingressgateway
+    istio: ingressgateway
+  type: NodePort  
+  ports:
+  - name: status-port
+    protocol: TCP
+    port: 15021    
+    targetPort: 15021
+    nodePort: 31521    
+  - name: http2
+    protocol: TCP  
+    port: 80
+    targetPort: 8080
+    nodePort: 31580
+  - name: https
+    protocol: TCP
+    port: 443
+    targetPort: 8443    
+    nodePort: 31543
+  - name: tls
+    protocol: TCP
+    port: 15443
+    targetPort: 15443
+    nodePort: 31563

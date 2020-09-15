@@ -181,6 +181,12 @@ https://192.168.1.131:30445/#/login
 
 
 
+## 起動を高速化する方法
 
+`vagrant up` を実行する前に、以下のコマンドを実行しておくことで、起動の時間短縮ができる。
+
+~~~
+vagrant plugin install vagrant-cachier
+~~~
 
 

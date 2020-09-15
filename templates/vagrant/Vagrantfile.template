@@ -2,14 +2,23 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+#
+# 高速化のために起動前に以下のコマンドを実行してください。
+# vagrant plugin install vagrant-cachier
+#
+
 # host network interfaice
 #bridge_if = "en0: Wi-Fi (Wireless)"
 bridge_if = "eno1"
 
-
 __VM_CONFIG__
 
 Vagrant.configure("2") do |config|
+
+  if Vagrant.has_plugin?("vagrant-cachier")
+    config.cache.scope = :machine
+  end
+  
   vm_spec.each do |spec|
     config.vm.define spec[:name] do |v|
       v.vm.box = spec[:box]

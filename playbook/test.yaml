@@ -23,5 +23,5 @@
   gather_facts: true
   become: true
   roles:
-    - addon_elk
+    - addon_istio
     

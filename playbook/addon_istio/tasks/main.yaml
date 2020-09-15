@@ -1,11 +1,47 @@
 - debug: msg="{{ ansible_facts.hostname }}"
 
-- name: Download Nginx Ingress Controller Manifest
-  get_url:
-    url: "https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-{{ nginx_ic_version }}/deploy/static/provider/baremetal/deploy.yaml"
-    dest: "/home/{{ user_name }}/ingress-controller-nginx.yaml"
-    mode: '0644'
+- name: check istio
+  stat:
+    path: "/home/{{ user_name }}/istio-{{ istio_version }}/README.md"
+  register: file_istio
+
+#
+# Istio のインストール
+#
+- name: install Istio step-1
+  become_user: "{{ user_name }}"
+  shell: |
+    curl -L https://istio.io/downloadIstio | ISTIO_VERSION={{ istio_version }} TARGET_ARCH=x86_64 sh -
+  args:
+    chdir: "/home/{{ user_name }}"
+  when: file_istio.stat.exists == false
+
+
+- name: install Istio step-2
+  become_user: "{{ user_name }}"
+  shell: |
+    export PATH=$PWD/bin:$PATH
+    istioctl install --set profile=default
+  args:
+    chdir: "/home/{{ user_name }}/istio-{{ istio_version }}"
+
+
+- template:
+    src: istio-patch.yaml
+    dest: "/home/{{ user_name }}/istio-patch.yaml"
     owner: "{{ user_name }}"
     group: "{{ user_name }}"
+    mode: '0644'
+    
+- name: apply patch for Istio
+  become_user: "{{ user_name }}"
+  shell: |
+    kubectl patch svc istio-ingressgateway --patch "$(cat istio-patch.yaml)" -n istio-system
+  args:
+    chdir: "/home/{{ user_name }}"
+    
 
+
+    
+    
   

@@ -20,14 +20,6 @@
 #
 # 設定編集
 #
-#- name: Edit elasticsearch-values.yaml  lineinfile
-#  lineinfile:
-#    path: elasticsearch-values.yaml
-#    insertafter: '^  type: ClusterIP'
-#    line: '  type: NodePort'
-#  args:
-#    chdir: "/home/{{ user_name }}"
-
 - name: Edit elasticsearch-values.yaml  replace  service type
   become_user: "{{ user_name }}"
   replace:
@@ -59,7 +51,6 @@
 #
 # 起動待機  
 #
-#
 - name: waiting for starting of the elasticsearch pods
   become_user: "{{ user_name }}"
   shell: |
@@ -75,14 +66,16 @@
   args:
     chdir: "/home/{{ user_name }}"  
 
-#########
-# Kibana
+    
+################################## ここからKibana パート
+#
+# Kibana 導入有無チェック
+#
 - name: Check Kibana value file
   become_user: "{{ user_name }}"
   stat:
     path: "/home/{{ user_name }}/kibana-values.yaml"
   register: kibana_values
-
 
 #
 # Kibana の Helm パラメータの取り出し
@@ -106,28 +99,19 @@
     replace: '  type: NodePort'
   when: kibana_values.stat.exists == false
 
-- name: Edit kibana-values.yaml  replace  service nodePort
-  become_user: "{{ user_name }}"
-  replace:
-    path: "/home/{{ user_name }}/kibana-values.yaml"
-    regexp: '^  nodePort: ""'
-    replace: '  nodePort: 31601'
-  when: kibana_values.stat.exists == false
-#
-# Kibaan デプロイ
-#
-- name: helm install Kibana
-  become_user: "{{ user_name }}"
-  shell: |
-    helm install kibana --namespace elasticsearch -f kibana-values.yaml elastic/kibana
-  args:
-    chdir: "/home/{{ user_name }}"
-  when: kibana_values.stat.exists == false
+#- name: Edit kibana-values.yaml  replace  service  type
+#  blockinfile:
+#    path: "/home/{{ user_name }}/grafana-values.yaml"
+#    insertafter: '  targetPort: 3000'
+#    block: |2
+#        nodePort: 30000
+  
 
+################################## ここからFileBeatsのインストール
 #
-# Beatのインストール
+# FileBeatsのインストール
 #
-- name: check clone
+- name: git clone if needed beats
   become_user: "{{ user_name }}"
   stat:
     path: "/home/{{ user_name }}/beats/README.md"
@@ -135,7 +119,7 @@
 
 - git:
     repo: https://github.com/elastic/beats
-    version: 7.5
+    version: '7.5'
     dest: "/home/{{ user_name }}/beats"
     force: yes
     update: yes
@@ -153,7 +137,6 @@
     replace: "value: {{ front_proxy_vip_nomask }}"
   when: file_beats.stat.exists == false
 
-
 - name: Edit filebeat-kubernetes.yaml  replace  Port number
   become_user: "{{ user_name }}"
   replace:
@@ -163,7 +146,7 @@
   when: file_beats.stat.exists == false
   
 #
-# file beat デプロイ
+# デプロイ Filebeat
 #
 - name: deploy filebeat
   become_user: "{{ user_name }}"
