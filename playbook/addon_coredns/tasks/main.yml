@@ -75,3 +75,4 @@
   args:
     chdir: "/home/{{ user_name }}"
     executable: /bin/bash
+

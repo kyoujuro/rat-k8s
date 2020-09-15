@@ -47,7 +47,9 @@ ka_backup_frontend_host: elb2
 ### extra addons
 sw_rook_ceph: "yes"
 sw_promethus: "yes"
-sw_grafana: "yes"
+sw_grafana:   "yes"
+sw_elk:       "yes"
+
 
 ### DOMAIN
 domain: example.com

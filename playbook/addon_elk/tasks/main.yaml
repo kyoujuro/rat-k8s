@@ -1,6 +1,12 @@
 #
 # Elastiecsearch のインストール
 #
+- name: Check elasticsearch value file
+  become_user: "{{ user_name }}"
+  stat:
+    path: "/home/{{ user_name }}/elasticsearch-values.yaml"
+  register: elasticsearch_values
+
 - name: setup helm chart for Elastiecsearch step-1
   become_user: "{{ user_name }}"
   shell: |
@@ -9,10 +15,34 @@
     helm inspect values  elastic/elasticsearch > elasticsearch-values.yaml    
   args:
     chdir: "/home/{{ user_name }}"
-
+  when: elasticsearch_values.stat.exists == false
+  
 #
 # 設定編集
 #
+#- name: Edit elasticsearch-values.yaml  lineinfile
+#  lineinfile:
+#    path: elasticsearch-values.yaml
+#    insertafter: '^  type: ClusterIP'
+#    line: '  type: NodePort'
+#  args:
+#    chdir: "/home/{{ user_name }}"
+
+- name: Edit elasticsearch-values.yaml  replace  service type
+  become_user: "{{ user_name }}"
+  replace:
+    path: "/home/{{ user_name }}/elasticsearch-values.yaml"
+    regexp: '^  type: ClusterIP'
+    replace: '  type: NodePort'
+  when: elasticsearch_values.stat.exists == false
+
+- name: Edit elasticsearch-values.yaml  replace  nodePort
+  become_user: "{{ user_name }}"
+  replace:
+    path: "/home/{{ user_name }}/elasticsearch-values.yaml"    
+    regexp: '^  nodePort: ""'
+    replace: '  nodePort: 31200'
+  when: elasticsearch_values.stat.exists == false
 
 #
 # Elastiecsearch デプロイ
@@ -24,8 +54,121 @@
   register: results_helm
   args:
     chdir: "/home/{{ user_name }}"
-
-
-
-
+  when: elasticsearch_values.stat.exists == false
   
+#
+# 起動待機  
+#
+#
+- name: waiting for starting of the elasticsearch pods
+  become_user: "{{ user_name }}"
+  shell: |
+    while true;
+    do 
+      RUNNING=$(kubectl get po -n elasticsearch |grep Running |wc -l)
+      if [ $RUNNING -gt 2 ]; then
+        exit 0
+      else
+        sleep 10
+      fi
+    done
+  args:
+    chdir: "/home/{{ user_name }}"  
+
+#########
+# Kibana
+- name: Check Kibana value file
+  become_user: "{{ user_name }}"
+  stat:
+    path: "/home/{{ user_name }}/kibana-values.yaml"
+  register: kibana_values
+
+
+#
+# Kibana の Helm パラメータの取り出し
+#
+- name: Retrive value.yaml from helm chart for Kibana
+  become_user: "{{ user_name }}"
+  shell: |
+    helm inspect values  elastic/kibana > kibana-values.yaml  
+  args:
+    chdir: "/home/{{ user_name }}"
+  when: kibana_values.stat.exists == false
+
+#
+# 設定編集
+#
+- name: Edit kibana-values.yaml  replace  service  type
+  become_user: "{{ user_name }}"
+  replace:
+    path: "/home/{{ user_name }}/kibana-values.yaml"
+    regexp: '^  type: ClusterIP'
+    replace: '  type: NodePort'
+  when: kibana_values.stat.exists == false
+
+- name: Edit kibana-values.yaml  replace  service nodePort
+  become_user: "{{ user_name }}"
+  replace:
+    path: "/home/{{ user_name }}/kibana-values.yaml"
+    regexp: '^  nodePort: ""'
+    replace: '  nodePort: 31601'
+  when: kibana_values.stat.exists == false
+#
+# Kibaan デプロイ
+#
+- name: helm install Kibana
+  become_user: "{{ user_name }}"
+  shell: |
+    helm install kibana --namespace elasticsearch -f kibana-values.yaml elastic/kibana
+  args:
+    chdir: "/home/{{ user_name }}"
+  when: kibana_values.stat.exists == false
+
+#
+# Beatのインストール
+#
+- name: check clone
+  become_user: "{{ user_name }}"
+  stat:
+    path: "/home/{{ user_name }}/beats/README.md"
+  register: file_beats
+
+- git:
+    repo: https://github.com/elastic/beats
+    version: 7.5
+    dest: "/home/{{ user_name }}/beats"
+    force: yes
+    update: yes
+  become_user: "{{ user_name }}"
+  when: file_beats.stat.exists == false
+
+#
+# 設定編集
+#
+- name: Edit filebeat-kubernetes.yaml  replace  Hostname
+  become_user: "{{ user_name }}"
+  replace:
+    path: "/home/{{ user_name }}/beats/deploy/kubernetes/filebeat-kubernetes.yaml"
+    regexp: 'value: elasticsearch'
+    replace: "value: {{ front_proxy_vip_nomask }}"
+  when: file_beats.stat.exists == false
+
+
+- name: Edit filebeat-kubernetes.yaml  replace  Port number
+  become_user: "{{ user_name }}"
+  replace:
+    path: "/home/{{ user_name }}/beats/deploy/kubernetes/filebeat-kubernetes.yaml"
+    regexp: 'value: "9200"'
+    replace: 'value: "31200"'
+  when: file_beats.stat.exists == false
+  
+#
+# file beat デプロイ
+#
+- name: deploy filebeat
+  become_user: "{{ user_name }}"
+  shell: |
+      kubectl apply -f filebeat-kubernetes.yaml
+  args:
+    chdir: "/home/{{ user_name }}/beats/deploy/kubernetes/"
+

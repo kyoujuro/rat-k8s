@@ -257,8 +257,8 @@
       when: sw_grafana == "yes"
     - role: addon_grafana
       when: sw_grafana == "yes"
-    #- role: addon_elk
-    #  when: sw_elk == "yes"
+    - role: addon_elk
+      when: sw_elk == "yes"
     #- role: addon_istio
     #  when: sw_istio == "yes"
     #- role: addon_knative

@@ -653,10 +653,10 @@ def output_ansible_inventory0(ofn,sw)
           w.write line.gsub(/__MLB_IP_BACKUP__/, priv_ip.to_s)
 
         elsif line =~ /__FRONTEND_IPADDR__/
-          # elbを検索して存在しなければパスする
+          # elb1を検索して存在しなければパスする
           $vm_config_array.each do |val|
             x = eval(val)
-            if x['name'] =~ /elb*/
+            if x['name'] =~ /elb1/
               w.write line.gsub(/__FRONTEND_IPADDR__/, $conf['front_proxy_vip'])
             end
           end
@@ -1098,6 +1098,10 @@ def append_ansible_inventory(ofn)
     print_nn(w,'kubernetes_metrics_server')
     print_nn(w,'etcd_version')
     print_nn(w,'keepalived_version')
+    if !$conf['front_proxy_vip'].nil?
+      $conf['front_proxy_vip_nomask'] = $conf['front_proxy_vip']
+      print_nn(w,'front_proxy_vip_nomask')
+    end
     w.write sprintf("proxy_node = %s\n", $exist_proxy_node)
     w.write sprintf("storage_node = %s\n", $exist_storage_node)
     print_nn(w,'domain')
@@ -1108,7 +1112,8 @@ def append_ansible_inventory(ofn)
     w.write sprintf("single_node = %s\n",  $single_node)
     w.write sprintf("sw_rook_ceph = %s\n", $conf['sw_rook_ceph'] == "yes" ? "yes" : "no")
     w.write sprintf("sw_promethus = %s\n", $conf['sw_promethus'] == "yes" ? "yes" : "no")
-    w.write sprintf("sw_grafana = %s\n",   $conf['sw_grafana'] == "yes" ? "yes" : "no")        
+    w.write sprintf("sw_grafana = %s\n",   $conf['sw_grafana'] == "yes" ? "yes" : "no")
+    w.write sprintf("sw_elk = %s\n",   $conf['sw_elk'] == "yes" ? "yes" : "no")            
     w.write sprintf("\n")
     if $conf['container_runtime'].nil?
       $conf['container_runtime'] = "containerd"

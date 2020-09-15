@@ -18,37 +18,10 @@
 #  tasks:
 #    - debug: msg="export KUBECONFIG=`pwd`/kubeconfig"
 
-
-- name: TEST Internal HA-PROXY install
-  hosts:
-  - bootnode
-  - mlbs
-  vars:
-    lb_pos: "Internal"
-  gather_facts: true
-  become: true
-  become_user: root
-  become_method: sudo
-  roles:
-    - keepalived
-
-- name: External HA-PROXY install
-  hosts:
-  - bootnode  
-  - elbs
-  vars:
-    lb_pos: "Frontend"
-  gather_facts: true
-  become: true
-  become_user: root
-  become_method: sudo
-  roles:
-    - keepalived
-
-
-- name: Deploy addon for k8s-2
+- name: K8s Monitoring setup
   hosts: bootnode
   gather_facts: true
   become: true
   roles:
-    - addon_ingress  
+    - addon_elk
+    
