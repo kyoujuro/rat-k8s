@@ -7,7 +7,7 @@ Kibanaのサービスも、NodePort として公開するので、front_proxy_vi
 
 
 * ElasticSearch nodePort : 31200
-* Kibana nodePort : 不明
+* Kibana nodePort : 31601
 * FileBeats の 書き込み先アドレス : front_proxy_vip_nomask:31200
 
 

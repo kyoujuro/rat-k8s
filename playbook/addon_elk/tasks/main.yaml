@@ -99,12 +99,13 @@
     replace: '  type: NodePort'
   when: kibana_values.stat.exists == false
 
-#- name: Edit kibana-values.yaml  replace  service  type
-#  blockinfile:
-#    path: "/home/{{ user_name }}/grafana-values.yaml"
-#    insertafter: '  targetPort: 3000'
-#    block: |2
-#        nodePort: 30000
+- name: Edit kibana-values.yaml  replace  nodePort
+  become_user: "{{ user_name }}"
+  replace:
+    path: "/home/{{ user_name }}/kibana-values.yaml"
+    regexp: '^  nodePort: ""'
+    replace: '  nodePort: "31601'
+  when: kibana_values.stat.exists == false
   
 
 ################################## ここからFileBeatsのインストール

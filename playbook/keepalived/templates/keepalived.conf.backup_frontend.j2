@@ -1,12 +1,12 @@
 global_defs {
     enable_script_security
-    script_user node
+    script_user root
 }
-vrrp_script chk_haproxy {
-    script "/usr/bin/pkill -0 haproxy"
-    interval 2
-    weight 2
-}
+#vrrp_script chk_haproxy {
+#    script "/usr/bin/pkill -0 haproxy"
+#    interval 2
+#    weight 2
+#}
 vrrp_instance VI_1 {
     interface enp0s9
     state BACKUP
@@ -20,11 +20,13 @@ vrrp_instance VI_1 {
         auth_type PASS
         auth_pass AaP51Mdi
     }
-    track_script {
-        chk_haproxy
-    }
+    #track_script {
+    #    chk_haproxy
+    #}
     virtual_ipaddress {                  
        {{ front_proxy_vip }} dev enp0s9
+       {{ istio_gateway_vip }} dev enp0s9       
     }      
     notify_master /etc/keepalived/master.sh
+    notify_backup /etc/keepalived/backup.sh
 }

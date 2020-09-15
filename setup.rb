@@ -149,6 +149,10 @@ def list_node_ip()
   if !$conf['front_proxy_vip'].nil?
     printf("%s = %-12s\n",'front_proxy_vip',$conf['front_proxy_vip'])
   end
+  if !$conf['istio_gateway_vip'].nil?
+    printf("%s = %-12s\n",'istio_gateway_vip',$conf['istio_gateway_vip'])
+  end
+  
 end
 
 
@@ -1013,15 +1017,23 @@ def haproxy_front_cfg()
   server_list_node = ""
   server_list_api = ""
   server_list_ingress_http = ""
-  server_list_ingress_https = ""    
+  server_list_ingress_https = ""
+  server_list_istio = ""
+  server_list_istio_tls = ""
+  
   $vm_config_array.each do |val|
     x = eval(val)
     ## ワーカーノード
     if x['name'] =~ /^node*/
       if x['role'] =~ /^worker/
         server_list_node = server_list_node + sprintf("%s server %s %s:30443 check\n", "\s"*4, x['name'], x['private_ip'])
+
         server_list_ingress_http = server_list_ingress_http + sprintf("%s server %s %s:31080 cookie %s check \n", "\s"*4, x['name'], x['private_ip'],x['name'])
         server_list_ingress_https = server_list_ingress_https + sprintf("%s server %s %s:31443 cookie %s check \n", "\s"*4, x['name'], x['private_ip'],x['name'])
+
+        server_list_istio = server_list_istio + sprintf("%s server %s %s:31580 cookie %s check \n", "\s"*4, x['name'], x['private_ip'],x['name'])
+        server_list_istio_tls = server_list_istio_tls + sprintf("%s server %s %s:31543 cookie %s check \n", "\s"*4, x['name'], x['private_ip'],x['name'])
+        
       end
     end
     if x['name'] =~ /^master*/
@@ -1044,6 +1056,10 @@ def haproxy_front_cfg()
           w.write server_list_ingress_http
         elsif line =~ /^__SERVER_LIST_INGRESS_HTTPS__/
           w.write server_list_ingress_https
+        elsif line =~ /^__SERVER_LIST_ISTIO__/
+          w.write server_list_istio
+        elsif line =~ /^__SERVER_LIST_ISTIO_TLS__/
+          w.write server_list_istio_tls
         else
           w.write line
         end
@@ -1113,7 +1129,8 @@ def append_ansible_inventory(ofn)
     w.write sprintf("sw_rook_ceph = %s\n", $conf['sw_rook_ceph'] == "yes" ? "yes" : "no")
     w.write sprintf("sw_promethus = %s\n", $conf['sw_promethus'] == "yes" ? "yes" : "no")
     w.write sprintf("sw_grafana = %s\n",   $conf['sw_grafana'] == "yes" ? "yes" : "no")
-    w.write sprintf("sw_elk = %s\n",   $conf['sw_elk'] == "yes" ? "yes" : "no")            
+    w.write sprintf("sw_elk = %s\n",   $conf['sw_elk'] == "yes" ? "yes" : "no")
+    w.write sprintf("sw_istio = %s\n",   $conf['sw_istio'] == "yes" ? "yes" : "no")     
     w.write sprintf("\n")
     if $conf['container_runtime'].nil?
       $conf['container_runtime'] = "containerd"

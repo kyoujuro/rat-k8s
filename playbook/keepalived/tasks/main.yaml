@@ -155,6 +155,29 @@
     - lb_pos == "Frontend"
 
 
+- name: copy /etc/keepalived/master.sh
+  template:
+    src: master.sh
+    dest: /etc/keepalived/master.sh
+    owner: root
+    group: root
+    mode: '0700'
+  when:
+    - ansible_facts.hostname is match("elb[12]")
+    - lb_pos == "Frontend"
+    
+- name: copy /etc/keepalived/backup.sh
+  template:
+    src: backup.sh
+    dest: /etc/keepalived/backup.sh
+    owner: root
+    group: root
+    mode: '0700'
+  when:
+    - ansible_facts.hostname is match("elb[12]")
+    - lb_pos == "Frontend"
+
+    
 - name: just force systemd to reread configs
   systemd:
     daemon_reload: yes

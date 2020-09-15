@@ -1,0 +1,225 @@
+#
+### host network interfaice
+#bridge_if: "en0: Wi-Fi (Wireless)"
+bridge_if: "eno1"
+
+
+### Container Runtime
+container_runtime:  containerd
+#container_runtime:  docker
+#container_runtime:  cri-o
+docker_version:     "5:18.09.9~3-0~ubuntu-bionic"
+containerd_version: "1.2.13"
+cni_plugins:        "v0.8.2"
+crictl_version:     "v1.15.0"
+crio_version:       "1.17"
+
+### Kubernetes version
+kubernetes_version: 1.18.2
+kubernetes_custom: false
+kubernetes_dashborad_ver: v2.0.0-beta6
+
+### K8s cluster/pod network CNI plugin
+#pod_network: bridge
+#pod_network: flannel
+pod_network: calico
+
+### flannel_version if you choice flannel
+#flannel_version: v0.12.0
+calico_version: v3.14.1
+
+### Cluster Network
+private_ip_subnet: 172.16.23.0/24
+public_ip_subnet:  192.168.1.0/24
+
+keepalived_version: 2.0.15
+
+### Internal Load Balancer
+kube_apiserver_vip: 172.16.23.23
+ka_primary_internal_host: mlb1
+ka_backup_internal_host: mlb2
+
+### Frontend Load Balancer
+front_proxy_vip: 192.168.1.138
+istio_gateway_vip: 192.168.1.139
+ka_primary_frontend_host: elb1
+ka_backup_frontend_host: elb2
+
+
+### extra addons
+sw_rook_ceph: "no"
+sw_promethus: "no"
+sw_grafana:   "no"
+sw_elk:       "no"
+sw_istio:     "yes"
+
+### DOMAIN
+domain: example.com
+
+### Master, Worker, Internal/Frontend Loadbalancer and bootnode
+vm_spec:
+  - name: "master1"
+    cpu: 2
+    memory: 2048
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.11"
+    storage:
+    playbook: "setup_linux.yaml"
+    comment: "Master node #1"
+    
+  - name: "master2"
+    cpu: 2
+    memory: 2048
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.12"
+    storage:
+    playbook: "setup_linux.yaml"
+    comment: "Master node #2"
+    
+  - name: "master3"
+    cpu: 2
+    memory: 2048
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.13"
+    storage:
+    playbook: "setup_linux.yaml"
+    comment: "Master node #3"
+  
+  - name: "mlb1"
+    cpu: 1
+    memory: 1024
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.21"
+    storage:
+    playbook: "setup_linux.yaml"
+    comment: "Internal Master Loadbalancer #1"
+
+  - name: "mlb2"
+    cpu: 1
+    memory: 1024
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.22"
+    storage:
+    playbook: "setup_linux.yaml"
+    comment: "Internal Master Loadbalancer #2"
+
+  - name: "elb1"
+    cpu: 1
+    memory: 1024
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.31"
+    public_ip: "192.168.1.135"
+    pod_network: "10.244.241.0/24"    
+    storage:
+    role: "proxy"      
+    playbook: "setup_linux.yaml"
+    comment: "Frontend Master Loadbalancer #1"
+
+  - name: "elb2"
+    cpu: 1
+    memory: 1024
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.32"
+    public_ip: "192.168.1.136"
+    pod_network: "10.244.242.0/24"    
+    storage:
+    role: "proxy"      
+    playbook: "setup_linux.yaml"
+    comment: "Frontend Backup Loadbalancer #2"
+
+
+  - name: "node1"
+    cpu: 2
+    memory: 8192
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.41"
+    storage:
+    playbook: "setup_linux.yaml"
+    pod_network: "10.244.1.0/24"
+    role: "worker"
+    comment:  "Worker node #1"
+    
+  - name: "node2"
+    cpu: 2
+    memory: 8192
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.42"
+    storage:
+    playbook: "setup_linux.yaml"
+    pod_network: "10.244.2.0/24"
+    role: "worker"    
+    comment: "Worker node #2"
+    
+  - name: "node3"
+    cpu: 2
+    memory: 8192
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.43"
+    storage:
+    playbook: "setup_linux.yaml"
+    pod_network: "10.244.3.0/24"
+    role: "worker"
+    comment: "Worker node #3"
+
+  - name: "node4"
+    cpu: 2
+    memory: 8192
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.44"
+    storage:
+    playbook: "setup_linux.yaml"
+    pod_network: "10.244.4.0/24"
+    role: "worker"
+    comment: "Worker node #4"
+
+  - name: "storage1"
+    cpu: 2
+    memory: 8192
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.51"
+    storage:
+    - 80
+    playbook: "setup_linux.yaml"
+    pod_network: "10.244.11.0/24"
+    role: "storage"
+    node_label:
+    - app: rook-ceph-mds
+    comment: "Storage node #1"
+
+  - name: "storage2"
+    cpu: 2
+    memory: 8192
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.52"
+    storage:
+    - 80
+    playbook: "setup_linux.yaml"
+    pod_network: "10.244.12.0/24"
+    role: "storage"
+    node_label:
+    - app: rook-ceph-mds
+    comment: "Storage node #2"
+
+  - name: "storage3"
+    cpu: 2
+    memory: 8192
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.23.53"
+    storage:
+    - 80
+    playbook: "setup_linux.yaml"
+    pod_network: "10.244.13.0/24"
+    role: "storage" 
+    node_label:
+    - app: rook-ceph-mds
+    comment: "Storage node #3"
+
+  - name: "bootnode"
+    cpu: 1
+    memory: 1024
+    private_ip: "172.16.23.2"
+    box: "ubuntu/bionic64"
+    playbook: "setup_linux.yaml"    
+    comment: "Bootstap node" 
+
+    
