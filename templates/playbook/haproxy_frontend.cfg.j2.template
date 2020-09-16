@@ -56,7 +56,7 @@ __SERVER_LIST_API__
 ## Ingress Controler用
 ##
 frontend ingress_http
-     bind {{ front_proxy_vip }}:80
+     bind {{ front_proxy_vip_nomask }}:80
      mode tcp
      option tcplog
      default_backend ingress_http
@@ -69,7 +69,7 @@ backend ingress_http
 __SERVER_LIST_INGRESS_HTTP__
 
 frontend ingress_https
-     bind {{ front_proxy_vip }}:443
+     bind {{ front_proxy_vip_nomask }}:443
      mode tcp
      option tcplog
      default_backend ingress_https

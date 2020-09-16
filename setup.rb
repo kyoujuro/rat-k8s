@@ -1118,6 +1118,7 @@ def append_ansible_inventory(ofn)
       $conf['front_proxy_vip_nomask'] = $conf['front_proxy_vip']
       print_nn(w,'front_proxy_vip_nomask')
     end
+    print_nn(w,'istio_gateway_vip')
     w.write sprintf("proxy_node = %s\n", $exist_proxy_node)
     w.write sprintf("storage_node = %s\n", $exist_storage_node)
     print_nn(w,'domain')
@@ -1130,7 +1131,8 @@ def append_ansible_inventory(ofn)
     w.write sprintf("sw_promethus = %s\n", $conf['sw_promethus'] == "yes" ? "yes" : "no")
     w.write sprintf("sw_grafana = %s\n",   $conf['sw_grafana'] == "yes" ? "yes" : "no")
     w.write sprintf("sw_elk = %s\n",   $conf['sw_elk'] == "yes" ? "yes" : "no")
-    w.write sprintf("sw_istio = %s\n",   $conf['sw_istio'] == "yes" ? "yes" : "no")     
+    w.write sprintf("sw_istio = %s\n",   $conf['sw_istio'] == "yes" ? "yes" : "no")
+    w.write sprintf("sw_use_sdc_cr = %s\n",   $conf['sw_use_sdc_cr'] == "yes" ? "yes" : "no")         
     w.write sprintf("\n")
     if $conf['container_runtime'].nil?
       $conf['container_runtime'] = "containerd"
@@ -1374,6 +1376,7 @@ if __FILE__ == $0
   ## 変数追加
   step_start("Ansible playbookに変数追加")  
   append_ansible_inventory("hosts_k8s")
+  append_ansible_inventory("hosts_vagrant")  
   step_end(0)
 
   ## 自動起動

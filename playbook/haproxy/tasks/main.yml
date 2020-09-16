@@ -45,9 +45,24 @@
   systemd:
     daemon_reload: yes
 
-- name: start haproxy
+# 開発メモ
+# 内部ロードバランサーと外部ロードバランサーを一つのplaybookで作成するのが
+# 難しくなって来た。 次の改良では二つを分離しよう。
+    
+- name: stop haproxy
+  systemd:
+    name: haproxy
+    state: stopped
+    enabled: no
+  when:
+    - lb_pos == "Frontend"
+
+    
+- name: restart haproxy for Internal 
   systemd:
     name: haproxy
     state: restarted
     enabled: yes
-
+  when:
+    - lb_pos == "Internal"
+    
