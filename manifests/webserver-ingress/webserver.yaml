@@ -1,42 +1,56 @@
+#
+# アプリケーションを Nginx Ingress で
+# クラスタ外へ公開するための構成ファイル
+#
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: webserver3
+---
 ## サービス(type NodePort)
 apiVersion: v1
 kind: Service
 metadata:
-  name: webserver3
+  name: webserver
+  namespace: webserver3
 spec:
   selector:
-    app: webserver3
+    app: webserver
   ports:
   - protocol: TCP
     port: 80
-    nodePort: 30443
-  type: NodePort
+    #nodePort: 30443
+  #type: NodePort
+  # Cluster IP を利用するので NodePortの設定は
+  # コメントにしている。
 ---
 ## デプロイメント 
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: webserver3
+  name: webserver
+  namespace: webserver3  
 spec:
   replicas: 3
   selector:
     matchLabels:
-      app: webserver3
+      app: webserver
   template:
     metadata:
       labels:
-        app: webserver3
+        app: webserver
     spec:
       containers:
-        - name: webserver3
-          image: 'maho/webapl2:0.1'
-
+        - name: webserver
+          image: 'maho/webapl3:0.1'
+          # レジストリは利用者の環境に合わせて変更ください
 ---
 ## Ingress
 apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
-  name: simple-fanout-webserver
+  name: webserver
+  namespace: webserver3  
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     kubernetes.io/ingress.class: 'nginx'
@@ -48,5 +62,5 @@ spec:
       paths:
       - path: /
         backend:
-          serviceName: webserver3
+          serviceName: webserver
           servicePort: 80
