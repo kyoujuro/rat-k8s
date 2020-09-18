@@ -11,3 +11,6 @@ Kibanaのサービスも、NodePort として公開するので、front_proxy_vi
 * FileBeats の 書き込み先アドレス : front_proxy_vip_nomask:31200
 
 
+https://k8s.labs.local:31601
+
+

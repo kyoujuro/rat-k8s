@@ -18,10 +18,11 @@
 #  tasks:
 #    - debug: msg="export KUBECONFIG=`pwd`/kubeconfig"
 
+
 - name: K8s Monitoring setup
   hosts: bootnode
   gather_facts: true
   become: true
   roles:
-    - addon_istio
+    - addon_elk
     

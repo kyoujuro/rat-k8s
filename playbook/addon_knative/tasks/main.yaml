@@ -1,11 +1,18 @@
-- debug: msg="{{ ansible_facts.hostname }}"
+#
+# Knative のデプロイ
+#
+#- debug: msg="{{ ansible_facts.hostname }}"
 
-- name: Download Nginx Ingress Controller Manifest
-  get_url:
-    url: "https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-{{ nginx_ic_version }}/deploy/static/provider/baremetal/deploy.yaml"
-    dest: "/home/{{ user_name }}/ingress-controller-nginx.yaml"
-    mode: '0644'
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
+- git:
+    repo: https://github.com/knative/serving
+    dest: "/home/{{ user_name }}/knative_serving"
+    version: v0.17.2
+  become_user: "{{ user_name }}"
+
+- git:
+    repo: https://github.com/knative/eventing
+    dest: "/home/{{ user_name }}/knative_eventing"
+    version: v0.17.3
+  become_user: "{{ user_name }}"
 
   

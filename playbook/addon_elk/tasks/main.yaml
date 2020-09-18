@@ -43,7 +43,7 @@
   become_user: "{{ user_name }}"
   shell: |
     helm install elasticsearch -n elasticsearch -f elasticsearch-values.yaml elastic/elasticsearch    
-  register: results_helm
+  register: results_helm_elasticsearch
   args:
     chdir: "/home/{{ user_name }}"
   when: elasticsearch_values.stat.exists == false
@@ -104,9 +104,23 @@
   replace:
     path: "/home/{{ user_name }}/kibana-values.yaml"
     regexp: '^  nodePort: ""'
-    replace: '  nodePort: "31601'
+    replace: '  nodePort: "31601"'
   when: kibana_values.stat.exists == false
   
+#
+# Kibana インストール
+#
+- name: helm install Elastiecsearch step-2
+  become_user: "{{ user_name }}"
+  shell: |
+    helm install kibana -n elasticsearch -f kibana-values.yaml elastic/kibana
+  register: results_helm_kibana
+  args:
+    chdir: "/home/{{ user_name }}"
+  when: kibana_values.stat.exists == false
+
+
+
 
 ################################## ここからFileBeatsのインストール
 #

@@ -25,7 +25,9 @@
   args:
     chdir: "/home/{{ user_name }}/istio-{{ istio_version }}"
 
-
+#
+# Istio パッチを適用する、NodePortとして公開するため。
+#
 - template:
     src: istio-patch.yaml
     dest: "/home/{{ user_name }}/istio-patch.yaml"
@@ -39,8 +41,19 @@
     kubectl patch svc istio-ingressgateway --patch "$(cat istio-patch.yaml)" -n istio-system
   args:
     chdir: "/home/{{ user_name }}"
-    
 
+
+#
+# istioctl は bootnode の /usr/local/bin へ配置する
+#
+- name: deploy istioctl to /usr/local/bin
+  copy:
+    src: "/home/{{ user_name }}/istio-{{ istio_version }}/bin/istioctl"
+    dest: /usr/local/bin
+    owner: root
+    group: root
+    mode: '0755'
+  
 
     
     
