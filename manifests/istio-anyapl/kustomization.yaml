@@ -1,0 +1,8 @@
+resources:
+  - webapl-namespace.yaml
+  - webapl-deployment-v1.yaml
+  - webapl-deployment-v2.yaml
+  - webapl-service.yaml
+  - webapl-destination-rule.yaml
+  - webapl-virtual-service.yaml
+  - webapl-gateway.yaml  
