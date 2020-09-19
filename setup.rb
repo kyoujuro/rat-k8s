@@ -47,7 +47,7 @@ def read_yaml_config(file)
     $conf = YAML.load_file(file)
     $conf.class
     $domain = $conf['domain']
-
+    $conf['sub_domain'] = $domain.split(".")[0]
     #################################################
     cnf = "vm_spec = [\n"    
     $conf.each do |key1, val1|
@@ -938,7 +938,9 @@ def etcd_yaml()
              + (host_list("master",1,0).length == 0 ? "" : "," + host_list("master",1,0)) \
              + (host_list("mlb",0,0).length == 0 ? "" : "," + host_list("mlb",0,0)) \
              + (host_list("mlb",1,0).length == 0 ? "" : "," + host_list("mlb",1,0)) \
-             + ",10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local"
+             + ",10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc" \
+             + ",kubernetes.default.svc." + $conf['sub_domain'] \
+             + ",kubernetes.default.svc." + $conf['domain']
 
   ofn = "playbook/cert_setup/vars/main.yaml"
   $file_list.push(ofn)  
@@ -961,7 +963,10 @@ def k8s_cert()
              + (host_list("mlb",1,0).length == 0 ? "" : "," + host_list("mlb",1,0)) \
              + ($conf['kube_apiserver_vip'].length == 0 ? "" : "," + $conf['kube_apiserver_vip']) \
              + ($conf['front_proxy_vip'].nil? ? "" : "," + $conf['front_proxy_vip']) \
-             + ",10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local"
+             + ",10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc" \
+             + ",kubernetes.default.svc." + $conf['sub_domain'] \
+             + ",kubernetes.default.svc." + $conf['domain'] 
+
   
   #printf("\n証明書対象リスト %s\n", list_all)
   ofn = "playbook/cert_setup/vars/main.yaml"
@@ -1122,7 +1127,12 @@ def append_ansible_inventory(ofn)
     w.write sprintf("proxy_node = %s\n", $exist_proxy_node)
     w.write sprintf("storage_node = %s\n", $exist_storage_node)
     print_nn(w,'domain')
+    print_nn(w,'sub_domain')
     print_nn(w,'pod_network')
+    host_sub_domain = sprintf("kubernetes.default.svc.%s",$conf['sub_domain'])
+    host_domain = sprintf("kubernetes.default.svc.%s",$conf['domain'])
+    w.write sprintf("host_list_etcd = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc",host_sub_domain,host_domain)
+    w.write sprintf("host_list_k8sapi = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc",host_sub_domain,host_domain)    
     # private_ip_subnet = internal_subnet として代入
     $conf['internal_subnet'] = $conf['private_ip_subnet']
     print_nn(w,'internal_subnet')
@@ -1144,7 +1154,7 @@ def append_ansible_inventory(ofn)
     print_nn(w,'crictl_version')
     print_nn(w,'crio_version')
     print_nn(w,'calico_version')
-    print_nn(w,'flannel_version')        
+    print_nn(w,'flannel_version')
     w.write sprintf("\n")
   end
 end

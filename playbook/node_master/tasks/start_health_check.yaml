@@ -7,10 +7,10 @@
     state: present
 - template:
     src: kubernetes.default.svc.cluster.local
-    dest: /etc/nginx/sites-available
+    dest: "/etc/nginx/sites-available/kubernetes.default.svc.{{ domain }}"
 - file:
-    src: /etc/nginx/sites-available/kubernetes.default.svc.cluster.local
-    dest: /etc/nginx/sites-enabled/kubernetes.default.svc.cluster.local
+    src: "/etc/nginx/sites-available/kubernetes.default.svc.{{ domain }}"
+    dest: "/etc/nginx/sites-enabled/kubernetes.default.svc.{{ domain }}"
     state: link
 - systemd:
     name: nginx

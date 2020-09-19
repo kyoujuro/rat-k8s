@@ -25,10 +25,18 @@ pod_network: calico
 ### Cluster Network
 private_ip_subnet: 172.16.8.0/24
 public_ip_subnet:  192.168.1.0/24
-
 kube_apiserver_vip: 172.16.8.21
-domain: example.com
 
+### extra addons
+sw_rook_ceph:  "no"
+sw_promethus:  "no"
+sw_grafana:    "no"
+sw_elk:        "no"
+sw_istio:      "no"
+sw_use_sdc_cr: "no"
+
+### DOMAIN
+domain: labs.local
 
 ### Master, Worker, Internal/Frontend Loadbalancer and bootnode
 vm_spec:
