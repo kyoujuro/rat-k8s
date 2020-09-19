@@ -1,0 +1,6 @@
+resources:
+  - bookinfo-namespace.yaml
+  - bookinfo.yaml
+  - bookinfo-gateway.yaml
+
+  

@@ -42,7 +42,6 @@
   args:
     chdir: "/home/{{ user_name }}"
 
-
 #
 # istioctl は bootnode の /usr/local/bin へ配置する
 #
@@ -53,7 +52,24 @@
     owner: root
     group: root
     mode: '0755'
-  
+
+
+##
+## Kiali, Jeager のインストールと公開
+## 
+
+- name: apply patch for Istio
+  become_user: "{{ user_name }}"
+  shell: |
+    kubectl apply -f prometheus.yaml
+    kubectl apply -f grafana.yaml
+    kubectl apply -f jaeger.yaml
+    kubectl apply -f kiali.yaml
+    kubectl patch svc kiali -n istio-system -p '{"spec":{"type":"NodePort","ports":[{"name": "http","port": 20001,"nodePort": 32001},{"port":9090, "nodePort":32090}]}}'
+    kubectl patch svc tracing -n istio-system -p '{"spec":{"type":"NodePort","ports":[{"name": "http","port": 80,"nodePort": 32095}]}}'
+  args:
+    chdir: "/home/{{ user_name }}/istio-{{ istio_version }}/samples/addons/"
+
 
     
     
