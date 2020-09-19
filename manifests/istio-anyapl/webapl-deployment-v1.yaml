@@ -1,0 +1,24 @@
+## デプロイメント 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapl-v1
+  namespace: istio-anyapl
+  labels:
+    app: webapls
+    version: v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webapls
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: webapls
+        version: v1
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest

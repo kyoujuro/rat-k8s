@@ -1,0 +1,17 @@
+## サービス
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapls
+  namespace: istio-anyapl
+  labels:
+    app: webapls
+    service: webapls
+spec:
+  ports:
+  - protocol: TCP
+    port: 9080
+    targetPort: 80
+  type: ClusterIP
+  selector:
+    app: webapls
