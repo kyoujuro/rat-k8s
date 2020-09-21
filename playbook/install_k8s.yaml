@@ -261,7 +261,7 @@
       when: sw_elk == "yes"
     - role: addon_istio
       when: sw_istio == "yes"
-    #- role: addon_knative
-    #  when: sw_knative == "yes"
+    - role: addon_knative
+      when: sw_knative == "yes"
   tasks:
     - debug: msg="export KUBECONFIG=`pwd`/kubeconfig"

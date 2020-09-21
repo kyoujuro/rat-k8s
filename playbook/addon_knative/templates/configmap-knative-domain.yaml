@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: config-domain
+  namespace: knative-serving
+  labels:
+    serving.knative.dev/release: "{{ knative_version }}"
+  annotations:
+    knative.dev/example-checksum: "f8e5beb4"
+data:
+  labs.local: ""
+  

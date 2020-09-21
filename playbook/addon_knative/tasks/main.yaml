@@ -20,29 +20,52 @@
 #
 # Knative serving の マニフェストダウンロード
 #
-- name: Download Knative serving maniset
+- name: Download Knative serving and eventing maniset
   become_user: "{{ user_name }}"
   shell: |
     curl -O -L https://github.com/knative/serving/releases/download/{{ knative_version }}/serving-crds.yaml
-    curl -O -L https://github.com/knative/serving/releases/download/{{ knative_version }}/serving-core.yaml
+    curl -O -L https://github.com/knative/serving/releases/download/{{ knative_version }}/serving-core.yaml  
+    curl -O -L https://github.com/knative/net-istio/releases/download/{{ knative_version }}/release.yaml
+    curl -O -L https://github.com/knative/eventing/releases/download/{{ knative_version }}/eventing-crds.yaml
+    curl -O -L https://github.com/knative/eventing/releases/download/{{ knative_version }}/eventing-core.yaml
+    curl -O -L https://github.com/knative/eventing/releases/download/{{ knative_version }}/in-memory-channel.yaml
   args:
     chdir: "/home/{{ user_name }}/knative-{{ knative_version }}"
   when: file_knative.stat.exists == false
 
-
 #
-# Knative serving の デプロイ
+# Knative serving ans eventing の デプロイ
 #
 - name: Deploy Knative serving
   become_user: "{{ user_name }}"
   shell: |
     kubectl apply -f serving-crds.yaml
-    sleep 10
     kubectl apply -f serving-core.yaml
+    kubectl apply -f release.yaml
+    kubectl apply -f eventing-crds.yaml
+    kubectl apply -f eventing-core.yaml
+    kubectl apply -f in-memory-channel.yaml
   args:
     chdir: "/home/{{ user_name }}/knative-{{ knative_version }}/"
-  when: file_knative.stat.exists == false
+  #when: file_knative.stat.exists == false
 
+#
+# ドメイン名の変更
+#
+- template:
+    src: configmap-knative-domain.yaml
+    dest: "/home/{{ user_name }}/knative-{{ knative_version }}/configmap-knative-domain.yaml"
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    mode: '0644'
+
+- name: change knative domain 
+  become_user: "{{ user_name }}"
+  shell: |
+    kubectl apply -f configmap-knative-domain.yaml
+  args:
+    chdir: "/home/{{ user_name }}/knative-{{ knative_version }}/"
+  #when: file_knative.stat.exists == false
 
 
   

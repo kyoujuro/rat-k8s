@@ -1142,6 +1142,7 @@ def append_ansible_inventory(ofn)
     w.write sprintf("sw_grafana = %s\n",   $conf['sw_grafana'] == "yes" ? "yes" : "no")
     w.write sprintf("sw_elk = %s\n",   $conf['sw_elk'] == "yes" ? "yes" : "no")
     w.write sprintf("sw_istio = %s\n",   $conf['sw_istio'] == "yes" ? "yes" : "no")
+    w.write sprintf("sw_knative = %s\n",   $conf['sw_knative'] == "yes" ? "yes" : "no")    
     w.write sprintf("sw_use_sdc_cr = %s\n",   $conf['sw_use_sdc_cr'] == "yes" ? "yes" : "no")         
     w.write sprintf("\n")
     if $conf['container_runtime'].nil?

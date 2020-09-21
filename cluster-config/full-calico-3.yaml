@@ -55,6 +55,7 @@ sw_promethus:  "yes"
 sw_grafana:    "yes"
 sw_elk:        "yes"
 sw_istio:      "yes"
+sw_knative     "yes"
 sw_use_sdc_cr: "yes"
 
 ### DOMAIN
