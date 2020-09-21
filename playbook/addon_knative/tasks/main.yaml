@@ -3,16 +3,46 @@
 #
 #- debug: msg="{{ ansible_facts.hostname }}"
 
-- git:
-    repo: https://github.com/knative/serving
-    dest: "/home/{{ user_name }}/knative_serving"
-    version: v0.17.2
-  become_user: "{{ user_name }}"
+- name: check knative
+  stat:
+    path: "/home/{{ user_name }}/knative-{{ knative_version }}/serving-core.yaml"
+  register: file_knative
 
-- git:
-    repo: https://github.com/knative/eventing
-    dest: "/home/{{ user_name }}/knative_eventing"
-    version: v0.17.3
+- name: mkdir knative-{{ knative_version }}
+  file:
+    path:  "/home/{{ user_name }}/knative-{{ knative_version }}"
+    state: directory
+    owner: "{{ user_name }}"
+    group: "{{ user_name }}"
+    mode: '0755'
+  when: file_knative.stat.exists == false
+
+#
+# Knative serving の マニフェストダウンロード
+#
+- name: Download Knative serving maniset
   become_user: "{{ user_name }}"
+  shell: |
+    curl -O -L https://github.com/knative/serving/releases/download/{{ knative_version }}/serving-crds.yaml
+    curl -O -L https://github.com/knative/serving/releases/download/{{ knative_version }}/serving-core.yaml
+  args:
+    chdir: "/home/{{ user_name }}/knative-{{ knative_version }}"
+  when: file_knative.stat.exists == false
+
+
+#
+# Knative serving の デプロイ
+#
+- name: Deploy Knative serving
+  become_user: "{{ user_name }}"
+  shell: |
+    kubectl apply -f serving-crds.yaml
+    sleep 10
+    kubectl apply -f serving-core.yaml
+  args:
+    chdir: "/home/{{ user_name }}/knative-{{ knative_version }}/"
+  when: file_knative.stat.exists == false
+
+
 
   

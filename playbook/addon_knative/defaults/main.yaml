@@ -1,3 +1,2 @@
 user_name        : vagrant
-nginx_ic_version : v0.35.0
-
+knative_version  : v0.17.2

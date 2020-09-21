@@ -7,25 +7,10 @@
 # ダウンロード用ディレクトリ作成    
 - include_tasks: mkdir_for_download.yaml
 
-
-# 必要なコードのダウンロード
-#- include_tasks: dl_cni_plugin.yaml
-#- include_tasks: dl_containerd.yaml
-#- include_tasks: dl_cri_containerd.yaml
-#- include_tasks: dl_crictl.yaml
-#- include_tasks: dl_runc.yaml
-
-#- include_tasks: dl_addon_etcd.yaml
-#- include_tasks: dl_addon_coredns.yaml
-#- include_tasks: dl_addon_flannel.yaml
-#- include_tasks: dl_addon_keepalived.yaml
-
-
 # ノード設定ツールのインストール
 - include_tasks: dl_k8s_bin.yaml
 - include_tasks: dl_cfssl.yaml
 - include_tasks: install_kubectl.yaml
-
   
 # 共有環境の設定
 - include_tasks: start_nfs_server.yaml

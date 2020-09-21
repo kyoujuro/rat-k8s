@@ -939,8 +939,8 @@ def etcd_yaml()
              + (host_list("mlb",0,0).length == 0 ? "" : "," + host_list("mlb",0,0)) \
              + (host_list("mlb",1,0).length == 0 ? "" : "," + host_list("mlb",1,0)) \
              + ",10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc" \
-             + ",kubernetes.default.svc." + $conf['sub_domain'] \
-             + ",kubernetes.default.svc." + $conf['domain']
+             + ",kubernetes.default.svc.cluster" \
+             + ",kubernetes.default.svc.cluster.local"
 
   ofn = "playbook/cert_setup/vars/main.yaml"
   $file_list.push(ofn)  
@@ -964,8 +964,8 @@ def k8s_cert()
              + ($conf['kube_apiserver_vip'].length == 0 ? "" : "," + $conf['kube_apiserver_vip']) \
              + ($conf['front_proxy_vip'].nil? ? "" : "," + $conf['front_proxy_vip']) \
              + ",10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc" \
-             + ",kubernetes.default.svc." + $conf['sub_domain'] \
-             + ",kubernetes.default.svc." + $conf['domain'] 
+             + ",kubernetes.default.svc.cluster" \
+             + ",kubernetes.default.svc.cluster.local"
 
   
   #printf("\n証明書対象リスト %s\n", list_all)
@@ -1129,10 +1129,10 @@ def append_ansible_inventory(ofn)
     print_nn(w,'domain')
     print_nn(w,'sub_domain')
     print_nn(w,'pod_network')
-    host_sub_domain = sprintf("kubernetes.default.svc.%s",$conf['sub_domain'])
-    host_domain = sprintf("kubernetes.default.svc.%s",$conf['domain'])
-    w.write sprintf("host_list_etcd = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc",host_sub_domain,host_domain)
-    w.write sprintf("host_list_k8sapi = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc",host_sub_domain,host_domain)    
+    #host_sub_domain = sprintf("kubernetes.default.svc.%s",$conf['sub_domain'])
+    #host_domain = sprintf("kubernetes.default.svc.%s",$conf['domain'])
+    w.write sprintf("host_list_etcd = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local")
+    w.write sprintf("host_list_k8sapi = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local")
     # private_ip_subnet = internal_subnet として代入
     $conf['internal_subnet'] = $conf['private_ip_subnet']
     print_nn(w,'internal_subnet')

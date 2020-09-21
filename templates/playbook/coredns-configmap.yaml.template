@@ -11,7 +11,7 @@ data:
           lameduck 5s
         }
         ready
-        kubernetes {{ domain }} in-addr.arpa ip6.arpa {
+        kubernetes cluster.local in-addr.arpa ip6.arpa {
           fallthrough in-addr.arpa ip6.arpa
         }
         hosts {
