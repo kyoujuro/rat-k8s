@@ -42,7 +42,7 @@ spec:
     spec:
       containers:
         - name: webserver
-          image: 'maho/webapl3:0.1'
+          image: 'maho/webapl2:0.1'
           # レジストリは利用者の環境に合わせて変更ください
 ---
 ## Ingress
