@@ -133,6 +133,12 @@
   - elbs
   gather_facts: true
   become: true
+  vars:
+    - dl_node: node1
+      when: pod_network == "bridge"
+    - dl_node: master1
+      when: pod_network != "bridge"
+      
   roles:
     # コンテナランタイムを選択してインストール
     - role: runtime_containerd
