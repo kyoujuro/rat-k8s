@@ -780,12 +780,12 @@ def set_role_added_node()
       kubectl taint node {{ item.name }} --overwrite=true role=worker-node
     fi
   args:
-    chdir: /home/vagrant
+    chdir: "/home/{{ cluster_admin }}"
     executable: /bin/bash
   when: item.name is match("node*")
   loop: "{{ nodes }}"
   become: true
-  become_user: vagrant
+  become_user: "{{ cluster_admin }}"
 EOF
 
   end
@@ -1061,6 +1061,7 @@ def haproxy_front_cfg()
           w.write server_list_ingress_http
         elsif line =~ /^__SERVER_LIST_INGRESS_HTTPS__/
           w.write server_list_ingress_https
+          break if $conf['istio_gateway_vip'].nil?
         elsif line =~ /^__SERVER_LIST_ISTIO__/
           w.write server_list_istio
         elsif line =~ /^__SERVER_LIST_ISTIO_TLS__/
