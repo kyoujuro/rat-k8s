@@ -134,11 +134,8 @@
   gather_facts: true
   become: true
   vars:
-    - dl_node: node1
+    - download_node: node1
       when: pod_network == "bridge"
-    - dl_node: master1
-      when: pod_network != "bridge"
-      
   roles:
     # コンテナランタイムを選択してインストール
     - role: runtime_containerd
@@ -232,6 +229,12 @@
     - addon_metrics-server
     - addon_dashboard
     - addon_ingress
+
+# このパートは廃止したい
+# kube-keepalived によってVIPを設定している部分
+# 現在はelb に Keepalived と Haproxy を設定しているので不要
+# kube-keepalived が普及していないと見受けられるので、
+# elbにKeepalived と Haproxy を設定する方を選択したい。
 #
 # Ingress コントローラーとHA-Proxyの設定
 #
@@ -259,8 +262,6 @@
       when: sw_rook_ceph == "yes"
     - role: addon_promethus
       when: sw_promethus == "yes"
-    - role: addon_grafana
-      when: sw_grafana == "yes"
     - role: addon_grafana
       when: sw_grafana == "yes"
     - role: addon_elk

@@ -1,3 +1,4 @@
-user_name:  vagrant
+user_name : "{{ cluster_admin }}"
 crio_version: 1.17
 linux_os: xUbuntu_18.04
+download_node:   master1

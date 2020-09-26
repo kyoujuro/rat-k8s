@@ -1,0 +1,33 @@
+#
+#  コントローラー抜きでポッドを
+#  サービスで公開するサンプル
+#
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: pod-nginx
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx
+  namespace: pod-nginx
+spec:
+  selector:
+    app: nginx
+  ports:
+  - protocol: TCP
+    port: 80
+  type: NodePort
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+  namespace: pod-nginx  
+  labels:
+    app: nginx
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest

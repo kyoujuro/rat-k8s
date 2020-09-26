@@ -28,6 +28,9 @@
   hosts: masters
   gather_facts: true
   become: true
+  vars:
+    - download_node: master
+      when: single_node == true
   roles:
     - etcd
     - role: runtime_containerd
@@ -36,7 +39,7 @@
       when: container_runtime == "docker"
     - net_bridge
     - node_master
-    - node_worker  
+    - node_worker
   tasks:
     - include_tasks: tasks/kubeconfig_setup.yml
     

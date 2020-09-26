@@ -4,7 +4,7 @@
 - name: Downloading crictl
   stat:
     path: "{{ r_download_dir }}/crictl-{{ crictl_version }}-linux-amd64.tar.gz"
-  when: ansible_facts.hostname is match("master1")    
+  when: ansible_facts.hostname is match(download_node)
   register: regi_crictl
 
 - get_url:
@@ -12,7 +12,7 @@
     dest: "{{ r_download_dir }}"
     mode: '0644'
   when:
-    - ansible_facts.hostname is match("master1")     
+    - ansible_facts.hostname is match(download_node)
     - regi_crictl.stat.exists == false
 
 - template:

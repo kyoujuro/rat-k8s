@@ -4,7 +4,7 @@
 - name: Downloading runc
   stat:
     path: "{{ r_download_dir }}/runc.amd64"
-  when: ansible_facts.hostname is match("master1")    
+  when: ansible_facts.hostname is match(download_node)
   register: regi_runc
 
 - get_url:
@@ -12,7 +12,7 @@
     dest: "{{ r_download_dir }}"
     mode: '0644'
   when:
-    - ansible_facts.hostname is match("master1")
+    - ansible_facts.hostname is match(download_node)
     - regi_runc.stat.exists == false
 
 

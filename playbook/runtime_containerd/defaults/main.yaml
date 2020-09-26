@@ -1,5 +1,6 @@
 work_dir :       /srv/k8s
 download_dir :   "{{ work_dir }}/download"
-user_name :      vagrant
+user_name :      "{{ cluster_admin }}"
 cni_plugins :    v0.8.2
 runc_version:    v1.0.0-rc8
+download_node:   master1
