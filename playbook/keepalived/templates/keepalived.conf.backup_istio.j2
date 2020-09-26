@@ -25,6 +25,7 @@ vrrp_instance VI_1 {
     #}
     virtual_ipaddress {                  
        {{ front_proxy_vip }} dev enp0s9
+       {{ istio_gateway_vip }} dev enp0s9       
     }      
     notify_master /etc/keepalived/master.sh
     notify_backup /etc/keepalived/backup.sh

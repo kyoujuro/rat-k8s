@@ -132,6 +132,33 @@
     - lb_pos == "Internal"
 
 
+
+##########    
+- name: /etc/keepalived/keepalived.conf to primary elb
+  template:
+    src: keepalived.conf.master_frontend_istio.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - ansible_facts.hostname is match("elb1")
+    - lb_pos == "Frontend"
+    - istio_gateway_vip is defined
+
+- name: /etc/keepalived/keepalived.conf to backup elb
+  template:
+    src: keepalived.conf.backup_frontend_istio.j2
+    dest: /etc/keepalived/keepalived.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when:
+    - ansible_facts.hostname is match("elb2")
+    - lb_pos == "Frontend"
+    - istio_gateway_vip is defined    
+########## 
+
 - name: /etc/keepalived/keepalived.conf to primary elb
   template:
     src: keepalived.conf.master_frontend.j2
@@ -142,6 +169,7 @@
   when:
     - ansible_facts.hostname is match("elb1")
     - lb_pos == "Frontend"
+    - istio_gateway_vip is undefined
 
 - name: /etc/keepalived/keepalived.conf to backup elb
   template:
@@ -153,6 +181,9 @@
   when:
     - ansible_facts.hostname is match("elb2")
     - lb_pos == "Frontend"
+    - istio_gateway_vip is undefined    
+########## 
+
 
 
 - name: copy /etc/keepalived/master.sh
