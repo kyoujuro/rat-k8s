@@ -22,6 +22,7 @@ public_ip_subnet:  192.168.1.0/24
 ## マスターか内部LBのIPをセットする
 kube_apiserver_vip: 172.16.11.3
 
+domain: labs.local
 
 ### Virtual Machine Spec
 vm_spec:

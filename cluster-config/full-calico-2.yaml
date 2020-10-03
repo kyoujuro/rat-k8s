@@ -52,7 +52,7 @@ sw_elk:       "yes"
 
 
 ### DOMAIN
-domain: example.com
+domain: labs.local
 
 ### Master, Worker, Internal/Frontend Loadbalancer and bootnode
 vm_spec:

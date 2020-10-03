@@ -27,7 +27,7 @@ private_ip_subnet: 172.16.5.0/24
 public_ip_subnet:  192.168.1.0/24
 
 kube_apiserver_vip: 172.16.5.21
-domain: example.com
+domain: labs.local
 
 
 ### Master, Worker, Internal/Frontend Loadbalancer and bootnode
