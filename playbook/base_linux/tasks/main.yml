@@ -1,3 +1,5 @@
+- debug: msg="{{ ansible_facts }}"
+
 - name: vagrant user add root group
   user:
     name: vagrant
@@ -21,7 +23,6 @@
 - name: Configure Kernel parameter
   include_tasks: kernel-param.yaml
 
-    
 - name: Ensure /etc/hosts
   template:
     src: hosts.j2
@@ -30,82 +31,23 @@
     group: root
     mode: '0644'
 
-- name: check ssh-key existing
-  stat:
-    path: /vagrant/keys/id_rsa.pub
-  register: regi_ssh_key
-    
-#- debug: msg="{{ ssh_key }}"
 
-- name: create ssh-key
-  command: ssh-keygen -t rsa -N '' -f id_rsa
-  args:
-    executable: /bin/bash
-    chdir: /vagrant/keys
-  when: regi_ssh_key.stat.exists == false
+- debug: msg="{{ ansible_facts.virtualization_type }}"
+##
+## sshkey sharing
+##
+- name: SSH KEY FOR VAGRANT
+  include_tasks: sshkey-sharing-vagrant.yaml
+  when: ansible_facts.virtualization_type == "virtualbox"
 
-#############################
+##
+## sshkey sharing
+##
+- name: SSH-KEY FOR KVM VM
+  include_tasks: sshkey-sharing-kvm.yaml
+  when: ansible_facts.virtualization_type == "kvm"
 
-- name: Ensure group 'admin' exists
-  group:
-    name:  "{{ cluster_admin }}"
-    state: present
-- name: Add the user 'admin' with a bash shell,
-  user:
-    name:  "{{ cluster_admin }}"
-    shell: /bin/bash
-    group: "{{ cluster_admin }}"
-- name: add sudoers
-  template:
-    src:  sudor.j2
-    dest: "/etc/sudoers.d/{{ cluster_admin }}"
-    owner: root
-    group: root
-    mode: '0440'
-- name: mkdir .ssh directory
-  file:
-    path: "/home/{{ cluster_admin }}/.ssh"
-    state: directory
-    owner: "{{ cluster_admin }}"
-    group: "{{ cluster_admin }}"
-    mode: '0700'
 
-    
-- name: Copy id_rsa to cluster_admin  home
-  command: cp {{ shared_fs }}/keys/id_rsa /home/{{ cluster_admin }}/.ssh/id_rsa
-- file:
-    path: /home/{{ cluster_admin }}/.ssh/id_rsa
-    owner: "{{ cluster_admin }}"
-    group: "{{ cluster_admin }}"
-    mode: '0400'
-
-- name: Copy id_rsa.pub to  cluster_admin  home
-  command: cp {{ shared_fs }}/keys/id_rsa.pub /home/{{ cluster_admin }}/.ssh/id_rsa.pub
-- file:
-    path: "/home/{{ cluster_admin }}/.ssh/id_rsa.pub"
-    owner: "{{ cluster_admin }}"
-    group: "{{ cluster_admin }}"
-    mode: '0644'
-
-- name: add authorized_keys
-  shell: |
-     cat {{ shared_fs }}/keys/id_rsa.pub >> /home/{{ cluster_admin }}/.ssh/authorized_keys
-- file:
-    path: "/home/{{ cluster_admin }}/.ssh/authorized_keys"
-    owner: "{{ cluster_admin }}"
-    group: "{{ cluster_admin }}"
-    mode: '0400'
-
-    
-- name: Copy config
-  command: cp {{ shared_fs }}/keys/config /home/{{ cluster_admin }}/.ssh/config
-- file:
-    path: "/home/{{ cluster_admin }}/.ssh/config"
-    owner: "{{ cluster_admin }}"
-    group: "{{ cluster_admin }}"
-    mode: '0400'
-
-#########
 #
 # コンテナのファイルシステム領域の設定
 #
