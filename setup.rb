@@ -533,6 +533,67 @@ def node_label_task()
   end
 end
 
+#
+# virt-install で仮想マシンを起動する
+#
+def kvm_shell()
+  kvm_names = "hosts=( "
+  kvm_cpus  = "vcpus=( "
+  kvm_rams  = "memory=( "
+  kvm_priIp = "ips=( "
+  kvm_pubIp = "pips=( "  
+  $vm_config_array.each do |val|
+    x = eval(val)
+    kvm_names = kvm_names + '"' + x['name'] + '"' + " "
+    kvm_cpus = kvm_cpus + x['cpu'].to_s + " "
+    kvm_rams = kvm_rams + x['memory'].to_s + " "
+    kvm_priIp = kvm_priIp + '"' + x['private_ip'].to_s + '"' + " "
+    kvm_pubIp = kvm_pubIp + '"' + x['public_ip'].to_s + '"' + " "
+  end
+  kvm_names = kvm_names + ")"
+  kvm_cpus  = kvm_cpus + ")"
+  kvm_rams  = kvm_rams + ")"
+  kvm_priIp = kvm_priIp + ")"
+  kvm_pubIp = kvm_pubIp + ")"  
+
+  ip = $conf['private_ip_subnet'].split(".")
+  gateway_ip = ip[0].to_s + "." +ip[1].to_s + "." + ip[2].to_s + ".1" 
+
+  tfn = "virt/temp-virt-import.sh"
+  ofn = "virt/import_node.sh"
+  $file_list.push(ofn)  
+  File.open(tfn, "r") do |f|
+    File.open(ofn, "w") do |w|
+      w.write sprintf("#!/bin/bash\n")
+      w.write $insert_msg
+      w.write sprintf("### Template file is %s\n",tfn)
+      w.write sprintf("#\n")
+      f.each_line { |line|
+        if line =~ /^__gateway=__/
+          w.write "gateway=" + gateway_ip + "\n"
+        elsif line =~ /^__hosts=__/
+          w.write kvm_names
+          w.write "\n"
+        elsif line =~ /^__vcpus=__/
+          w.write kvm_cpus
+          w.write "\n"
+        elsif line =~ /^__memory=__/
+          w.write kvm_rams
+          w.write "\n"
+        elsif line =~ /^__ips=__/
+          w.write kvm_priIp
+          w.write "\n"
+        elsif line =~ /^__pips=__/
+          w.write kvm_pubIp
+          w.write "\n"
+        else
+          w.write line
+        end
+      }
+    end
+  end
+end
+
 ###############################################################
 
 ##
@@ -579,6 +640,7 @@ if __FILE__ == $0
     exit!
   end
 
+  
   ## IP アドレスのチェックと空きアドレスのアサイン
   if $search_ip
     step_start("空きIPアドレスのスキャン")
@@ -613,11 +675,21 @@ if __FILE__ == $0
     end
   end
   step_end(0)
+
+
   
   ## Ansibleインベントリ書き出し
   step_start("Ansible インベントリ書き出し")
   output_ansible_inventory()
   step_end(0)
+
+  ## KVM 環境用
+  if $conf['hypervisor'] == 'kvm'
+    step_start("virt-installシェルの書き出し")
+    kvm_shell()
+    step_end(0)
+  end
+  
   
   printf("ノード構成\n")
   printf("マスターノード   = %d\n", $cnt['master'])
@@ -646,7 +718,7 @@ if __FILE__ == $0
   ## ansible変数としてノードのリスト作成、hostsファイル作成
   step_start("ノードリストの変数作成")
   vars_nodelist()
-p  step_end(0)
+  step_end(0)
   
   step_start("/etc/hosts テンプレート作成")
   create_hosts_file()
