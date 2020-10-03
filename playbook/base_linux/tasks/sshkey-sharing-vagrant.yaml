@@ -32,24 +32,9 @@
     chdir: "{{ shared_fs }}/keys"
   when: regi_ssh_key.stat.exists == false
 
+
 #############################
 
-- name: Ensure group 'admin' exists
-  group:
-    name:  "{{ cluster_admin }}"
-    state: present
-- name: Add the user 'admin' with a bash shell,
-  user:
-    name:  "{{ cluster_admin }}"
-    shell: /bin/bash
-    group: "{{ cluster_admin }}"
-- name: add sudoers
-  template:
-    src:  sudor.j2
-    dest: "/etc/sudoers.d/{{ cluster_admin }}"
-    owner: root
-    group: root
-    mode: '0440'
 - name: mkdir .ssh directory
   file:
     path: "/home/{{ cluster_admin }}/.ssh"
@@ -57,7 +42,6 @@
     owner: "{{ cluster_admin }}"
     group: "{{ cluster_admin }}"
     mode: '0700'
-
     
 - name: Copy id_rsa to cluster_admin  home
   command: cp {{ shared_fs }}/keys/id_rsa /home/{{ cluster_admin }}/.ssh/id_rsa

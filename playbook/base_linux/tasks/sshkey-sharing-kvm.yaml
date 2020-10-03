@@ -1,3 +1,61 @@
 #############################
 - debug: msg="Dummy yaml"
 
+- name: mkdir .ssh directory
+  file:
+    path: "/home/{{ cluster_admin }}/.ssh"
+    state: directory
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
+    mode: '0700'
+
+- debug: msg="{{ ansible_facts.env.PWD }}"
+
+
+- name: Copy id_rsa to cluster_admin  home
+  command: cp ../keys/id_rsa /home/{{ cluster_admin }}/.ssh/id_rsa
+  args:
+    chdir: "{{ ansible_facts.env.PWD }}"
+  
+- file:
+    path: /home/{{ cluster_admin }}/.ssh/id_rsa
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
+    mode: '0400'
+
+
+- name: Copy id_rsa.pub to  cluster_admin  home
+  command: cp ../keys/id_rsa.pub /home/{{ cluster_admin }}/.ssh/id_rsa.pub
+  args:
+    chdir: "{{ ansible_facts.env.PWD }}"
+  
+- file:
+    path: "/home/{{ cluster_admin }}/.ssh/id_rsa.pub"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
+    mode: '0644'
+
+- name: add authorized_keys
+  shell: |
+     cat ../keys/id_rsa.pub >> /home/{{ cluster_admin }}/.ssh/authorized_keys
+  args:
+    chdir: "{{ ansible_facts.env.PWD }}"
+     
+- file:
+    path: "/home/{{ cluster_admin }}/.ssh/authorized_keys"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
+    mode: '0400'
+
+    
+- name: Copy config
+  command: cp ../keys/config /home/{{ cluster_admin }}/.ssh/config
+  args:
+    chdir: "{{ ansible_facts.env.PWD }}"
+  
+- file:
+    path: "/home/{{ cluster_admin }}/.ssh/config"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
+    mode: '0400'
+

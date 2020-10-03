@@ -1,4 +1,4 @@
-- debug: msg="{{ ansible_facts }}"
+#- debug: msg="{{ ansible_facts }}"
 
 - name: vagrant user add root group
   user:
@@ -30,6 +30,29 @@
     owner: root
     group: root
     mode: '0644'
+
+
+#############################
+
+- name: Ensure group 'admin' exists
+  group:
+    name:  "{{ cluster_admin }}"
+    state: present
+- name: Add the user 'admin' with a bash shell,
+  user:
+    name:  "{{ cluster_admin }}"
+    shell: /bin/bash
+    group: "{{ cluster_admin }}"
+- name: add sudoers
+  template:
+    src:  sudor.j2
+    dest: "/etc/sudoers.d/{{ cluster_admin }}"
+    owner: root
+    group: root
+    mode: '0440'
+
+
+#############################
 
 
 - debug: msg="{{ ansible_facts.virtualization_type }}"
