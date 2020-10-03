@@ -1,5 +1,5 @@
 - name: config master & worker node
-  hosts: localhost
+  hosts: all
   gather_facts: true
   become: true
   roles:
