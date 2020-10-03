@@ -21,12 +21,6 @@ elb[1:2]
 [all:vars]
 
 
-# Ansible & Vagrant vars
-#shared_fs=/mnt
-shared_fs=/vagrant
-cluster_admin=vagrant
-
-
 # Kubernetes API IP address
 KUBERNETES_PUBLIC_ADDRESS=__API_SERVER_IPADDR__
 

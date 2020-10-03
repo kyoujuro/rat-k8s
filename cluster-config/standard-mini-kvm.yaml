@@ -33,8 +33,10 @@ domain: labs.local
 ## select hypervisor type
 ##  kvm : CentOS8 virsh
 ##  vv  : VirtualBox + Vagrant
-#hypervisor: kvm
-hypervisor: vv
+hypervisor: kvm
+#hypervisor: vv
+
+
 
 
 ### Master, Worker, Internal/Frontend Loadbalancer and bootnode
