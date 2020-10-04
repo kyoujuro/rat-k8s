@@ -109,23 +109,6 @@ def vars_nodelist()
   end
 end
 
-##
-## Ansible インベントリファイルの出力
-##   Vagrant から起動する初期化用
-##   ノードから起動するK8sセットアップ用
-##
-def output_ansible_inventory()
-  if $conf['hypervisor'] == "vv" 
-    output_ansible_inventory0("hosts_k8s", 1)
-    output_ansible_inventory0("hosts_vagrant", 0)
-  elsif $conf['hypervisor'] == 'kvm'
-    output_ansible_inventory0("hosts_kvm", 2)
-  else
-    printf("Abort due to undfined hypervisor\n")
-    exit!
-  end
-end
-
 #
 # CoreDNSのエントリーをコンフィグを元に追加
 #                       coredns-configmap.yaml
@@ -276,73 +259,6 @@ end
 
 
 
-##
-## Ansible Inventory に変数を追加する
-##
-def print_nn(w,param)
-  if $conf[param].nil?
-    return
-  else
-    w.write sprintf("%s = %s\n", param, $conf[param])
-  end
-end
-
-def append_ansible_inventory(ofn)
-  $file_list.push(ofn)  
-  File.open(ofn, "a") do |w|
-    w.write sprintf("\n")
-    print_nn(w,'hypervisor')
-    print_nn(w,'cluster_admin')
-    print_nn(w,'shared_fs')
-    
-    print_nn(w,'cpu_arch')
-    print_nn(w,'kubernetes_version')
-    
-    w.write sprintf("custom_kubernetes = %s\n",$conf['custom_kubernetes'] == true ? "yes" : "no")
-    print_nn(w,'kubernetes_dashborad_ver')
-    print_nn(w,'kubernetes_metrics_server')
-    print_nn(w,'etcd_version')
-    print_nn(w,'keepalived_version')
-    if !$conf['front_proxy_vip'].nil?
-      $conf['front_proxy_vip_nomask'] = $conf['front_proxy_vip']
-      print_nn(w,'front_proxy_vip_nomask')
-    end
-    print_nn(w,'istio_gateway_vip')
-    w.write sprintf("proxy_node = %s\n", $exist_proxy_node)
-    w.write sprintf("storage_node = %s\n", $exist_storage_node)
-    print_nn(w,'domain')
-    print_nn(w,'sub_domain')
-    print_nn(w,'pod_network')
-    #host_sub_domain = sprintf("kubernetes.default.svc.%s",$conf['sub_domain'])
-    #host_domain = sprintf("kubernetes.default.svc.%s",$conf['domain'])
-    w.write sprintf("host_list_etcd = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local")
-    w.write sprintf("host_list_k8sapi = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local")
-    # private_ip_subnet = internal_subnet として代入
-    $conf['internal_subnet'] = $conf['private_ip_subnet']
-    print_nn(w,'internal_subnet')
-    w.write sprintf("single_node = %s\n",  $single_node)
-    w.write sprintf("sw_rook_ceph = %s\n", $conf['sw_rook_ceph'] == true ? "yes" : "no")
-    w.write sprintf("sw_promethus = %s\n", $conf['sw_promethus'] == true ? "yes" : "no")
-    w.write sprintf("sw_grafana = %s\n",   $conf['sw_grafana'] == true ? "yes" : "no")
-    w.write sprintf("sw_elk = %s\n",   $conf['sw_elk'] == true ? "yes" : "no")
-    w.write sprintf("sw_istio = %s\n",   $conf['sw_istio'] == true ? "yes" : "no")
-    w.write sprintf("sw_knative = %s\n",   $conf['sw_knative'] == true ? "yes" : "no")    
-    w.write sprintf("sw_use_sdc_cr = %s\n",   $conf['sw_use_sdc_cr'] == true ? "yes" : "no")         
-    w.write sprintf("\n")
-    if $conf['container_runtime'].nil?
-      $conf['container_runtime'] = "containerd"
-    end
-    print_nn(w,'container_runtime')
-    print_nn(w,'docker_version')
-    print_nn(w,'containerd_version')
-    print_nn(w,'cni_plugins')
-    print_nn(w,'crictl_version')
-    print_nn(w,'crio_version')
-    print_nn(w,'calico_version')
-    print_nn(w,'flannel_version')
-    w.write sprintf("\n")
-  end
-end
 
 ##
 ## ノードにラベルを追加する
@@ -635,9 +551,15 @@ if __FILE__ == $0
   step_end(0)
   
   ## 変数追加
-  step_start("Ansible playbookに変数追加")  
-  append_ansible_inventory("hosts_k8s")
-  append_ansible_inventory("hosts_vagrant")  
+  step_start("Ansible playbookに変数追加")
+
+  if $conf['hypervisor'] == "vv" 
+    append_ansible_inventory("hosts_k8s")
+    append_ansible_inventory("hosts_vagrant")  
+  elsif $conf['hypervisor'] == 'kvm'
+    append_ansible_inventory("hosts_kvm")      
+  end
+
   step_end(0)
 
   ## 自動起動
