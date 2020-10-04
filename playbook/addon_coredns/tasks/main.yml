@@ -36,9 +36,9 @@
 - name: Deploy CoreDNS
   template:
     src: coredns.yaml
-    dest: "/home/{{ user_name }}/coredns.yaml"
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
+    dest: "/home/{{ cluster_admin }}/coredns.yaml"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
     mode: 0644
 
 #
@@ -47,9 +47,9 @@
 #
 - template:
     src: coredns-configmap.yaml
-    dest: "/home/{{ user_name }}/coredns-configmap.yaml"
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
+    dest: "/home/{{ cluster_admin }}/coredns-configmap.yaml"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
     mode: 0644
 
 #
@@ -58,10 +58,10 @@
 - name: kubectl apply -f coredns-configmap.yaml
   shell: |
     kubectl apply -f coredns-configmap.yaml
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   become_method: sudo
   args:
-    chdir: "/home/{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"
     executable: /bin/bash
 
 #
@@ -70,9 +70,9 @@
 - name: apply kubectl apply -f coredns.yaml
   shell: |
     kubectl apply -f coredns.yaml
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   become_method: sudo 
   args:
-    chdir: "/home/{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"
     executable: /bin/bash
 

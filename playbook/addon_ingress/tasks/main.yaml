@@ -2,35 +2,35 @@
 
 - name: Exisiting check 
   stat:
-    path: "/home/{{ user_name }}/ingress-controller-nginx.yaml"
+    path: "/home/{{ cluster_admin }}/ingress-controller-nginx.yaml"
   register: file_ingress_controller_nginx
 
 
 - name: Download Nginx Ingress Controller Manifest
   get_url:
     url: "https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-{{ nginx_ic_version }}/deploy/static/provider/baremetal/deploy.yaml"
-    dest: "/home/{{ user_name }}/ingress-controller-nginx.yaml"
+    dest: "/home/{{ cluster_admin }}/ingress-controller-nginx.yaml"
     mode: '0644'
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
   when: file_ingress_controller_nginx.stat.exists == false
 
 
 - name: Edit Nginx Ingress Controller Manifest - http
   lineinfile:
-    path: "/home/{{ user_name }}/ingress-controller-nginx.yaml"
+    path: "/home/{{ cluster_admin }}/ingress-controller-nginx.yaml"
     insertafter: '^      targetPort: https'
     line: '      nodePort: 31443'
   when: file_ingress_controller_nginx.stat.exists == false
 
 - name: Edit Nginx Ingress Controller Manifest - https
   lineinfile:
-    path: "/home/{{ user_name }}/ingress-controller-nginx.yaml"
+    path: "/home/{{ cluster_admin }}/ingress-controller-nginx.yaml"
     insertafter: '      targetPort: http$'
     line: '      nodePort: 31080'
   when: file_ingress_controller_nginx.stat.exists == false
 
 
 - name: Deploy Ingress nginx
-  become_user: "{{ user_name }}"
-  command: kubectl apply -f /home/{{ user_name }}/ingress-controller-nginx.yaml
+  become_user: "{{ cluster_admin }}"
+  command: kubectl apply -f /home/{{ cluster_admin }}/ingress-controller-nginx.yaml

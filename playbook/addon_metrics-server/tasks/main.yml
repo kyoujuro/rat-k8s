@@ -18,6 +18,6 @@
   
 - name: Deploy Metrics Server
   command: kubectl apply -f {{ download_dir }}/components.yaml
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   args:
-    chdir: "/home/{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"

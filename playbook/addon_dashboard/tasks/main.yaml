@@ -3,32 +3,32 @@
 - name: Download Dashboard Manifest
   get_url:
     url: "https://raw.githubusercontent.com/kubernetes/dashboard/{{ kubernetes_dashborad_ver }}/aio/deploy/recommended.yaml"
-    dest: "/home/{{ user_name }}/kubernetes-dashboard.yaml"
+    dest: "/home/{{ cluster_admin }}/kubernetes-dashboard.yaml"
     mode: '0644'
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
 
 - name: Change Dashboard RBAC
   replace:
-    path: "/home/{{ user_name }}/kubernetes-dashboard.yaml"
+    path: "/home/{{ cluster_admin }}/kubernetes-dashboard.yaml"
     after: '  kind: ClusterRole'
     regexp: '^  name: kubernetes-dashboard'
     replace: '  name: cluster-admin'
 
 - name: Insert nodePort
   blockinfile:
-    path: "/home/{{ user_name }}/kubernetes-dashboard.yaml"
+    path: "/home/{{ cluster_admin }}/kubernetes-dashboard.yaml"
     insertafter: "      targetPort: 8443"
     block: |2
             nodePort: 30445
         type: NodePort
 
 - name: Deploy Dashboard UI
-  become_user: "{{ user_name }}"
-  command: kubectl apply -f /home/{{ user_name }}/kubernetes-dashboard.yaml
+  become_user: "{{ cluster_admin }}"
+  command: kubectl apply -f /home/{{ cluster_admin }}/kubernetes-dashboard.yaml
 
 - name: setup kubeconfig
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
         ##KUBECONFIG=/srv/k8s/kubeconfig/admin.kubeconfig
         TOKEN=$(kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret |grep kubernetes-dashboard-token-* | awk '{print $1}') |awk '$1=="token:"{print $2}')

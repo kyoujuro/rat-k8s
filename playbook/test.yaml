@@ -1,18 +1,14 @@
 #
 # テスト用
 #
-# 
-#  RBAC for Kubelet Authorization
-#
-- name: Configure RBAC
-  hosts:
-  - bootnode
+- name: Deploy addon for k8s
+  hosts: bootnode
   gather_facts: true
   become: true
-  #become_user: vagrant
-  tasks:
-    # RBAC設定を追加
-    - include_tasks: tasks/config_rbac_kubelet.yml
-    # kubectlコマンドをログインシェルから使えるように設定する      
-    - include_tasks: tasks/kubeconfig_setup.yml
+  roles:
+    - addon_helm3    
+    - addon_coredns
+    - addon_metrics-server
+    - addon_dashboard
+    - addon_ingress
 
