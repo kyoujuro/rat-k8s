@@ -464,13 +464,11 @@ if __FILE__ == $0
   printf("外部LB           = %d\n", $cnt['elb'])  
   printf("監視用ノード     = %d\n", $cnt['mon'])  
 
-  if $conf['hypervisor'].nil?
-    $conf['hypervisor'] = "vv"
+  if $conf['hypervisor'].nil? or $conf['hypervisor'] == 'vv'
+    $conf['hypervisor'] = 'vv'
     $conf['cluster_admin'] = 'vagrant'
     $conf['shared_fs'] = '/vagrant'
-  end
-
-  if $conf['hypervisor'] == 'kvm'
+  elsif $conf['hypervisor'] == 'kvm'
     $conf['cluster_admin'] = 'ubuntu'
     $conf['shared_fs'] = '/srv'
   end
