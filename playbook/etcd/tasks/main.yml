@@ -1,5 +1,5 @@
 - debug: msg="hostname = {{ ansible_facts.hostname }} "
-- debug: msg="download_node = {{ download_node }} "
+#- debug: msg="download_node = {{ download_node }} "
 #- debug: msg="{{ ansible_facts }}"
 
 #

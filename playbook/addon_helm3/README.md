@@ -21,5 +21,5 @@ helm チャートのリポジトリをhttps://kubernetes-charts.storage.googleap
 ## デフォルト変数
 
 helm_version       : v3.3.1
-user_name          : vagrant
+
 

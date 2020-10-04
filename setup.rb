@@ -468,9 +468,13 @@ if __FILE__ == $0
     $conf['hypervisor'] = 'vv'
     $conf['cluster_admin'] = 'vagrant'
     $conf['shared_fs'] = '/vagrant'
+    $conf['iface'] = 'enp0s8'
+    $conf['internal_ipv4_address'] = "{{ ansible_facts.enp0s8.ipv4.address }}"
   elsif $conf['hypervisor'] == 'kvm'
     $conf['cluster_admin'] = 'ubuntu'
     $conf['shared_fs'] = '/srv'
+    $conf['iface'] = 'enp1s0'
+    $conf['internal_ipv4_address'] = "{{ ansible_facts.enp1s0.ipv4.address }}"
   end
   
   printf("HyoerVisor       = %s\n", $conf['hypervisor'])
