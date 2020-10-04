@@ -15,12 +15,12 @@
 - debug: msg="single_node == {{ single_node }}"
   
 - name: static route masters
-  include_tasks: /vagrant/playbook/net_bridge/tasks/static-route.yaml
+  include_tasks: static-route.yaml
   when: ansible_facts.hostname is match("master[123]") or {{ single_node }} == true
   # シングル ノードクラスタの時はコメントにする
   
 - name: static route for each node
-  include_tasks: "/vagrant/playbook/net_bridge/tasks/static-route-{{ ansible_facts.hostname }}.yaml"
+  include_tasks: "static-route-{{ ansible_facts.hostname }}.yaml"
   when: ansible_facts.hostname is not match("master[123]") or {{ single_node }} == true
   # シングル ノードクラスタの時はコメントにする
 

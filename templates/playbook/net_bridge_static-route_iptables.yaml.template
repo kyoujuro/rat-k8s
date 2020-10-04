@@ -1,8 +1,9 @@
 - name: Insert/Update netplan
-  shell: cp /etc/netplan/50-vagrant.yaml /etc/netplan/51-k8s.yaml
+__SHELL_COMMAND__
 
 - blockinfile:
-    dest: /etc/netplan/51-k8s.yaml
+__DEST_NETPLAN__
+
     insertafter: '172.16.*'
     regexp: '172.16.*'
     state: present

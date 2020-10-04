@@ -100,7 +100,19 @@ def create_static_network_route()
             if line =~ /^__SET_ROUTING__/
               w.write rst1
             elsif line =~ /^__SET_IPTABLES__/
-              w.write rst2              
+              w.write rst2
+            elsif line =~ /^__SHELL_COMMAND__/
+              if $conf['hypervisor'] == 'kvm'
+                w.write sprintf("  shell: cp /etc/netplan/01-netcfg.yaml /tmp/01-netcfg.yaml")
+              else
+                w.write sprintf("  shell: cp /etc/netplan/50-vagrant.yaml /etc/netplan/51-k8s.yaml")
+              end
+            elsif line =~ /^__DEST_NETPLAN__/
+              if $conf['hypervisor'] == 'kvm'
+                w.write sprintf("    dest: /etc/netplan/01-netcfg.yaml")
+              else
+                w.write sprintf("    dest: /etc/netplan/51-k8s.yaml")            
+              end
             else
               w.write line
             end
@@ -146,6 +158,18 @@ def create_ubuntu_static_routing()
               w.write sprintf("%s   metric: 100\n",   "\s"*11)
               w.write sprintf("%s   on-link: true\n", "\s"*11)              
             end
+          end
+        elsif line =~ /^__SHELL_COMMAND__/
+          if $conf['hypervisor'] == 'kvm'
+            w.write sprintf("  shell: cp /etc/netplan/01-netcfg.yaml /tmp/01-netcfg.yaml")
+          else
+            w.write sprintf("  shell: cp /etc/netplan/50-vagrant.yaml /etc/netplan/51-k8s.yaml")
+          end
+        elsif line =~ /^__DEST_NETPLAN__/
+          if $conf['hypervisor'] == 'kvm'
+            w.write sprintf("    dest: /etc/netplan/01-netcfg.yaml")
+          else
+            w.write sprintf("    dest: /etc/netplan/51-k8s.yaml")            
           end
         else
           w.write line
