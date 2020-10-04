@@ -81,6 +81,11 @@
   - masters
   gather_facts: true
   become: true
+  vars:
+    - internal_ipv4_address: "{{ ansible_facts.enp0s8.ipv4.address }}"
+      when: ansible_facts.virtualization_type == "virtualbox"
+    - internal_ipv4_address: "{{ ansible_facts.enp1s0.ipv4.address }}"
+      when: ansible_facts.virtualization_type == "kvm"
   roles:
     - etcd
     # コンテナランタイムを選択してインストール
@@ -112,7 +117,7 @@
   - bootnode
   gather_facts: true
   become: true
-  become_user: vagrant
+  #become_user: "{{ cluster_admin }}"
   tasks:
     # 処理完了まで時間を取らないと失敗する
     - wait_for:

@@ -1,28 +1,18 @@
 #
 # テスト用
 #
-
+# 
+#  RBAC for Kubelet Authorization
 #
-# モニタリングセットアップ
-# CoreDNSセットアップ
-#
-#- name: K8s Monitoring setup
-#  hosts: masters
-#  gather_facts: true
-#  become: true
-#  roles:
-#    - addon_helm3     
-#    - addon_coredns
-#    - addon_metrics-server
-#    - addon_dashboard
-#  tasks:
-#    - debug: msg="export KUBECONFIG=`pwd`/kubeconfig"
-
-
-- name: K8s Monitoring setup
-  hosts: bootnode
+- name: Configure RBAC
+  hosts:
+  - bootnode
   gather_facts: true
   become: true
-  roles:
-    - addon_knative
-    
+  #become_user: vagrant
+  tasks:
+    # RBAC設定を追加
+    - include_tasks: tasks/config_rbac_kubelet.yml
+    # kubectlコマンドをログインシェルから使えるように設定する      
+    - include_tasks: tasks/kubeconfig_setup.yml
+

@@ -5,9 +5,9 @@
     kubectl label node {{ item.name }} --overwrite=true node-role.kubernetes.io/master=""
     kubectl taint node {{ item.name }} --overwrite=true node-role.kubernetes.io/master="":NoSchedule
   args:
-    chdir: /home/vagrant
+    chdir: "/home/{{ cluster_admin }}"
   when: item.name is match("master*")
   loop: "{{ nodes }}"    
   become: true
-  become_user: vagrant
+  become_user: "{{ cluster_admin }}"
 

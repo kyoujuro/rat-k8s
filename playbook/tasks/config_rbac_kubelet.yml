@@ -1,29 +1,29 @@
 - name: copy rbac yamls to bootnode
   template:
     src: rbac-kubelet.yaml
-    dest: /home/vagrant/rbac-kubelet.yaml
-    owner: vagrant
-    group: vagrant
+    dest: "/home/{{ cluster_admin }}/rbac-kubelet.yaml"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
     mode: '0644'
 
 - template:
     src: rbac-kubelet-rolebinding.yaml
-    dest: /home/vagrant/rbac-kubelet-rolebinding.yaml
-    owner: vagrant
-    group: vagrant
+    dest: "/home/{{ cluster_admin }}/rbac-kubelet-rolebinding.yaml"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
     mode: '0644'
 
 - name: apply rbac manifests
   shell: |
     kubectl apply --kubeconfig {{ r_ca_kubeconfig }}/admin.kubeconfig -f rbac-kubelet.yaml
   args:
-    chdir: /home/vagrant
+    chdir: "/home/{{ cluster_admin }}"
   become: true
 
 - shell: |
     kubectl apply --kubeconfig {{ r_ca_kubeconfig }}/admin.kubeconfig -f rbac-kubelet-rolebinding.yaml
   args:
-    chdir: /home/vagrant
+    chdir: "/home/{{ cluster_admin }}"  
   become: true
 
 

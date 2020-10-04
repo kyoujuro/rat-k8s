@@ -48,14 +48,22 @@
 #    mode: '0400'
 
     
-- name: Copy config
-  command: cp ../keys/config /home/{{ cluster_admin }}/.ssh/config
-  args:
-    chdir: "{{ ansible_facts.env.PWD }}"
-  
-- file:
-    path: "/home/{{ cluster_admin }}/.ssh/config"
+#- name: Copy config
+#  command: cp ../keys/config /home/{{ cluster_admin }}/.ssh/config
+#  args:
+#    chdir: "{{ ansible_facts.env.PWD }}"
+#  
+#- file:
+#    path: "/home/{{ cluster_admin }}/.ssh/config"
+#    owner: "{{ cluster_admin }}"
+#    group: "{{ cluster_admin }}"
+#    mode: '0400'
+
+- name: copy ssh config
+  template:
+    src: config
+    dest: "/home/{{ cluster_admin }}/.ssh/config"
     owner: "{{ cluster_admin }}"
     group: "{{ cluster_admin }}"
     mode: '0400'
-
+    

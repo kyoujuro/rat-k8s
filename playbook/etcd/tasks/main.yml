@@ -1,6 +1,6 @@
 - debug: msg="hostname = {{ ansible_facts.hostname }} "
 - debug: msg="download_node = {{ download_node }} "
-
+#- debug: msg="{{ ansible_facts }}"
 
 #
 # Download Etcd 
@@ -126,8 +126,13 @@
     owner: root
     group: root
     mode: '0600'
-#########    
-    
+
+###########    
+#  Interface name is changed depend on Hypervisor.
+#  it should not use in the template file.
+#  like this  ansible_facts.enp0s8.ipv4.address 
+###########
+
 - template:
     src: etcd.service.j2
     dest: /etc/systemd/system/etcd.service

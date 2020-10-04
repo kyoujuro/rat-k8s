@@ -41,7 +41,7 @@
     path: "{{ r_download_dir }}/containerd_start.lock"
     state: present
   
-- include_vars: /vagrant/playbook/vars/main.yaml
+#- include_vars: /vagrant/playbook/vars/main.yaml
 
 - name: mkdir /opt/cni/bin/
   file:

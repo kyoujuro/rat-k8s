@@ -4,27 +4,27 @@
 
 - name: check kube-state-metrics
   stat:
-    path: '/home/vagrant/kube-state-metrics/README.md'
+    path: "/home/{{ cluste_admin }}/kube-state-metrics/README.md"
   register: regi_kube_state_metrics
 
 - name: git clone kube-state-metrics
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   git:
     repo: 'https://github.com/kubernetes/kube-state-metrics'
     version: release-1.9
-    dest: "/home/{{ user_name }}/kube-state-metrics"
+    dest: "/home/{{ cluster_admin }}/kube-state-metrics"
     #mode: '0644'
-    #owner: "{{ user_name }}"
-    #group: "{{ user_name }}"
+    #owner: "{{ cluster_admin }}"
+    #group: "{{ cluster_admin }}"
   when: regi_kube_state_metrics.stat.exists == false
 
 - name: apply kube-state-metrics 
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
         kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=USER-MAIL-ADDRESS
         kubectl apply -f examples/standard/
   args:
-    chdir: "/home/{{ user_name }}/kube-state-metrics"
+    chdir: "/home/{{ cluster_admin }}/kube-state-metrics"
 
 
 
@@ -32,7 +32,7 @@
 # Promethuse のインストール
 #
 - name: install Promethuse step-1
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     kubectl create namespace prometheus
     helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -40,7 +40,7 @@
     helm inspect values prometheus-community/prometheus > prometheus-values.yaml
 
   args:
-    chdir: "/home/{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"
 
 #
 # 設定編集
@@ -50,19 +50,19 @@
 # Helm インストール
 #
 - name: install Promethuse step-3
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     ##helm install prometheus --namespace prometheus -f prometheus-values.yaml stable/prometheus
     helm install prometheus --namespace prometheus -f prometheus-values.yaml prometheus-community/prometheus
   register: results_helm
   args:
-    chdir: "/home/{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"
 
 - debug: msg="stdout  = {{ results_helm.stdout_lines }}"
 
 
-- local_action: copy content="{{  results_helm.stdout_lines }}" dest="/home/{{ user_name }}/helm_promethus_results"
-  become_user: "{{ user_name }}"
+- local_action: copy content="{{  results_helm.stdout_lines }}" dest="/home/{{ cluster_admin }}/helm_promethus_results"
+  become_user: "{{ cluster_admin }}"
 
 
   
