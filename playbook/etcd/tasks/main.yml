@@ -132,7 +132,9 @@
 #  it should not use in the template file.
 #  like this  ansible_facts.enp0s8.ipv4.address 
 ###########
-
+- debug: msg="{{ internal_ipv4_address }}"
+- debug: msg="{{ ansible_facts.virtualization_type }}"
+  
 - template:
     src: etcd.service.j2
     dest: /etc/systemd/system/etcd.service
