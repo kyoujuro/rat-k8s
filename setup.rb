@@ -324,7 +324,7 @@ def kvm_shell()
   gateway_ip = ip[0].to_s + "." +ip[1].to_s + "." + ip[2].to_s + ".1" 
 
   tfn = "virt/temp-virt-import.sh"
-  ofn = "virt/import_node.sh"
+  ofn = "virt/create_nodes.sh"
   $file_list.push(ofn)  
   File.open(tfn, "r") do |f|
     File.open(ofn, "w") do |w|
