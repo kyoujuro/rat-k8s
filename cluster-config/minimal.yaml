@@ -2,11 +2,18 @@
 # 最小構成のK8sクラスタ
 #
 
-domain: example.com
+domain: labs.local
 
 ### host network interfaice
 bridge_if: "en0: Wi-Fi (Wireless)"
 #bridge_if: "eno1"
+
+## Hypervisor type
+##  kvm : CentOS8 virsh
+##  vv  : VirtualBox + Vagrant
+#hypervisor: kvm
+hypervisor: vv
+
 
 ### Kubernetes version
 kubernetes_version: 1.18.2

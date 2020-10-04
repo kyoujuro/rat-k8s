@@ -3,6 +3,14 @@
 #bridge_if: "en0: Wi-Fi (Wireless)"
 bridge_if: "eno1"
 
+
+## Hypervisor type
+##  kvm : CentOS8 virsh
+##  vv  : VirtualBox + Vagrant
+hypervisor: kvm
+#hypervisor: vv
+
+
 ### Container Runtime
 container_runtime:  containerd
 #container_runtime:  docker
@@ -11,12 +19,6 @@ cni_plugins:        "v0.8.2"
 containerd_version: "1.2.13"
 crictl_version:     "v1.15.0"
 
-##
-## select hypervisor type
-##  kvm : CentOS8 virsh
-##  vv  : VirtualBox + Vagrant
-hypervisor: kvm
-#hypervisor: vv
 
 
 ### Kubernetes version

@@ -1,14 +1,13 @@
 #
 # 最小構成のK8sクラスタ
 #
-
 domain: labs.local
 
 ### host network interfaice
 bridge_if: "en0: Wi-Fi (Wireless)"
 #bridge_if: "eno1"
 
-## select hypervisor type
+## Hypervisor type
 ##  kvm : CentOS8 virsh
 ##  vv  : VirtualBox + Vagrant
 #hypervisor: kvm

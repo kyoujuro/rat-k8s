@@ -3,6 +3,12 @@
 #bridge_if: "en0: Wi-Fi (Wireless)"
 bridge_if: "eno1"
 
+## Hypervisor type
+##  kvm : CentOS8 virsh
+##  vv  : VirtualBox + Vagrant
+hypervisor: kvm
+#hypervisor: vv
+
 ### Container Runtime
 container_runtime:  containerd
 #container_runtime:  docker
@@ -28,14 +34,6 @@ public_ip_subnet:  192.168.1.0/24
 
 kube_apiserver_vip: 172.16.5.21
 domain: labs.local
-
-##
-## select hypervisor type
-##  kvm : CentOS8 virsh
-##  vv  : VirtualBox + Vagrant
-hypervisor: kvm
-#hypervisor: vv
-
 
 
 
