@@ -198,9 +198,10 @@ def append_ansible_inventory(ofn)
   File.open(ofn, "a") do |w|
     w.write sprintf("\n")
     print_nn(w,'hypervisor')
+    print_nn(w,'iface')
+    print_nn(w,'internal_ipv4_address')
     print_nn(w,'cluster_admin')
     print_nn(w,'shared_fs')
-    
     print_nn(w,'cpu_arch')
     print_nn(w,'kubernetes_version')
     
@@ -246,6 +247,9 @@ def append_ansible_inventory(ofn)
     print_nn(w,'crio_version')
     print_nn(w,'calico_version')
     print_nn(w,'flannel_version')
+    
+
+    
     w.write sprintf("\n")
   end
 end
