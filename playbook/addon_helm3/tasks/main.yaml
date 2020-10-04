@@ -33,7 +33,7 @@
   shell: |
     helm repo add stable https://kubernetes-charts.storage.googleapis.com/
   args:
-    chdir: "/home/{{ user_name }}"
-  become_user: "{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"
+  become_user: "{{ cluster_admin }}"
   become_method: sudo
 
