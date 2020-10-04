@@ -171,9 +171,9 @@ EOF
     
     w.write <<EOF
   args:
-    chdir: /home/vagrant
+    chdir: "/home/{{ cluster_admin }}"
   become: true
-  become_user: vagrant
+  become_user: "{{ cluster_admin }}"
 EOF
   end
 end
