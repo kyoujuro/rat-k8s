@@ -1,0 +1,89 @@
+#
+### host network interfaice
+#bridge_if: "en0: Wi-Fi (Wireless)"
+bridge_if: "eno1"
+
+### Container Runtime
+container_runtime:  containerd
+#container_runtime:  docker
+cni_plugins:        "v0.8.2"
+containerd_version: "1.2.13"
+crictl_version:     "v1.15.0"
+
+
+##
+## select hypervisor type
+##  kvm : CentOS8 virsh
+##  vv  : VirtualBox + Vagrant
+hypervisor: kvm
+#hypervisor: vv
+
+
+### Kubernetes version
+kubernetes_version: 1.18.2
+kubernetes_custom: false
+
+
+### K8s cluster/pod network CNI plugin
+#pod_network: bridge
+#pod_network: flannel
+pod_network: calico
+
+
+### Cluster Network
+private_ip_subnet: 172.16.5.0/24
+public_ip_subnet:  192.168.1.0/24
+kube_apiserver_vip: 172.16.5.21
+
+### extra addons
+sw_rook_ceph:  "no"
+sw_promethus:  "no"
+sw_grafana:    "no"
+sw_elk:        "no"
+sw_istio:      "no"
+sw_use_sdc_cr: "no"
+
+### DOMAIN
+domain: labs.local
+
+### Master, Worker, Internal/Frontend Loadbalancer and bootnode
+vm_spec:
+  - name: "master1"
+    cpu: 2
+    memory: 2048
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.5.21"
+    public_ip: "192.168.1.98"
+    #pod_network: "10.244.0.0/24"    
+    role: "master"
+    playbook: "setup_linux.yaml"
+    comment: "Master node #1"
+
+  - name: "node1"
+    cpu: 1
+    memory: 1024
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.5.31"
+    playbook: "setup_linux.yaml"
+    #pod_network: "10.244.1.0/24"
+    role: "worker"
+    comment:  "Worker node #1"
+
+  - name: "node2"
+    cpu: 1
+    memory: 1024
+    box: "ubuntu/bionic64"
+    private_ip: "172.16.5.32"
+    playbook: "setup_linux.yaml"
+    #pod_network: "10.244.2.0/24"
+    role: "worker"
+    comment:  "Worker node #2"
+    
+  - name: "bootnode"
+    cpu: 1
+    memory: 1024
+    box: "ubuntu/bionic64"    
+    private_ip: "172.16.5.10"
+    playbook: "setup_linux.yaml"
+    comment: "Bootstap node" 
+
