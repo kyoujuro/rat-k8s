@@ -83,8 +83,12 @@
   become: true
   vars:
     - internal_ipv4_address: "{{ ansible_facts.enp0s8.ipv4.address }}"
+      when: ansible_facts.virtualization_type == "virtualbox"    
+    - iface: enp0s8
       when: ansible_facts.virtualization_type == "virtualbox"
     - internal_ipv4_address: "{{ ansible_facts.enp1s0.ipv4.address }}"
+      when: ansible_facts.virtualization_type == "kvm"
+    - iface: enp1s0
       when: ansible_facts.virtualization_type == "kvm"
   roles:
     - etcd
@@ -141,6 +145,14 @@
   vars:
     - download_node: node1
       when: pod_network == "bridge"
+    - internal_ipv4_address: "{{ ansible_facts.enp0s8.ipv4.address }}"
+      when: ansible_facts.virtualization_type == "virtualbox"    
+    - iface: enp0s8
+      when: ansible_facts.virtualization_type == "virtualbox"
+    - internal_ipv4_address: "{{ ansible_facts.enp1s0.ipv4.address }}"
+      when: ansible_facts.virtualization_type == "kvm"
+    - iface: enp1s0
+      when: ansible_facts.virtualization_type == "kvm"
   roles:
     # コンテナランタイムを選択してインストール
     - role: runtime_containerd

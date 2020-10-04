@@ -23,3 +23,5 @@
     state: present
     reload: yes
 
+- name: swap off
+  command: swapoff -a
