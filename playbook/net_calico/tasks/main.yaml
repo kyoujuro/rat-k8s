@@ -3,9 +3,9 @@
 - name: copy calico-custom.yaml to local
   template:
     src: calico-custom.yaml
-    dest: "/home/{{ user_name }}/calico-custom.yaml"
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
+    dest: "/home/{{ cluster_admin }}/calico-custom.yaml"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
     mode: '0644'
 
     
@@ -13,10 +13,10 @@
   shell: |
     kubectl apply -f calico-custom.yaml
   args:
-    chdir: "/home/{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"
   when: ansible_facts.hostname is match("bootnode")
   become: true
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
 
 
 - name: Download calicoctl command
@@ -31,12 +31,12 @@
   
 - name: setup ENVIRONMENT VAR in .profile at home dir
   shell: |
-    cat <<EOF >> /home/vagrant/.profile
+    cat <<EOF >> /home/{{ cluster_admin }}/.profile
     # for calicoctl
     export DATASTORE_TYPE=kubernetes
     export KUBECONFIG=~/.kube/config
     EOF
   args:
-    chdir: "/home/{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"
   when: ansible_facts.hostname is match("bootnode") or ansible_facts.hostname is match("master*")
 
