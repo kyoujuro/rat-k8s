@@ -6,8 +6,8 @@ bridge_if: "eno1"
 ## Hypervisor type
 ##  kvm : CentOS8 virsh
 ##  vv  : VirtualBox + Vagrant
-hypervisor: kvm
-#hypervisor: vv
+#hypervisor: kvm
+hypervisor: vv
 
 ### Container Runtime
 #container_runtime:  containerd
