@@ -68,6 +68,14 @@
     group: root
     mode: '0755'
 
+- name: install crictl
+  unarchive:
+    src: "{{ r_download_dir }}/crictl-{{ crictl_version }}-linux-amd64.tar.gz"
+    dest: /usr/local/bin/
+    owner: root
+    group: root
+    mode: '0755'
+    
 - copy:
     src: "{{ r_download_dir }}/runc.amd64"
     dest: /usr/local/bin/runc
