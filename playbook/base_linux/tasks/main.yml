@@ -1,12 +1,26 @@
 #- debug: msg="{{ ansible_facts }}"
 
+##
+## Ubuntu の 自動アップデートを禁止する
+##
+- replace:
+    path: /etc/apt/apt.conf.d/20auto-upgrades
+    regexp: 'APT::Periodic::Update-Package-Lists "1";'
+    replace: 'APT::Periodic::Update-Package-Lists "0";'
+    backup: no
+
+##
+## 管理ユーザーをrootグループへ追加
+##
 - name: admin  user add root group
   user:
     name: "{{ cluster_admin }}"
     groups: root
     append: yes
 
-#####
+##
+## パッケージの追加
+##
 - name: Install Ubuntu package
   apt:
     name: "{{ packages }}"
