@@ -4,7 +4,7 @@
 
 - name: check kube-state-metrics
   stat:
-    path: "/home/{{ cluste_admin }}/kube-state-metrics/README.md"
+    path: "/home/{{ cluster_admin }}/kube-state-metrics/README.md"
   register: regi_kube_state_metrics
 
 - name: git clone kube-state-metrics
