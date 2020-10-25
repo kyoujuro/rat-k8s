@@ -10,11 +10,11 @@ os_disk_tmp=$home_dir/ubuntu.qcow2
 network=k8s1
 stg_pool=/home/qcow2s
 
-gateway=172.16.5.1
-hosts=( "master1" "node1" "bootnode" )
-ips=( "172.16.5.21" "172.16.5.31" "172.16.5.10" )
-memory=( 2048 1024 1024 )
-vcpus=( 2 1 1 )
+gateway=172.16.8.1
+hosts=( "master1" "node1" "node2" "bootnode" )
+ips=( "172.16.8.21" "172.16.8.31" "172.16.8.32" "172.16.8.10" )
+memory=( 2048 1024 1024 1024 )
+vcpus=( 2 1 1 1 )
 
 
 function import_node() {
