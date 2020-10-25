@@ -1,0 +1,26 @@
+#
+#  コントローラー抜きでポッドを
+#  サービスで公開するサンプル
+#
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-apps
+spec:
+  selector:
+    app: my-apps
+  ports:
+  - protocol: TCP
+    port: 80
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: my-apps
+  labels:
+    app: my-apps
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
