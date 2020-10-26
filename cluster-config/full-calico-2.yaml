@@ -49,7 +49,7 @@ ka_backup_internal_host: mlb2
 
 ### Frontend Load Balancer
 front_proxy_vip: 192.168.1.140
-istio_gateway_vip: 192.168.1.141
+#istio_gateway_vip: 192.168.1.141
 ka_primary_frontend_host: elb1
 ka_backup_frontend_host: elb2
 
@@ -60,8 +60,8 @@ sw_rook_ceph:  yes
 sw_promethus:  yes
 sw_grafana:    yes
 sw_elk:        no
-sw_istio:      yes
-sw_knative:    yes
+sw_istio:      no
+sw_knative:    no
 sw_use_sdc_cr: yes
 
 ### DOMAIN
@@ -71,7 +71,7 @@ domain: labs.local
 vm_spec:
   - name: "master1"
     cpu: 2
-    memory: 1536
+    memory: 2048
     box: "ubuntu/bionic64"
     private_ip: "172.16.22.11"
     storage:
@@ -81,7 +81,7 @@ vm_spec:
     
   - name: "master2"
     cpu: 2
-    memory: 1536
+    memory: 2048
     box: "ubuntu/bionic64"
     private_ip: "172.16.22.12"
     storage:
@@ -91,7 +91,7 @@ vm_spec:
     
   - name: "master3"
     cpu: 2
-    memory: 1536
+    memory: 2048
     box: "ubuntu/bionic64"
     private_ip: "172.16.22.13"
     storage:
@@ -145,7 +145,7 @@ vm_spec:
 
   - name: "node1"
     cpu: 2
-    memory: 8192
+    memory: 4096
     box: "ubuntu/bionic64"
     private_ip: "172.16.22.41"
     storage:
@@ -159,7 +159,7 @@ vm_spec:
     
   - name: "node2"
     cpu: 2
-    memory: 8192
+    memory: 4096
     box: "ubuntu/bionic64"
     private_ip: "172.16.22.42"
     storage:
@@ -173,7 +173,7 @@ vm_spec:
     
   - name: "node3"
     cpu: 2
-    memory: 8192
+    memory: 4096
     box: "ubuntu/bionic64"
     private_ip: "172.16.22.43"
     storage:

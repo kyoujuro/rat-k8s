@@ -36,7 +36,9 @@
     while true;
     do 
       RUNNING=$(kubectl get po -n rook-ceph |grep Running |wc -l)
-      if [ $RUNNING -gt 7 ]; then
+      PODS=$(kubectl get po -n rook-ceph -o name |wc -l)
+      if [ $RUNNING -eq $PODS ]; then
+        sleep 20
         exit 0
       else
         sleep 10
@@ -60,7 +62,7 @@
 
   
 #
-# Ceph Cluset 起動まで待つ
+# Ceph Cluseter 起動まで待つ
 #
 - name: wait to complete of stating ceph
   become_user: "{{ user_name }}"
@@ -68,7 +70,8 @@
     while true;
     do 
       RUNNING=$(kubectl get po -n rook-ceph |grep Running |wc -l)
-      if [ $RUNNING -gt 36 ]; then
+      PODS=$(kubectl get po -n rook-ceph -o name |wc -l)
+      if [ $RUNNING -eq $PODS ]; then      
         exit 0
       else
         sleep 10
