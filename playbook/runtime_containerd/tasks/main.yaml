@@ -59,7 +59,6 @@
     group: root
     mode: '0755'
 
-
 - name: install containerd
   unarchive:
     src: "{{ r_download_dir }}/containerd-{{ containerd_version }}.linux-amd64.tar.gz"
