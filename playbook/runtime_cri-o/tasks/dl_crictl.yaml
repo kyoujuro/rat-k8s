@@ -15,6 +15,14 @@
     - ansible_facts.hostname is match(download_node)
     - regi_crictl.stat.exists == false
 
+- name: install crictl
+  unarchive:
+    src: "{{ r_download_dir }}/crictl-{{ crictl_version }}-linux-amd64.tar.gz"
+    dest: /usr/local/bin/
+    owner: root
+    group: root
+    mode: '0755'
+    
 - template:
     src: crictl.yaml
     dest: /etc/crictl.yaml
