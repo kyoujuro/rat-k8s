@@ -78,6 +78,8 @@
     packages:
     - cri-o
     - cri-o-runc
+    - podman
+    - skopeo
 
 
     
