@@ -1,6 +1,7 @@
 - name: copy kubectl 
   copy:
-    src: "{{ download_dir }}/kubernetes/server/bin/kubectl"
+    #src: "{{ download_dir }}/kubernetes/server/bin/kubectl"
+    src: "{{ work_dir }}/bin/kubectl"
     dest: /usr/local/bin
     owner: root
     group: root

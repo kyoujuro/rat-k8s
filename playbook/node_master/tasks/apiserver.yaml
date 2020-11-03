@@ -2,7 +2,7 @@
 ## Configure the Kubernetes API Server
 ##
 ##
-- debug: msg="custom_kubernetes = {{ custom_kubernetes }}"
+#
 - debug: msg="{{ r_k8s_binary }}/kube-apiserver"
 
 - name: copy kube-apiserver
