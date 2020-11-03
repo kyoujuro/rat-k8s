@@ -15,7 +15,7 @@
     helm inspect values  elastic/elasticsearch > elasticsearch-values.yaml    
   args:
     chdir: "/home/{{ user_name }}"
-  when: elasticsearch_values.stat.exists == false
+  when: elasticsearch_values.stat.exists == False
   
 #
 # 設定編集
@@ -26,7 +26,7 @@
     path: "/home/{{ user_name }}/elasticsearch-values.yaml"
     regexp: '^  type: ClusterIP'
     replace: '  type: NodePort'
-  when: elasticsearch_values.stat.exists == false
+  when: elasticsearch_values.stat.exists == False
 
 - name: Edit elasticsearch-values.yaml  replace  nodePort
   become_user: "{{ user_name }}"
@@ -34,7 +34,7 @@
     path: "/home/{{ user_name }}/elasticsearch-values.yaml"    
     regexp: '^  nodePort: ""'
     replace: '  nodePort: 31200'
-  when: elasticsearch_values.stat.exists == false
+  when: elasticsearch_values.stat.exists == False
 
 #
 # Elastiecsearch デプロイ
@@ -46,7 +46,7 @@
   register: results_helm_elasticsearch
   args:
     chdir: "/home/{{ user_name }}"
-  when: elasticsearch_values.stat.exists == false
+  when: elasticsearch_values.stat.exists == False
   
 #
 # 起動待機  
@@ -86,7 +86,7 @@
     helm inspect values  elastic/kibana > kibana-values.yaml  
   args:
     chdir: "/home/{{ user_name }}"
-  when: kibana_values.stat.exists == false
+  when: kibana_values.stat.exists == False
 
 #
 # 設定編集
@@ -97,7 +97,7 @@
     path: "/home/{{ user_name }}/kibana-values.yaml"
     regexp: '^  type: ClusterIP'
     replace: '  type: NodePort'
-  when: kibana_values.stat.exists == false
+  when: kibana_values.stat.exists == False
 
 - name: Edit kibana-values.yaml  replace  nodePort
   become_user: "{{ user_name }}"
@@ -105,7 +105,7 @@
     path: "/home/{{ user_name }}/kibana-values.yaml"
     regexp: '^  nodePort: ""'
     replace: '  nodePort: "31601"'
-  when: kibana_values.stat.exists == false
+  when: kibana_values.stat.exists == False
   
 #
 # Kibana インストール
@@ -117,7 +117,7 @@
   register: results_helm_kibana
   args:
     chdir: "/home/{{ user_name }}"
-  when: kibana_values.stat.exists == false
+  when: kibana_values.stat.exists == False
 
 
 
@@ -139,7 +139,7 @@
     force: yes
     update: yes
   become_user: "{{ user_name }}"
-  when: file_beats.stat.exists == false
+  when: file_beats.stat.exists == False
 
 #
 # 設定編集
@@ -150,7 +150,7 @@
     path: "/home/{{ user_name }}/beats/deploy/kubernetes/filebeat-kubernetes.yaml"
     regexp: 'value: elasticsearch'
     replace: "value: {{ front_proxy_vip_nomask }}"
-  when: file_beats.stat.exists == false
+  when: file_beats.stat.exists == False
 
 - name: Edit filebeat-kubernetes.yaml  replace  Port number
   become_user: "{{ user_name }}"
@@ -158,7 +158,7 @@
     path: "/home/{{ user_name }}/beats/deploy/kubernetes/filebeat-kubernetes.yaml"
     regexp: 'value: "9200"'
     replace: 'value: "31200"'
-  when: file_beats.stat.exists == false
+  when: file_beats.stat.exists == False
   
 #
 # デプロイ Filebeat

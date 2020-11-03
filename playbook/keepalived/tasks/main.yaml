@@ -27,7 +27,7 @@
     mode: '0644'
   when:
     - ansible_facts.hostname is match("bootnode")     
-    - regi_keepalived.stat.exists == false
+    - regi_keepalived.stat.exists == False
 
 - name: extracted  keepalived
   stat:
@@ -42,7 +42,7 @@
     dest: "{{ r_download_dir }}"
   when:
     - ansible_facts.hostname is match("bootnode") 
-    - regi_keepalived_extra.stat.exists == false
+    - regi_keepalived_extra.stat.exists == False
 
 - debug: msg="{{ r_download_dir }}/keepalived-{{ keepalived_version }}"
     
@@ -54,7 +54,7 @@
     chdir: "{{ r_download_dir }}/keepalived-{{ keepalived_version }}"
   when:
     - ansible_facts.hostname is match("bootnode") 
-    - regi_keepalived_extra.stat.exists == false
+    - regi_keepalived_extra.stat.exists == False
 
 
 ##

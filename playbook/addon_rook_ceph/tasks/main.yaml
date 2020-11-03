@@ -12,7 +12,7 @@
     repo: 'https://github.com/rook/rook.git'
     version: release-1.3
     dest: "/home/{{ user_name }}/rook"
-  when: regi_rook.stat.exists == false
+  when: regi_rook.stat.exists == False
 
 
 #

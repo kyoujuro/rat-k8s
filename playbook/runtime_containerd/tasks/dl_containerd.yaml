@@ -13,6 +13,6 @@
     mode: '0644'
   when:
     - ansible_facts.hostname is match(download_node)
-    - regi_containerd.stat.exists == false
+    - regi_containerd.stat.exists == False
 
 

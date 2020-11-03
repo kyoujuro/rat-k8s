@@ -14,7 +14,7 @@
     owner: root
     group: root
     mode: '0775'
-  when: regi_shared_fs.stat.exists == false
+  when: regi_shared_fs.stat.exists == False
 
 
 - name: check ssh-key existing
@@ -30,7 +30,7 @@
   args:
     executable: /bin/bash
     chdir: "{{ shared_fs }}/keys"
-  when: regi_ssh_key.stat.exists == false
+  when: regi_ssh_key.stat.exists == False
 
 
 #############################

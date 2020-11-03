@@ -18,12 +18,12 @@
     kubectl apply --kubeconfig {{ r_ca_kubeconfig }}/admin.kubeconfig -f rbac-kubelet.yaml
   args:
     chdir: "/home/{{ cluster_admin }}"
-  become: true
+  become: yes
 
 - shell: |
     kubectl apply --kubeconfig {{ r_ca_kubeconfig }}/admin.kubeconfig -f rbac-kubelet-rolebinding.yaml
   args:
     chdir: "/home/{{ cluster_admin }}"  
-  become: true
+  become: yes
 
 

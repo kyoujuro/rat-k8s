@@ -32,7 +32,7 @@
     cfssl gencert -initca front-proxy-ca-csr.json | cfssljson -bare front-proxy-ca
   args:
     chdir: "{{ ca_front_proxy }}"
-  when: file_front_proxy_ca.stat.exists == false
+  when: file_front_proxy_ca.stat.exists == False
     
 - name: Front-proxy Client Certificate
   template:
@@ -55,7 +55,7 @@
     front-proxy-client-csr.json | cfssljson -bare front-proxy-client
   args:
     chdir: "{{ ca_front_proxy }}"
-  when: file_front_proxy_client.stat.exists == false
+  when: file_front_proxy_client.stat.exists == False
 
 
 - name: chmod 0644 front-proxy-ca-key.pem

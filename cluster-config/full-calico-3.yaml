@@ -1,5 +1,7 @@
 #
-### host network interfaice
+# Kubernetesクラスタ構成ファイル
+#
+### VM Host network interfaice
 #bridge_if: "en0: Wi-Fi (Wireless)"
 bridge_if: "eno1"
 
@@ -9,37 +11,42 @@ bridge_if: "eno1"
 #hypervisor: kvm
 hypervisor: vv
 
-
 ### Container Runtime
 container_runtime:  containerd
-#container_runtime:  docker
-#container_runtime:  cri-o
-#docker_version:     "5:18.09.9~3-0~ubuntu-bionic"
 containerd_version: "1.2.13"
-cni_plugins:        "v0.8.2"
+#
+#container_runtime:  docker
+#docker_version:     "5:18.09.9~3-0~ubuntu-bionic"
+#
+#container_runtime:  cri-o
+#crio_version:       "1.17"
+#
 crictl_version:     "v1.15.0"
-crio_version:       "1.17"
 
+### K8s cluster/pod network CNI plugin
+cni_plugins:        "v0.8.2"
+#pod_network: bridge
+#
+#pod_network: flannel
+#flannel_version: v0.12.0
+#
+pod_network: calico
+calico_version: v3.14.1
 
 
 ### Kubernetes version
 kubernetes_version: 1.18.2
-kubernetes_custom: false
+kubernetes_custom: False
 kubernetes_dashborad_ver: v2.0.0-beta6
 
-### K8s cluster/pod network CNI plugin
-#pod_network: bridge
-#pod_network: flannel
-pod_network: calico
 
-### flannel_version if you choice flannel
-#flannel_version: v0.12.0
-calico_version: v3.14.1
 
 ### Cluster Network
 private_ip_subnet: 172.16.23.0/24
 public_ip_subnet:  192.168.1.0/24
 
+
+### Load Balancer config
 keepalived_version: 2.0.15
 
 ### Internal Load Balancer
@@ -54,15 +61,14 @@ ka_primary_frontend_host: elb1
 ka_backup_frontend_host: elb2
 
 
-
 ### extra addons
-sw_rook_ceph:  yes
-sw_promethus:  yes
-sw_grafana:    yes
-sw_elk:        yes
-sw_istio:      yes
-sw_knative:    yes
-sw_use_sdc_cr: yes
+sw_rook_ceph:  True
+sw_promethus:  True
+sw_grafana:    True
+sw_elk:        True
+sw_istio:      True
+sw_knative:    True
+sw_use_sdc_cr: True
 
 ### DOMAIN
 domain: labs.local

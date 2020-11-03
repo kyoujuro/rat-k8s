@@ -16,5 +16,5 @@
 
   args:
     chdir: /home/vagrant
-  become: true
+  become: yes
   become_user: root

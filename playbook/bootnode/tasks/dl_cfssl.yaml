@@ -10,7 +10,7 @@
     mode: '0755'
     owner: root
     group: root
-  when: regi_cfssl.stat.exists == false	
+  when: regi_cfssl.stat.exists == False
 
 - name: copy cfssl local_bin
   copy:
@@ -32,7 +32,7 @@
     mode: '0755'
     owner: root
     group: root
-  when: regi_cfssl.stat.exists == false	
+  when: regi_cfssl.stat.exists == False
 
 - name: copy cfssljson local_bin
   copy:

@@ -95,7 +95,7 @@
   filesystem:
     fstype: ext4
     dev: /dev/sdc
-  when: sw_use_sdc_cr == "yes" and ansible_facts.devices.sdc is defined
+  when: sw_use_sdc_cr == True and ansible_facts.devices.sdc is defined
     
 - name: Create mount point
   file:
@@ -104,7 +104,7 @@
     group: root
     mode: '0755'
     state: directory
-  when: sw_use_sdc_cr == "yes" and ansible_facts.devices.sdc is defined
+  when: sw_use_sdc_cr == True and ansible_facts.devices.sdc is defined
 
 - name: Mount up device by /dev/sdc
   mount:
@@ -112,6 +112,6 @@
     src:  /dev/sdc
     fstype: ext4
     state: mounted
-  when: sw_use_sdc_cr == "yes" and ansible_facts.devices.sdc is defined
+  when: sw_use_sdc_cr == True and ansible_facts.devices.sdc is defined
 
 

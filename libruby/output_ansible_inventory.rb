@@ -189,7 +189,18 @@ def print_nn(w,param)
   if $conf[param].nil?
     return
   else
-    w.write sprintf("%s = %s\n", param, $conf[param])
+    if $conf[param] == true or $conf[param] == false
+      w.write sprintf("%s = %s\n", param, $conf[param].to_s.capitalize)
+    else
+      w.write sprintf("%s = %s\n", param, $conf[param])
+    end
+    #if !!$conf[param]
+    #  # Boolean
+    #  w.write sprintf("%s = %s\n", param, $conf[param].to_s.capitalize)
+    #else
+    #  # 文字型
+    #  w.write sprintf("%s = %s\n", param, $conf[param])
+    #end
   end
 end
 
@@ -215,8 +226,8 @@ def append_ansible_inventory(ofn)
       print_nn(w,'front_proxy_vip_nomask')
     end
     print_nn(w,'istio_gateway_vip')
-    w.write sprintf("proxy_node = %s\n", $exist_proxy_node)
-    w.write sprintf("storage_node = %s\n", $exist_storage_node)
+    w.write sprintf("proxy_node = %s\n", $exist_proxy_node.to_s.capitalize)
+    w.write sprintf("storage_node = %s\n", $exist_storage_node.to_s.capitalize)
     print_nn(w,'domain')
     print_nn(w,'sub_domain')
     print_nn(w,'pod_network')
@@ -227,14 +238,14 @@ def append_ansible_inventory(ofn)
     # private_ip_subnet = internal_subnet として代入
     $conf['internal_subnet'] = $conf['private_ip_subnet']
     print_nn(w,'internal_subnet')
-    w.write sprintf("single_node = %s\n",  $single_node)
-    w.write sprintf("sw_rook_ceph = %s\n", $conf['sw_rook_ceph'] == true ? "yes" : "no")
-    w.write sprintf("sw_promethus = %s\n", $conf['sw_promethus'] == true ? "yes" : "no")
-    w.write sprintf("sw_grafana = %s\n",   $conf['sw_grafana'] == true ? "yes" : "no")
-    w.write sprintf("sw_elk = %s\n",   $conf['sw_elk'] == true ? "yes" : "no")
-    w.write sprintf("sw_istio = %s\n",   $conf['sw_istio'] == true ? "yes" : "no")
-    w.write sprintf("sw_knative = %s\n",   $conf['sw_knative'] == true ? "yes" : "no")    
-    w.write sprintf("sw_use_sdc_cr = %s\n",   $conf['sw_use_sdc_cr'] == true ? "yes" : "no")         
+    w.write sprintf("single_node = %s\n",   $single_node.to_s.capitalize)
+    w.write sprintf("sw_rook_ceph = %s\n",  $conf['sw_rook_ceph'] == true ? "True" : "False")
+    w.write sprintf("sw_promethus = %s\n",  $conf['sw_promethus'] == true ? "True" : "False")
+    w.write sprintf("sw_grafana = %s\n",    $conf['sw_grafana'] == true ? "True" : "False")
+    w.write sprintf("sw_elk = %s\n",        $conf['sw_elk'] == true ? "True" : "False")
+    w.write sprintf("sw_istio = %s\n",      $conf['sw_istio'] == true ? "True" : "False")
+    w.write sprintf("sw_knative = %s\n",    $conf['sw_knative'] == true ? "True" : "False")    
+    w.write sprintf("sw_use_sdc_cr = %s\n", $conf['sw_use_sdc_cr'] == true ? "True" : "False")         
     w.write sprintf("\n")
     if $conf['container_runtime'].nil?
       $conf['container_runtime'] = "containerd"
@@ -247,8 +258,6 @@ def append_ansible_inventory(ofn)
     print_nn(w,'crio_version')
     print_nn(w,'calico_version')
     print_nn(w,'flannel_version')
-    
-
     
     w.write sprintf("\n")
   end

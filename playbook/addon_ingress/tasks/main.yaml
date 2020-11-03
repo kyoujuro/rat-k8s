@@ -13,7 +13,7 @@
     mode: '0644'
     owner: "{{ cluster_admin }}"
     group: "{{ cluster_admin }}"
-  when: file_ingress_controller_nginx.stat.exists == false
+  when: file_ingress_controller_nginx.stat.exists == False
 
 
 - name: Edit Nginx Ingress Controller Manifest - http
@@ -21,14 +21,14 @@
     path: "/home/{{ cluster_admin }}/ingress-controller-nginx.yaml"
     insertafter: '^      targetPort: https'
     line: '      nodePort: 31443'
-  when: file_ingress_controller_nginx.stat.exists == false
+  when: file_ingress_controller_nginx.stat.exists == False
 
 - name: Edit Nginx Ingress Controller Manifest - https
   lineinfile:
     path: "/home/{{ cluster_admin }}/ingress-controller-nginx.yaml"
     insertafter: '      targetPort: http$'
     line: '      nodePort: 31080'
-  when: file_ingress_controller_nginx.stat.exists == false
+  when: file_ingress_controller_nginx.stat.exists == False
 
 
 - name: Deploy Ingress nginx

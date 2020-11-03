@@ -8,7 +8,7 @@
   - proxys
   - storages
   - elbs
-  become: true
+  become: yes
   tasks:
     - include_tasks: tasks/setup_k8s_dirs.yml
 
@@ -18,14 +18,14 @@
 - name: Download software packeges
   hosts:
   - bootnode
-  become: true
+  become: yes
   roles:
     - bootnode
     - cert_setup
 
 - name: Mount NFS server (bootnode)
   hosts: all
-  become: true
+  become: yes
   tasks:
   - name: Mount up
     mount:
@@ -43,8 +43,8 @@
   - bootnode
   vars:
     lb_pos: "Internal"
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   become_user: root
   become_method: sudo
   roles:
@@ -61,8 +61,8 @@
   - bootnode  
   vars:
     lb_pos: "Frontend"
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   become_user: root
   become_method: sudo
   roles:
@@ -79,8 +79,8 @@
 - name: Configure etcd on masters
   hosts:
   - masters
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   roles:
     - etcd
     # コンテナランタイムを選択してインストール
@@ -110,8 +110,8 @@
 - name: Configure RBAC
   hosts:
   - bootnode
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   #become_user: "{{ cluster_admin }}"
   tasks:
     # 処理完了まで時間を取らないと失敗する
@@ -131,8 +131,8 @@
   - storages
   - proxys
   - elbs
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   vars:
     # MUST CHANGE when
     - download_node: node1
@@ -159,8 +159,8 @@
 - name: Configure cluster
   hosts:
   - bootnode
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   tasks:
     # ノードのリスト読み込み
     - include_vars:
@@ -188,8 +188,8 @@
   hosts:
   - proxys
   - elbs
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   tasks:
     - include_tasks: tasks/proxy_test.yaml
 
@@ -199,7 +199,7 @@
   tasks:
     - include_tasks: tasks/role_storage.yaml
       when:
-      - storage_node == "true"
+      - storage_node == True
 
 #
 # 不要のマニフェストのクリーンナップ
@@ -208,8 +208,8 @@
   hosts:
   - proxys
   - elbs
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   tasks:
     - include_tasks: tasks/proxy_del_manifest.yaml
 
@@ -222,8 +222,8 @@
 #
 - name: Deploy addon for k8s
   hosts: bootnode
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   roles:
     - addon_helm3    
     - addon_coredns
@@ -242,13 +242,13 @@
 - name: Deploy kube-keepalived-vip + ingress 
   hosts:
   - bootnode
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   tasks:
     - debug: msg="proxy_node = {{ proxy_node }}"
     - include_tasks: tasks/deploy-ka-vip-ingress.yaml
       when:
-      - proxy_node == "true"
+      - proxy_node == True
 
 #
 # テスト
@@ -256,20 +256,20 @@
 #
 - name: Deploy addon for k8s-2
   hosts: bootnode
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   roles:
     - role: addon_rook_ceph
-      when: sw_rook_ceph == "yes"
+      when: sw_rook_ceph == True
     - role: addon_promethus
-      when: sw_promethus == "yes"
+      when: sw_promethus == True
     - role: addon_grafana
-      when: sw_grafana == "yes"
+      when: sw_grafana == True
     - role: addon_elk
-      when: sw_elk == "yes"
+      when: sw_elk == True
     - role: addon_istio
-      when: sw_istio == "yes"
+      when: sw_istio == True
     - role: addon_knative
-      when: sw_knative == "yes"
+      when: sw_knative == True
   tasks:
     - debug: msg="export KUBECONFIG=`pwd`/kubeconfig"

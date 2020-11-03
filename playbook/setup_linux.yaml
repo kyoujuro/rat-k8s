@@ -1,7 +1,7 @@
 - name: config master & worker node
   hosts: all
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   roles:
   - base_linux
 

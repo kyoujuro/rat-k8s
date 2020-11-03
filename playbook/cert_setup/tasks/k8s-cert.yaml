@@ -29,7 +29,7 @@
     cfssl gencert -initca ca-csr.json | cfssljson -bare ca
   args:
     chdir: "{{ ca_home2 }}"
-  when: file_ca.stat.exists == false
+  when: file_ca.stat.exists == False
 
 #
 # kubectl の管理者用クライアント証明書
@@ -55,7 +55,7 @@
     admin-csr.json | cfssljson -bare admin
   args:
     chdir: "{{ ca_home2 }}"
-  when: file_admin.stat.exists == false
+  when: file_admin.stat.exists == False
 
 # 
 # Controller-Manager のクライアント証明書
@@ -81,7 +81,7 @@
     kube-controller-manager-csr.json | cfssljson -bare kube-controller-manager    
   args:
     chdir: "{{ ca_home2 }}"
-  when: file_kube_controller_manager.stat.exists == false
+  when: file_kube_controller_manager.stat.exists == False
 
 
 #
@@ -108,7 +108,7 @@
     kube-proxy-csr.json | cfssljson -bare kube-proxy
   args:
     chdir: "{{ ca_home2 }}"
-  when: file_kube_proxy.stat.exists == false
+  when: file_kube_proxy.stat.exists == False
 
 # 
 # スケジューラーのクライアント証明書
@@ -134,7 +134,7 @@
     kube-scheduler-csr.json | cfssljson -bare kube-scheduler
   args:
     chdir: "{{ ca_home2 }}"
-  when: file_kube_scheduler.stat.exists == false
+  when: file_kube_scheduler.stat.exists == False
 #
 # APIサーバーのサーバー証明書
 #   The Kubernetes API Server Certificate
@@ -160,7 +160,7 @@
     kubernetes-csr.json | cfssljson -bare kubernetes
   args:
     chdir: "{{ ca_home2 }}"
-  when: file_kubernetes.stat.exists == false
+  when: file_kubernetes.stat.exists == False
     
 #
 # サービスアカウントの公開鍵ペア
@@ -187,7 +187,7 @@
      service-account-csr.json | cfssljson -bare service-account
   args:
     chdir: "{{ ca_home2 }}"
-  when: file_service_account.stat.exists == false
+  when: file_service_account.stat.exists == False
 
 
 - name: chmod 0644 admin-key.pem

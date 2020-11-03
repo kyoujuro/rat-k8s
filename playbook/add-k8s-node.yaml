@@ -1,6 +1,6 @@
 - name: Setup/etc/hosts on node
   hosts: bootnode
-  become: true
+  become: yes
   tasks:
     - template:
         src: base_linux/templates/hosts.j2
@@ -19,7 +19,7 @@
   - nodes
   - proxys
   - storages
-  become: true
+  become: yes
   tasks:
     - include_tasks: tasks/setup_k8s_dirs.yml
 
@@ -34,7 +34,7 @@
       
 - name: Mount NFS server (bootnode)
   hosts: all
-  become: true
+  become: yes
   tasks:
   - name: Mount up
     mount:
@@ -49,8 +49,8 @@
 - name: Configure work-nodes
   hosts:
   - nodes
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   roles:
     - role: net_bridge
       when: pod_network == "bridge"
@@ -70,8 +70,8 @@
 - name: Configure cluster
   hosts:
   - bootnode
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   tasks:
     - include_vars:
         dir: vars

@@ -12,7 +12,7 @@
 #
 - name: Download software packeges
   hosts: masters
-  become: true  
+  become: yes
   roles:
     - bootnode    
     - cert_setup
@@ -26,11 +26,11 @@
 #
 - name: Configure etcd on masters
   hosts: masters
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   vars:
     - download_node: master
-      when: single_node == true
+      when: single_node == True
   roles:
     - etcd
     - role: runtime_containerd
@@ -48,8 +48,8 @@
 #
 - name: Configure RBAC
   hosts: masters
-  gather_facts: true
-  become: true
+  gather_facts: yes
+  become: yes
   tasks:
     - wait_for:
         timeout: 60
@@ -62,9 +62,9 @@
 #
 - name: K8s Monitoring setup
   hosts: masters
-  gather_facts: true
+  gather_facts: yes
   #become_user: vagrant
-  become: true  
+  become: yes
   roles:
     - addon_helm3     
     - addon_coredns

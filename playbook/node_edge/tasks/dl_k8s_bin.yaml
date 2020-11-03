@@ -14,7 +14,7 @@
     url: https://dl.k8s.io/{{ kubernetes_version }}/kubernetes-server-linux-{{ cpu_arch }}.tar.gz
     dest: "{{ download_dir }}"
     mode: '0644'
-  when: regi_k8s_bin.stat.exists == false
+  when: regi_k8s_bin.stat.exists == False
 
 
 - name: Check unarchive 
@@ -26,7 +26,7 @@
 - unarchive:
     src:  "{{ download_dir }}/kubernetes-server-linux-{{ cpu_arch }}.tar.gz"
     dest: "{{ download_dir }}"
-  when: regi_check_kube_apiserver.stat.exists == false
+  when: regi_check_kube_apiserver.stat.exists == False
 
   
 - name: Copy kubernetes binary 

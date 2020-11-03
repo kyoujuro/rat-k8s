@@ -23,7 +23,7 @@ crio_version:       "1.17"
 
 ### Kubernetes version
 kubernetes_version: 1.18.2
-kubernetes_custom: false
+kubernetes_custom: False
 
 ### K8s cluster/pod network CNI plugin
 #pod_network: bridge

@@ -9,19 +9,19 @@
     owner: root
     group: root
     mode: '0644'
-  when: ansible_facts.hostname is not match("master[123]") or {{ single_node }} == true
+  when: ansible_facts.hostname is not match("master[123]") or {{ single_node }} == True
   # シングル ノードクラスタの時はコメントにする
 
 - debug: msg="single_node == {{ single_node }}"
   
 - name: static route masters
   include_tasks: static-route.yaml
-  when: ansible_facts.hostname is match("master[123]") or {{ single_node }} == true
+  when: ansible_facts.hostname is match("master[123]") or {{ single_node }} == True
   # シングル ノードクラスタの時はコメントにする
   
 - name: static route for each node
   include_tasks: "static-route-{{ ansible_facts.hostname }}.yaml"
-  when: ansible_facts.hostname is not match("master[123]") or {{ single_node }} == true
+  when: ansible_facts.hostname is not match("master[123]") or {{ single_node }} == True
   # シングル ノードクラスタの時はコメントにする
 
 

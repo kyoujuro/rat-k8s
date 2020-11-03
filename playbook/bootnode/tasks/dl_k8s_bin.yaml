@@ -12,11 +12,13 @@
     path: "{{ download_dir }}/kubernetes-server-linux-amd64.tar.gz"
   register: regi_k8s_bin
 
+- debug: msg="check regi_k8s_bin = {{ regi_k8s_bin }}"
+  
 - get_url:
     url: https://dl.k8s.io/v{{ kubernetes_version }}/kubernetes-server-linux-amd64.tar.gz
     dest: "{{ download_dir }}"
     mode: '0644'
-  when: regi_k8s_bin.stat.exists == "false" and kubernetes_custom == "false"
+  when: regi_k8s_bin.stat.exists == False and kubernetes_custom == False
 
 
 - name: Check unarchive 
@@ -24,18 +26,18 @@
     path: "{{ download_dir }}/kubernetes/server/bin/kube-apiserver"
   register: regi_check_kube_apiserver
 
+- debug: msg="check regi_check_kube_apiserver = {{ regi_check_kube_apiserver }}"
   
 - unarchive:
     src:  "{{ download_dir }}/kubernetes-server-linux-amd64.tar.gz"
     dest: "{{ download_dir }}"
-  when: kubernetes_custom == "false" and regi_check_kube_apiserver.stat.exists == "false"
-
+  when: kubernetes_custom == False and regi_check_kube_apiserver.stat.exists == False
   
 - name: Copy kubernetes binary to nfs
   shell: |
     cp -fr {{ download_dir }}/kubernetes/server/bin/* {{ work_dir }}/bin
     chmod -R 0755 {{ work_dir }}/bin
-  when: kubernetes_custom == "false"
+  when: kubernetes_custom == False
   
 #
 # Copy binary which is builded source 
@@ -44,5 +46,5 @@
   shell: |
     cp -fr /vagrant/build-k8s/bin/* {{ work_dir }}/bin
     chmod -R 0755 {{ work_dir }}/bin
-  when: kubernetes_custom == "true"
+  when: kubernetes_custom == True
 

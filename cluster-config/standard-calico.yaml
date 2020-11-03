@@ -20,7 +20,7 @@ crictl_version:     "v1.15.0"
 
 ### Kubernetes version
 kubernetes_version: 1.18.2
-kubernetes_custom: false
+kubernetes_custom: False
 
 
 ### K8s cluster/pod network CNI plugin
@@ -35,12 +35,12 @@ public_ip_subnet:  192.168.1.0/24
 kube_apiserver_vip: 172.16.8.21
 
 ### extra addons
-sw_rook_ceph:  "no"
-sw_promethus:  "no"
-sw_grafana:    "no"
-sw_elk:        "no"
-sw_istio:      "no"
-sw_use_sdc_cr: "no"
+sw_rook_ceph:  False
+sw_promethus:  False
+sw_grafana:    False
+sw_elk:        False
+sw_istio:      False
+sw_use_sdc_cr: False
 
 ### DOMAIN
 domain: labs.local

@@ -15,7 +15,7 @@
 
 - name: install edge node
   hosts: all
-  become: true  
+  become: yes
   roles:
     - node_edge
     - net_flannel

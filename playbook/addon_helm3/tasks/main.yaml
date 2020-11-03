@@ -10,7 +10,7 @@
     url: "https://get.helm.sh/helm-{{ helm_version }}-linux-amd64.tar.gz"
     dest: "{{ download_dir }}"
     mode: '0644'
-  when: regi_helm3.stat.exists == false
+  when: regi_helm3.stat.exists == False
 
 - stat:
     path: "{{ download_dir }}/linux-amd64/helm"
@@ -19,7 +19,7 @@
 - unarchive:
     src:  "{{ download_dir }}/helm-{{ helm_version }}-linux-amd64.tar.gz"
     dest: "{{ download_dir }}"
-  when: regi_helm3_bin.stat.exists == false
+  when: regi_helm3_bin.stat.exists == False
 
 - name: copy helm3 usr/local/bin
   copy:

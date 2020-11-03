@@ -15,7 +15,7 @@ hypervisor: vv
 
 ### Kubernetes version
 kubernetes_version: 1.18.2
-kubernetes_custom: false
+kubernetes_custom: False
 
 
 

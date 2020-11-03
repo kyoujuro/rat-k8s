@@ -17,8 +17,8 @@ hypervisor: vv
 
 ### Kubernetes version
 kubernetes_version: 1.18.2
-kubernetes_custom: false
-#kubernetes_custom: true
+kubernetes_custom: False
+#kubernetes_custom: True
 
 
 ### K8s cluster/pod network CNI plugin

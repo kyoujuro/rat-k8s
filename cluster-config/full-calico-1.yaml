@@ -24,7 +24,7 @@ crio_version:       "1.17"
 
 ### Kubernetes version
 kubernetes_version: 1.18.2
-kubernetes_custom: false
+kubernetes_custom: False
 kubernetes_dashborad_ver: v2.0.0-beta6
 
 ### K8s cluster/pod network CNI plugin
@@ -56,13 +56,13 @@ ka_backup_frontend_host: elb2
 
 
 ### extra addons
-sw_rook_ceph:  no
-sw_promethus:  no
-sw_grafana:    no
-sw_elk:        no
-sw_istio:      no
-sw_knative:    no
-sw_use_sdc_cr: yes
+sw_rook_ceph:  False
+sw_promethus:  False
+sw_grafana:    False
+sw_elk:        False
+sw_istio:      False
+sw_knative:    False
+sw_use_sdc_cr: True
 
 ### DOMAIN
 domain: labs.local

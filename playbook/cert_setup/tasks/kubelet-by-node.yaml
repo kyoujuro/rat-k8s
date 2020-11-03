@@ -24,6 +24,7 @@
         -profile=kubernetes \
         "{{ item.name }}-csr.json" | cfssljson -bare "{{ item.name }}"
     fi
+
   args:
     chdir: "{{ ca_home2 }}"
     executable: /bin/bash    
@@ -72,6 +73,7 @@
 
       kubectl config use-context default --kubeconfig={{ ca_kubeconfig }}/{{ item.name }}.kubeconfig
     fi
+
   args:
     chdir: "{{ ca_home2 }}"
     executable: /bin/bash    

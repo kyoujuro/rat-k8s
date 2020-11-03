@@ -8,6 +8,6 @@
     chdir: "/home/{{ cluster_admin }}"
   when: item.name is match("master*")
   loop: "{{ nodes }}"    
-  become: true
+  become: yes
   become_user: "{{ cluster_admin }}"
 

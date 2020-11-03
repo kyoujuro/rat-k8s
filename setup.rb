@@ -477,7 +477,7 @@ if __FILE__ == $0
     $conf['internal_ipv4_address'] = "{{ ansible_facts.enp1s0.ipv4.address }}"
   end
   
-  printf("HyoerVisor       = %s\n", $conf['hypervisor'])
+  printf("HyperVisor       = %s\n", $conf['hypervisor'])
 
   
   

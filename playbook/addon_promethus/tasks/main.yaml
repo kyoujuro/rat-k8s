@@ -16,7 +16,7 @@
     #mode: '0644'
     #owner: "{{ cluster_admin }}"
     #group: "{{ cluster_admin }}"
-  when: regi_kube_state_metrics.stat.exists == false
+  when: regi_kube_state_metrics.stat.exists == False
 
 - name: apply kube-state-metrics 
   become_user: "{{ cluster_admin }}"
