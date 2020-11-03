@@ -2,6 +2,8 @@
 # KUBERNETES BINARY to NFS export dir on bootnode
 #
 
+- debug: msg="kubernetes_custom = {{ kubernetes_custom }}"
+
 #
 # register: r_k8s_bin の設定と変数が混ざると予想外の動きになる。
 #
@@ -14,7 +16,7 @@
     url: https://dl.k8s.io/v{{ kubernetes_version }}/kubernetes-server-linux-amd64.tar.gz
     dest: "{{ download_dir }}"
     mode: '0644'
-  when: regi_k8s_bin.stat.exists == false and custom_kubernetes != 'true'
+  when: regi_k8s_bin.stat.exists == false and kubernetes_custom == false
 
 
 - name: Check unarchive 
@@ -26,14 +28,14 @@
 - unarchive:
     src:  "{{ download_dir }}/kubernetes-server-linux-amd64.tar.gz"
     dest: "{{ download_dir }}"
-  when: custom_kubernetes != 'true' and regi_check_kube_apiserver.stat.exists == false
+  when: kubernetes_custom == false and regi_check_kube_apiserver.stat.exists == false
 
   
 - name: Copy kubernetes binary to nfs
   shell: |
     cp -fr {{ download_dir }}/kubernetes/server/bin/* {{ work_dir }}/bin
     chmod -R 0755 {{ work_dir }}/bin
-  when: custom_kubernetes != 'true'
+  when: kubernetes_custom == false
   
 #
 # Copy binary which is builded source 
@@ -42,6 +44,6 @@
   shell: |
     cp -fr /vagrant/build-k8s/bin/* {{ work_dir }}/bin
     chmod -R 0755 "{{ work_dir }}/bin"
-  when: custom_kubernetes == 'true'
+  when: kubernetes_custom == true
 
 
