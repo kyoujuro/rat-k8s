@@ -475,6 +475,11 @@ if __FILE__ == $0
     $conf['shared_fs'] = '/srv'
     $conf['iface'] = 'enp1s0'
     $conf['internal_ipv4_address'] = "{{ ansible_facts.enp1s0.ipv4.address }}"
+  elsif $conf['hypervisor'] == 'hv'
+    $conf['cluster_admin'] = 'ubuntu'
+    $conf['shared_fs'] = '/srv'
+    $conf['iface'] = 'eth1'
+    $conf['internal_ipv4_address'] = "{{ ansible_facts.eth1.ipv4.address }}"    
   end
   
   printf("HyperVisor       = %s\n", $conf['hypervisor'])
@@ -559,7 +564,9 @@ if __FILE__ == $0
     append_ansible_inventory("hosts_k8s")
     append_ansible_inventory("hosts_vagrant")  
   elsif $conf['hypervisor'] == 'kvm'
-    append_ansible_inventory("hosts_kvm")      
+    append_ansible_inventory("hosts_kvm")
+  elsif $conf['hypervisor'] == 'hv'
+    append_ansible_inventory("hosts_hv")     
   end
 
   step_end(0)

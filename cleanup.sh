@@ -48,6 +48,8 @@ playbook/tasks/role_worker.yaml
 playbook/tasks/add-node-label.yaml
 playbook/tasks/role_worker_add.yaml
 kubeconfig
+hosts_hv
+hosts_kvm
 EOF
 
 

@@ -10,6 +10,8 @@ def output_ansible_inventory()
     output_ansible_inventory0("hosts_vagrant", 0)
   elsif $conf['hypervisor'] == 'kvm'
     output_ansible_inventory0("hosts_kvm", 2)
+  elsif $conf['hypervisor'] == 'hv'
+    output_ansible_inventory0("hosts_hv", 3)
   else
     printf("Abort due to undfined hypervisor\n")
     exit!
@@ -23,6 +25,7 @@ end
 ##    0 : ansible local
 ##    1 : ansible remote on vagarnt / virtualbox
 ##    2 : ansible remote on virsh / kvm
+##    3 : ansible remote on windows hyper-v
 ##
 def output_ansible_inventory0(ofn,env_sw)
   counter_master  = 0
@@ -70,7 +73,7 @@ def output_ansible_inventory0(ofn,env_sw)
           end
           if env_sw == 1
             w.write sprintf("%-20s ansible_ssh_host=%s  ansible_ssh_private_key_file=/vagrant/keys/id_rsa\n", x['name'],x['name'])            
-          elsif env_sw == 2
+          elsif env_sw == 2 or env_sw == 3
             w.write sprintf("%-20s ansible_ssh_host=%s  ansible_ssh_private_key_file=/root/.ssh/id_rsa\n", x['name'],x['name']) 
           else
             w.write sprintf("%-20s  %s\n", x['name'], "ansible_connection=local")
