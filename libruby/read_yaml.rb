@@ -13,6 +13,7 @@ def read_yaml_config(file)
     $conf.class
     $domain = $conf['domain']
     $conf['sub_domain'] = $domain.split(".")[0]
+    $sub_domain = $conf['sub_domain']
     #################################################
     cnf = "vm_spec = [\n"    
     $conf.each do |key1, val1|

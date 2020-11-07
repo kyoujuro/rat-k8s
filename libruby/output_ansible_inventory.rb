@@ -234,10 +234,14 @@ def append_ansible_inventory(ofn)
     print_nn(w,'domain')
     print_nn(w,'sub_domain')
     print_nn(w,'pod_network')
-    #host_sub_domain = sprintf("kubernetes.default.svc.%s",$conf['sub_domain'])
-    #host_domain = sprintf("kubernetes.default.svc.%s",$conf['domain'])
-    w.write sprintf("host_list_etcd = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local")
-    w.write sprintf("host_list_k8sapi = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local")
+
+    host_sub_domain = sprintf("kubernetes.default.svc.%s",$domain)
+    host_domain = sprintf("kubernetes.default.svc.%s",$sub_domain)
+    #w.write sprintf("host_list_etcd = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local")
+    #w.write sprintf("host_list_k8sapi = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc","kubernetes.default.svc.cluster","kubernetes.default.svc.cluster.local")
+    w.write sprintf("host_list_etcd = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc",host_sub_domain,host_domain)
+    w.write sprintf("host_list_k8sapi = %s,%s,%s,%s,%s,%s,%s\n","10.32.0.1","127.0.0.1","kubernetes","kubernetes.default","kubernetes.default.svc",host_sub_domain,host_domain)
+    
     # private_ip_subnet = internal_subnet として代入
     $conf['internal_subnet'] = $conf['private_ip_subnet']
     print_nn(w,'internal_subnet')

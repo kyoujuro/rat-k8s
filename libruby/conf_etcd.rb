@@ -76,9 +76,13 @@ def etcd_yaml()
              + (host_list("mlb",0,0).length == 0 ? "" : "," + host_list("mlb",0,0)) \
              + (host_list("mlb",1,0).length == 0 ? "" : "," + host_list("mlb",1,0)) \
              + ",10.32.0.1,127.0.0.1,kubernetes,kubernetes.default,kubernetes.default.svc" \
-             + ",kubernetes.default.svc.cluster" \
-             + ",kubernetes.default.svc.cluster.local"
+             + ",kubernetes.default.svc." + $sub_domain \
+             + ",kubernetes.default.svc." + $domain
 
+#             + ",kubernetes.default.svc.cluster" \
+#             + ",kubernetes.default.svc.cluster.local"
+
+               
   ofn = "playbook/cert_setup/vars/main.yaml"
   $file_list.push(ofn)  
   File.open(ofn, "w") do |w|
