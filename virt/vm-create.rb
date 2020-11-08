@@ -13,6 +13,40 @@ require '../libruby/util_defs.rb'
 $config_yaml = nil
 
 ##
+## Ubuntu netplan の設定ファイル作成
+## 
+##
+def create_netplan_from_config(vm_name)
+  $vm_config_array.each do |val|
+    x = eval(val)
+    if x['name'] == vm_name
+      ofn = "01-netcfg.yaml"
+      File.open(ofn, "w") do |w|
+        w.write sprintf("network:\n")
+        w.write sprintf("  version: 2\n")
+        w.write sprintf("  renderer: networkd\n")
+        w.write sprintf("  ethernets:\n")
+        w.write sprintf("    enp1s0:\n")
+        w.write sprintf("      dhcp4: true\n")
+        w.write sprintf("      nameservers:\n")
+        w.write sprintf("        addresses: [8.8.8.8]\n")
+        if ! x['private_ip'].nil?
+          w.write sprintf("    enp2s0:\n")
+          w.write sprintf("      addresses:\n")
+          w.write sprintf("      - %s\n", x['private_ip']+"/24")
+        end
+        if ! x['public_ip'].nil?
+          w.write sprintf("    enp3s0:\n")
+          w.write sprintf("      addresses:\n")
+          w.write sprintf("      - %s\n", x['public_ip']+"/24")
+        end
+      end
+    end
+  end
+end
+
+
+##
 ## OSイメージのカスタマイズ
 ##   ファイルの変更
 ##
@@ -154,6 +188,8 @@ if __FILE__ == $0
   end
   step_end(0)
 
+
+  
   ##
   ## コンフィグに従って仮想マシンを起動
   ##
@@ -161,6 +197,8 @@ if __FILE__ == $0
     x = eval(val)
     
     printf("\n\nVM %s の起動中\n", x['name'])
+    create_netplan_from_config(x['name'])
+    
     configure_os_vdisk(x['name'])
     
     ## OSテンプレートのイメージをコピー    
