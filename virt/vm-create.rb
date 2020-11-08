@@ -52,6 +52,7 @@ end
 ##
 def copy_ssh_to_vdisk(user_name,path)
 
+  
   if user_name == "root"
     ssh_path = path + "/" + user_name + "/.ssh"
   else
@@ -67,8 +68,11 @@ def copy_ssh_to_vdisk(user_name,path)
   FileUtils.chmod(0700, ssh_path)
   FileUtils.chmod(0600, ssh_dir + "authorized_keys")
   FileUtils.chmod(0600, ssh_dir + "id_rsa.pub")  
-  FileUtils.chown_R(1000,1000, ssh_path)    
-  
+  if user_name == "root"
+    FileUtils.chown_R("root","root", ssh_path)    
+  else
+    FileUtils.chown_R(1000,1000, ssh_path)
+  end
 end
 
 ##

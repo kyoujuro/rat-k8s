@@ -30,7 +30,7 @@ flannel_version: v0.12.0
 
 ### Cluster Network
 private_ip_subnet: 172.16.40.0/24
-public_ip_subnet:  192.168.3.0/24
+public_ip_subnet:  192.168.1.0/24
 
 kube_apiserver_vip: 172.16.40.21
 domain: labs.local
@@ -44,7 +44,7 @@ vm_spec:
     memory: 2048
     box: "ubuntu/bionic64"
     private_ip: "172.16.40.21"
-    public_ip: "192.168.3.95"    
+    public_ip: "192.168.1.95"    
     role: "master"
     playbook: "setup_linux.yaml"
     comment: "Master node #1"

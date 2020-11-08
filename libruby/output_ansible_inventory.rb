@@ -10,8 +10,10 @@ def output_ansible_inventory()
     output_ansible_inventory0("hosts_vagrant", 0)
   elsif $conf['hypervisor'] == 'kvm'
     output_ansible_inventory0("hosts_kvm", 2)
+    output_ansible_inventory0("hosts_local", 0)    
   elsif $conf['hypervisor'] == 'hv'
     output_ansible_inventory0("hosts_hv", 3)
+    output_ansible_inventory0("hosts_local", 0)    
   else
     printf("Abort due to undfined hypervisor\n")
     exit!
