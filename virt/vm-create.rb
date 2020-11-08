@@ -25,18 +25,15 @@ def copy_ssh_to_vdisk(user_name,path)
   end
   ssh_dir  = ssh_path + "/"
 
-  cmd = sprintf("rm -fr %s",ssh_path)
-  puts %x( #{cmd} )
-  puts %x( echo #{cmd} )
-  puts %x( ls -lR _master1/root )    
-  #FileUtils.rm_r(ssh_path, {:force => true})
-  FileUtils.mkdir(path + ssh_path)
+  FileUtils.rm_r(ssh_path, {:force => true})
+  FileUtils.mkdir(ssh_path)
   FileUtils.cp("id_rsa", ssh_dir + "id_rsa")
   FileUtils.cp("id_rsa.pub", ssh_dir + "id_rsa.pub")
   FileUtils.cp("id_rsa.pub", ssh_dir + "authorized_keys")    
   FileUtils.chmod(0700, ssh_path)
-  FileUtils.chmod(0600, ssh_dir + "/*")
-  FileUtils.chown_R(user_name,user_name, ssh_path)    
+  FileUtils.chmod(0600, ssh_dir + "authorized_keys")
+  FileUtils.chmod(0600, ssh_dir + "id_rsa.pub")  
+  FileUtils.chown_R(1000,1000, ssh_path)    
   
 end
 
@@ -63,7 +60,7 @@ end
 ## OSイメージのカスタマイズ
 ##   仮想ディスクのマウント
 ##
-def mount_os_vdisk(vm_name)
+def configure_os_vdisk(vm_name)
     ## OSテンプレートのイメージをコピー
     step_start("OSイメージのコピー")
     cmd = sprintf("cp /home/images/%s /home/images/%s.qcow2","ubuntu18.04.qcow2", vm_name)
@@ -81,15 +78,13 @@ def mount_os_vdisk(vm_name)
 
     ## マウントポイントの作成
     cmd = sprintf("mkdir ./_%s", vm_name)
-    puts %x( #{cmd} )
+    %x( #{cmd} )
 
     ## 仮想ストレージのマウント
     path = sprintf("./_%s", vm_name)
     cmd = sprintf("mount %sp2 %s", nbd_dev, path)
-    puts %x( #{cmd} )
+    %x( #{cmd} )
 
-    puts %x( ls _master1/etc )
-    
     ##
     ## 仮想ディスクの設定変更
     ##
@@ -109,6 +104,7 @@ def mount_os_vdisk(vm_name)
     puts $?.exitstatus
 
 end
+
 
 
 ##
@@ -158,8 +154,6 @@ if __FILE__ == $0
   end
   step_end(0)
 
-
-  
   ##
   ## コンフィグに従って仮想マシンを起動
   ##
@@ -167,7 +161,7 @@ if __FILE__ == $0
     x = eval(val)
     
     printf("\n\nVM %s の起動中\n", x['name'])
-    mount_os_vdisk(x['name'])
+    configure_os_vdisk(x['name'])
     
     ## OSテンプレートのイメージをコピー    
     step_start("仮想マシンの起動")

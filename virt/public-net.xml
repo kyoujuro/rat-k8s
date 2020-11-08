@@ -1,0 +1,10 @@
+<network>
+  <name>public</name>
+  <bridge name="virbr2"/>
+  <forward mode="route" dev="enp3s0f0"/>
+  <ip address="192.168.3.0" netmask="255.255.255.0">
+    <dhcp>
+      <range start="192.168.3.200" end="192.168.3.254"/>
+    </dhcp>
+  </ip>
+</network>

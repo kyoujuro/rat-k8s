@@ -1,0 +1,9 @@
+<network>
+  <name>private</name>
+  <bridge name="virbr1"/>
+  <ip address="172.16.40.1" netmask="255.255.255.0">
+    <dhcp>
+      <range start="172.16.40.200" end="172.16.40.254"/>
+    </dhcp>
+  </ip>
+</network>
