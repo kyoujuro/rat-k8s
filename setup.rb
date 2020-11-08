@@ -397,10 +397,10 @@ if __FILE__ == $0
   step_end(0)
 
   ## KVM 環境用
-  if $conf['hypervisor'] == 'kvm'
-    step_start("virt-installシェルの書き出し")
-    step_end(0)
-  end
+  #if $conf['hypervisor'] == 'kvm'
+  #  step_start("virt-installシェルの書き出し")
+  #  step_end(0)
+  #end
   
   
   printf("ノード構成\n")
@@ -513,8 +513,10 @@ if __FILE__ == $0
     append_ansible_inventory("hosts_vagrant")  
   elsif $conf['hypervisor'] == 'kvm'
     append_ansible_inventory("hosts_kvm")
+    append_ansible_inventory("hosts_local")
   elsif $conf['hypervisor'] == 'hv'
-    append_ansible_inventory("hosts_hv")     
+    append_ansible_inventory("hosts_hv")
+    append_ansible_inventory("hosts_local")    
   end
 
   step_end(0)
