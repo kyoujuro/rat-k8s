@@ -19,7 +19,7 @@ crictl_version:     "v1.15.0"
 
 
 ### Kubernetes version
-kubernetes_version: 1.18.2
+kubernetes_version: 1.18.9
 kubernetes_custom: False
 
 ### K8s cluster/pod network CNI plugin
@@ -29,9 +29,9 @@ pod_network: calico
 
 
 ### Cluster Network
-private_ip_subnet: 172.16.5.0/24
+private_ip_subnet: 172.16.40.0/24
 public_ip_subnet:  192.168.1.0/24
-kube_apiserver_vip: 172.16.5.21
+kube_apiserver_vip: 172.16.40.21
 
 ### extra addons
 sw_rook_ceph:  False
@@ -50,9 +50,8 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.5.21"
+    private_ip: "172.16.40.21"
     public_ip: "192.168.1.98"
-    #pod_network: "10.244.0.0/24"    
     role: "master"
     playbook: "setup_linux.yaml"
     comment: "Master node #1"
@@ -61,9 +60,8 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.5.31"
+    private_ip: "172.16.40.31"
     playbook: "setup_linux.yaml"
-    #pod_network: "10.244.1.0/24"
     role: "worker"
     comment:  "Worker node #1"
 
@@ -71,9 +69,8 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.5.32"
+    private_ip: "172.16.40.32"
     playbook: "setup_linux.yaml"
-    #pod_network: "10.244.2.0/24"
     role: "worker"
     comment:  "Worker node #2"
     
@@ -81,7 +78,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"    
-    private_ip: "172.16.5.10"
+    private_ip: "172.16.40.10"
     playbook: "setup_linux.yaml"
     comment: "Bootstap node" 
 
