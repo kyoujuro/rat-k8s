@@ -1,0 +1,6 @@
+<network>
+  <name>public</name>
+  <forward mode="bridge">
+    <interface dev="enp3s0f0"/>
+  </forward>
+</network>
