@@ -3,9 +3,14 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 #
-# 起動前にモジュールを追加しておく
-# $ sudo gem install mb_string
 #
+# エラー発生時の対策メモ
+#
+# 1 このプログラムを実行する前に bundler を実行して必要なモジュールをインストール
+#
+# 2 次のメッセージで困った時はinvalid byte sequence in US-ASCII (ArgumentError)
+#   export LANG=C.UTF-8 を実行する
+
 
 require 'mb_string'
 require 'yaml'
@@ -302,6 +307,7 @@ def node_label_task()
   end
 end
 
+##################################################################
 #
 # virt-install で仮想マシンを起動する
 #
@@ -362,6 +368,8 @@ def kvm_shell()
     end
   end
 end
+##################################################################
+
 
 ###############################################################
 
@@ -455,7 +463,7 @@ if __FILE__ == $0
   ## KVM 環境用
   if $conf['hypervisor'] == 'kvm'
     step_start("virt-installシェルの書き出し")
-    kvm_shell()
+    #kvm_shell()
     step_end(0)
   end
   

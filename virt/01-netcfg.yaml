@@ -3,10 +3,10 @@ network:
   renderer: networkd
   ethernets:
     enp1s0:
-      addresses:
-      - 999.999.999.999/24
-      gateway4: 888.888.888.888
-      nameservers:
-          addresses:
-          - 8.8.8.8
+      dhcp4: true
+    enp2s0:
+      dhcp4: true
+    enp3s0:
+      dhcp4: true
+
 

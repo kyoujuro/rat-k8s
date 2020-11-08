@@ -1,4 +1,6 @@
 
+# yum install ruby rubygem-bundler
+
 # 1 Download iso image
 
 curl -O -L https://releases.ubuntu.com/18.04/ubuntu-18.04.5-live-server-amd64.iso
