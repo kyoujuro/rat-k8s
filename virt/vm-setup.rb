@@ -84,12 +84,14 @@ if __FILE__ == $0
     x = eval(val)
     if x['name'] != "bootnode"
 
+      
       printf("==== %s ====\n",x['name'])
+      
       cmd = sprintf("ssh -i id_rsa ubuntu@%s \"scp -r rat-k8s %s:\"", bootnode_ip, x['name'])
       value = %x( #{cmd} )
       puts value
       
-      cmd = sprintf("ssh -i id_rsa root@%s \"cd /home/ubuntu/rat-k8s && ansible-playbook -i hosts_local -l %s playbook/setup_linux.yaml\"", bootnode_ip,x['name'])
+      cmd = sprintf("ssh -i id_rsa root@%s \"cd /home/ubuntu/rat-k8s && ansible-playbook -i hosts_local -l %s playbook/setup_linux.yaml\"", x['private_ip'],x['name'])
       value = %x( #{cmd} )
       puts value
     end
