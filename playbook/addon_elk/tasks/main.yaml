@@ -2,36 +2,36 @@
 # Elastiecsearch のインストール
 #
 - name: Check elasticsearch value file
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   stat:
-    path: "/home/{{ user_name }}/elasticsearch-values.yaml"
+    path: "/home/{{ cluster_admin }}/elasticsearch-values.yaml"
   register: elasticsearch_values
 
 - name: setup helm chart for Elastiecsearch step-1
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     kubectl create namespace elasticsearch
     helm repo add elastic https://helm.elastic.co
     helm inspect values  elastic/elasticsearch > elasticsearch-values.yaml    
   args:
-    chdir: "/home/{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"
   when: elasticsearch_values.stat.exists == False
   
 #
 # 設定編集
 #
 - name: Edit elasticsearch-values.yaml  replace  service type
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   replace:
-    path: "/home/{{ user_name }}/elasticsearch-values.yaml"
+    path: "/home/{{ cluster_admin }}/elasticsearch-values.yaml"
     regexp: '^  type: ClusterIP'
     replace: '  type: NodePort'
   when: elasticsearch_values.stat.exists == False
 
 - name: Edit elasticsearch-values.yaml  replace  nodePort
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   replace:
-    path: "/home/{{ user_name }}/elasticsearch-values.yaml"    
+    path: "/home/{{ cluster_admin }}/elasticsearch-values.yaml"    
     regexp: '^  nodePort: ""'
     replace: '  nodePort: 31200'
   when: elasticsearch_values.stat.exists == False
@@ -40,19 +40,19 @@
 # Elastiecsearch デプロイ
 #
 - name: helm install Elastiecsearch step-2
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     helm install elasticsearch -n elasticsearch -f elasticsearch-values.yaml elastic/elasticsearch    
   register: results_helm_elasticsearch
   args:
-    chdir: "/home/{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"
   when: elasticsearch_values.stat.exists == False
   
 #
 # 起動待機  
 #
 - name: waiting for starting of the elasticsearch pods
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     while true;
     do 
@@ -64,7 +64,7 @@
       fi
     done
   args:
-    chdir: "/home/{{ user_name }}"  
+    chdir: "/home/{{ cluster_admin }}"  
 
     
 ################################## ここからKibana パート
@@ -72,37 +72,37 @@
 # Kibana 導入有無チェック
 #
 - name: Check Kibana value file
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   stat:
-    path: "/home/{{ user_name }}/kibana-values.yaml"
+    path: "/home/{{ cluster_admin }}/kibana-values.yaml"
   register: kibana_values
 
 #
 # Kibana の Helm パラメータの取り出し
 #
 - name: Retrive value.yaml from helm chart for Kibana
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     helm inspect values  elastic/kibana > kibana-values.yaml  
   args:
-    chdir: "/home/{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"
   when: kibana_values.stat.exists == False
 
 #
 # 設定編集
 #
 - name: Edit kibana-values.yaml  replace  service  type
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   replace:
-    path: "/home/{{ user_name }}/kibana-values.yaml"
+    path: "/home/{{ cluster_admin }}/kibana-values.yaml"
     regexp: '^  type: ClusterIP'
     replace: '  type: NodePort'
   when: kibana_values.stat.exists == False
 
 - name: Edit kibana-values.yaml  replace  nodePort
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   replace:
-    path: "/home/{{ user_name }}/kibana-values.yaml"
+    path: "/home/{{ cluster_admin }}/kibana-values.yaml"
     regexp: '^  nodePort: ""'
     replace: '  nodePort: "31601"'
   when: kibana_values.stat.exists == False
@@ -111,12 +111,12 @@
 # Kibana インストール
 #
 - name: helm install Elastiecsearch step-2
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     helm install kibana -n elasticsearch -f kibana-values.yaml elastic/kibana
   register: results_helm_kibana
   args:
-    chdir: "/home/{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"
   when: kibana_values.stat.exists == False
 
 
@@ -127,35 +127,35 @@
 # FileBeatsのインストール
 #
 - name: git clone if needed beats
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   stat:
-    path: "/home/{{ user_name }}/beats/README.md"
+    path: "/home/{{ cluster_admin }}/beats/README.md"
   register: file_beats
 
 - git:
     repo: https://github.com/elastic/beats
     version: '7.5'
-    dest: "/home/{{ user_name }}/beats"
+    dest: "/home/{{ cluster_admin }}/beats"
     force: yes
     update: yes
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   when: file_beats.stat.exists == False
 
 #
 # 設定編集
 #
 - name: Edit filebeat-kubernetes.yaml  replace  Hostname
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   replace:
-    path: "/home/{{ user_name }}/beats/deploy/kubernetes/filebeat-kubernetes.yaml"
+    path: "/home/{{ cluster_admin }}/beats/deploy/kubernetes/filebeat-kubernetes.yaml"
     regexp: 'value: elasticsearch'
     replace: "value: {{ front_proxy_vip_nomask }}"
   when: file_beats.stat.exists == False
 
 - name: Edit filebeat-kubernetes.yaml  replace  Port number
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   replace:
-    path: "/home/{{ user_name }}/beats/deploy/kubernetes/filebeat-kubernetes.yaml"
+    path: "/home/{{ cluster_admin }}/beats/deploy/kubernetes/filebeat-kubernetes.yaml"
     regexp: 'value: "9200"'
     replace: 'value: "31200"'
   when: file_beats.stat.exists == False
@@ -164,9 +164,9 @@
 # デプロイ Filebeat
 #
 - name: deploy filebeat
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
       kubectl apply -f filebeat-kubernetes.yaml
   args:
-    chdir: "/home/{{ user_name }}/beats/deploy/kubernetes/"
+    chdir: "/home/{{ cluster_admin }}/beats/deploy/kubernetes/"
 

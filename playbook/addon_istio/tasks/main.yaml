@@ -2,52 +2,52 @@
 
 - name: check istio
   stat:
-    path: "/home/{{ user_name }}/istio-{{ istio_version }}/README.md"
+    path: "/home/{{ cluster_admin }}/istio-{{ istio_version }}/README.md"
   register: file_istio
 
 #
 # Istio のインストール
 #
 - name: install Istio step-1
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     curl -L https://istio.io/downloadIstio | ISTIO_VERSION={{ istio_version }} TARGET_ARCH=x86_64 sh -
   args:
-    chdir: "/home/{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"
   when: file_istio.stat.exists == False
 
 
 - name: install Istio step-2
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     export PATH=$PWD/bin:$PATH
     istioctl install --set profile=default
   args:
-    chdir: "/home/{{ user_name }}/istio-{{ istio_version }}"
+    chdir: "/home/{{ cluster_admin }}/istio-{{ istio_version }}"
 
 #
 # Istio パッチを適用する、NodePortとして公開するため。
 #
 - template:
     src: istio-patch.yaml
-    dest: "/home/{{ user_name }}/istio-patch.yaml"
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
+    dest: "/home/{{ cluster_admin }}/istio-patch.yaml"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
     mode: '0644'
     
 - name: apply patch for Istio
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     kubectl patch svc istio-ingressgateway --patch "$(cat istio-patch.yaml)" -n istio-system
   args:
-    chdir: "/home/{{ user_name }}"
+    chdir: "/home/{{ cluster_admin }}"
 
 #
 # istioctl は bootnode の /usr/local/bin へ配置する
 #
 - name: deploy istioctl to /usr/local/bin
   copy:
-    src: "/home/{{ user_name }}/istio-{{ istio_version }}/bin/istioctl"
+    src: "/home/{{ cluster_admin }}/istio-{{ istio_version }}/bin/istioctl"
     dest: /usr/local/bin
     owner: root
     group: root
@@ -59,7 +59,7 @@
 ## 
 
 - name: apply patch for Istio
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     kubectl apply -f prometheus.yaml
     kubectl apply -f grafana.yaml
@@ -68,7 +68,7 @@
     kubectl patch svc kiali -n istio-system -p '{"spec":{"type":"NodePort","ports":[{"name": "http","port": 20001,"nodePort": 32001},{"port":9090, "nodePort":32090}]}}'
     kubectl patch svc tracing -n istio-system -p '{"spec":{"type":"NodePort","ports":[{"name": "http","port": 80,"nodePort": 32095}]}}'
   args:
-    chdir: "/home/{{ user_name }}/istio-{{ istio_version }}/samples/addons/"
+    chdir: "/home/{{ cluster_admin }}/istio-{{ istio_version }}/samples/addons/"
 
 
     

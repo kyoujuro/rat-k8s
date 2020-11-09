@@ -1,14 +1,19 @@
 #
 # テスト用
 #
-- name: Deploy addon for k8s
+- name: Deploy addon for k8s-2
   hosts: bootnode
   gather_facts: yes
   become: yes
   roles:
-    - addon_helm3    
-    - addon_coredns
-    - addon_metrics-server
-    - addon_dashboard
-    - addon_ingress
+    - role: addon_grafana
+      when: sw_grafana == True
+    - role: addon_elk
+      when: sw_elk == True
+    - role: addon_istio
+      when: sw_istio == True
+    - role: addon_knative
+      when: sw_knative == True
+  tasks:
+    - debug: msg="export KUBECONFIG=`pwd`/kubeconfig"
 

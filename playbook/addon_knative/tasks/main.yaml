@@ -5,15 +5,15 @@
 
 - name: check knative
   stat:
-    path: "/home/{{ user_name }}/knative-{{ knative_version }}/serving-core.yaml"
+    path: "/home/{{ cluster_admin }}/knative-{{ knative_version }}/serving-core.yaml"
   register: file_knative
 
 - name: mkdir knative-{{ knative_version }}
   file:
-    path:  "/home/{{ user_name }}/knative-{{ knative_version }}"
+    path:  "/home/{{ cluster_admin }}/knative-{{ knative_version }}"
     state: directory
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
     mode: '0755'
   when: file_knative.stat.exists == False
 
@@ -21,7 +21,7 @@
 # Knative serving の マニフェストダウンロード
 #
 - name: Download Knative serving and eventing maniset
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     curl -O -L https://github.com/knative/serving/releases/download/{{ knative_version }}/serving-crds.yaml
     curl -O -L https://github.com/knative/serving/releases/download/{{ knative_version }}/serving-core.yaml  
@@ -30,14 +30,14 @@
     curl -O -L https://github.com/knative/eventing/releases/download/{{ knative_version }}/eventing-core.yaml
     curl -O -L https://github.com/knative/eventing/releases/download/{{ knative_version }}/in-memory-channel.yaml
   args:
-    chdir: "/home/{{ user_name }}/knative-{{ knative_version }}"
+    chdir: "/home/{{ cluster_admin }}/knative-{{ knative_version }}"
   when: file_knative.stat.exists == False
 
 #
 # Knative serving ans eventing の デプロイ
 #
 - name: Deploy Knative serving
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     kubectl apply -f serving-crds.yaml
     kubectl apply -f serving-core.yaml
@@ -46,7 +46,7 @@
     kubectl apply -f eventing-core.yaml
     kubectl apply -f in-memory-channel.yaml
   args:
-    chdir: "/home/{{ user_name }}/knative-{{ knative_version }}/"
+    chdir: "/home/{{ cluster_admin }}/knative-{{ knative_version }}/"
   #when: file_knative.stat.exists == false
 
 #
@@ -54,17 +54,17 @@
 #
 - template:
     src: configmap-knative-domain.yaml
-    dest: "/home/{{ user_name }}/knative-{{ knative_version }}/configmap-knative-domain.yaml"
-    owner: "{{ user_name }}"
-    group: "{{ user_name }}"
+    dest: "/home/{{ cluster_admin }}/knative-{{ knative_version }}/configmap-knative-domain.yaml"
+    owner: "{{ cluster_admin }}"
+    group: "{{ cluster_admin }}"
     mode: '0644'
 
 - name: change knative domain 
-  become_user: "{{ user_name }}"
+  become_user: "{{ cluster_admin }}"
   shell: |
     kubectl apply -f configmap-knative-domain.yaml
   args:
-    chdir: "/home/{{ user_name }}/knative-{{ knative_version }}/"
+    chdir: "/home/{{ cluster_admin }}/knative-{{ knative_version }}/"
   #when: file_knative.stat.exists == false
 
 
