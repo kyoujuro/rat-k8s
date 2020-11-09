@@ -655,7 +655,7 @@ spec:
             # 追加 https://docs.projectcalico.org/reference/node/configuration
             #
             - name: IP_AUTODETECTION_METHOD
-              value: "interface={{ iface }}"
+              value: "interface={{ iface_pri }}"
 
             # Enable IPIP
             - name: CALICO_IPV4POOL_IPIP

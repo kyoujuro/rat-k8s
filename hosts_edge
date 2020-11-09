@@ -11,7 +11,7 @@ kubernetes_version  = "v1.18.2"
 pod_network         = "flannel"
 flannel_version     = "v0.12.0"
 cpu_arch            = "arm64"
-iface               = "wlan0"
+iface_pri           = "wlan0"
 
 work_dir         =  /srv/k8s  
 download_dir     = {{ work_dir }}/download

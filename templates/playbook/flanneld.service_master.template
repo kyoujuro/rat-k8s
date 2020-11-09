@@ -15,7 +15,7 @@ ExecStart=/opt/bin/flanneld \
    --etcd-certfile=/etc/kubernetes/pki/apiserver-etcd-client.crt \
    --etcd-keyfile=/etc/kubernetes/pki/apiserver-etcd-client.key \
    --etcd-endpoints=__ETCD_LIST__ \
-   --iface=enp0s8 
+   --iface={{ iface_pri }}
 
 Restart=on-failure
 RestartSec=5
