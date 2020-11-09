@@ -8,7 +8,7 @@ vrrp_script chk_haproxy {
     weight 2
 }
 vrrp_instance VI_1 {
-    interface enp0s8
+    interface {{ iface_pri }}
     state BACKUP
     priority 100
     virtual_router_id 42
