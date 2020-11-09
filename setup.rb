@@ -416,17 +416,20 @@ if __FILE__ == $0
     $conf['hypervisor'] = 'vv'
     $conf['cluster_admin'] = 'vagrant'
     $conf['shared_fs'] = '/vagrant'
-    $conf['iface'] = 'enp0s8'
+    $conf['iface_pri'] = 'enp0s8'
+    $conf['iface_pub'] = 'enp0s9'    
     $conf['internal_ipv4_address'] = "{{ ansible_facts.enp0s8.ipv4.address }}"
   elsif $conf['hypervisor'] == 'kvm'
     $conf['cluster_admin'] = 'ubuntu'
     $conf['shared_fs'] = '/srv'
-    $conf['iface'] = 'enp1s0'
+    $conf['iface_pri'] = 'enp1s0'
+    $conf['iface_pub'] = 'enp2s0'    
     $conf['internal_ipv4_address'] = "{{ ansible_facts.enp1s0.ipv4.address }}"
   elsif $conf['hypervisor'] == 'hv'
     $conf['cluster_admin'] = 'ubuntu'
     $conf['shared_fs'] = '/srv'
-    $conf['iface'] = 'eth1'
+    $conf['iface_pri'] = 'eth1'
+    $conf['iface_pub'] = 'eth2'
     $conf['internal_ipv4_address'] = "{{ ansible_facts.eth1.ipv4.address }}"    
   end
   

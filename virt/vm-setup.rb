@@ -71,10 +71,6 @@ if __FILE__ == $0
       value = %x( #{cmd} )
       puts value
 
-      # ansible 
-      cmd = sprintf("ssh -i id_rsa root@%s \"cd /home/ubuntu/rat-k8s && ansible-playbook -i hosts_local -l %s playbook/setup_linux.yaml\"", bootnode_ip,x['name'])
-      value = %x( #{cmd} )
-      puts value
     end
     step_end(0)
     
@@ -91,10 +87,15 @@ if __FILE__ == $0
       value = %x( #{cmd} )
       puts value
       
-      cmd = sprintf("ssh -i id_rsa root@%s \"cd /home/ubuntu/rat-k8s && ansible-playbook -i hosts_local -l %s playbook/setup_linux.yaml\"", x['private_ip'],x['name'])
-      value = %x( #{cmd} )
-      puts value
+#      cmd = sprintf("ssh -i id_rsa root@%s \"cd /home/ubuntu/rat-k8s && ansible-playbook -i hosts_local -l %s playbook/setup_linux.yaml\"", x['private_ip'],x['name'])
+#      value = %x( #{cmd} )
+#      puts value
     end
   end
+
+  # ansible 
+  cmd = sprintf("ssh -i id_rsa root@%s \"cd /home/ubuntu/rat-k8s && ansible-playbook -i hosts_kvm  playbook/setup_linux.yaml\"", bootnode_ip,"bootnode")
+  value = %x( #{cmd} )
+  puts value
   
 end
