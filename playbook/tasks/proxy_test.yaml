@@ -15,6 +15,6 @@
     EOF
 
   args:
-    chdir: /home/vagrant
+    chdir: "/home/{{ cluster_admin }}"    
   become: yes
   become_user: root

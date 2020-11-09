@@ -5,7 +5,7 @@
 __ADD_NODELABEL_LIST__
     kubectl get nodes --show-labels
   args:
-    chdir: /home/vagrant
+    chdir: "/home/{{ cluster_admin }}"    
   become: true
-  become_user: vagrant
+  become_user: "{{ cluster_admin }}"
 

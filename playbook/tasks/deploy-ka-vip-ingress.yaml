@@ -11,7 +11,7 @@
     kubectl apply -f https://raw.githubusercontent.com/takara9/rat-k8s/master/manifests/kube-keepalived-vip/proxy-daemonset.yaml
     kubectl apply -f https://raw.githubusercontent.com/takara9/rat-k8s/master/manifests/ingress-haproxy/haproxy-ingress-proxy.yaml
     kubectl apply -f https://raw.githubusercontent.com/takara9/rat-k8s/master/manifests/ingress-haproxy/haproxy-ingress.yaml    
-  become_user: vagrant
+  become_user: "{{ cluster_admin }}"
   args:
-    chdir: /home/vagrant
-  become_user: vagrant
+    chdir: "/home/{{ cluster_admin }}"
+  become_user: "{{ cluster_admin }}"

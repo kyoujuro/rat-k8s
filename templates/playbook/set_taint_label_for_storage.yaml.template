@@ -6,7 +6,7 @@
     #kubectl taint node {{ item }} --overwrite=true storage-node="":NoSchedule
     
   args:
-    chdir: /home/vagrant
+    chdir: "/home/{{ cluster_admin }}"  
   loop:
 __SERVER_LIST__  
 
