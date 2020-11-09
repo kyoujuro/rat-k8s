@@ -421,8 +421,8 @@ if __FILE__ == $0
   elsif $conf['hypervisor'] == 'kvm'
     $conf['cluster_admin'] = 'ubuntu'
     $conf['shared_fs'] = '/srv'
-    $conf['iface'] = 'enp2s0'
-    $conf['internal_ipv4_address'] = "{{ ansible_facts.enp2s0.ipv4.address }}"
+    $conf['iface'] = 'enp1s0'
+    $conf['internal_ipv4_address'] = "{{ ansible_facts.enp1s0.ipv4.address }}"
   elsif $conf['hypervisor'] == 'hv'
     $conf['cluster_admin'] = 'ubuntu'
     $conf['shared_fs'] = '/srv'
