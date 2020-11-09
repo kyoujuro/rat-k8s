@@ -38,6 +38,10 @@ ansible.log
 Vagrantfile
 hosts_k8s
 hosts_vagrant
+hosts_local
+virt/01-netcfg.yaml
+virt/id_rsa
+virt/id_rsa.pub
 ubuntu-bionic-18.04-cloudimg-console.log
 playbook/base_linux/templates/hosts.j2
 playbook/net_bridge/tasks/static-route*

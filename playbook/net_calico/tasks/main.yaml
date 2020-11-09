@@ -35,7 +35,7 @@
     # for calicoctl
     export DATASTORE_TYPE=kubernetes
     export KUBECONFIG=~/.kube/config
-    EOF
+
   args:
     chdir: "/home/{{ cluster_admin }}"
   when: ansible_facts.hostname is match("bootnode") or ansible_facts.hostname is match("master*")
