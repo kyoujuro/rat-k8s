@@ -88,30 +88,52 @@
 #
 # コンテナのファイルシステム領域の設定
 #
-#- debug: msg="sw_use_sdc_cr = {{ sw_use_sdc_cr }}"
 
-
-- name: Create CR FS
+- name: Create CR FS  Vagrant
   filesystem:
     fstype: ext4
     dev: /dev/sdc
-  when: sw_use_sdc_cr == True and ansible_facts.devices.sdc is defined
+  when: sw_container_fs == True and ansible_facts.devices.sdc is defined
     
-- name: Create mount point
+- name: Create mount point  Vagrant
   file:
     path: /var/lib/containerd
     owner: root
     group: root
     mode: '0755'
     state: directory
-  when: sw_use_sdc_cr == True and ansible_facts.devices.sdc is defined
+  when: sw_container_fs == True and ansible_facts.devices.sdc is defined
 
-- name: Mount up device by /dev/sdc
+- name: Mount up device by /dev/sdc  Vagrant
   mount:
     path: /var/lib/containerd
     src:  /dev/sdc
     fstype: ext4
     state: mounted
-  when: sw_use_sdc_cr == True and ansible_facts.devices.sdc is defined
+  when: sw_container_fs == True and ansible_facts.devices.sdc is defined
+
+
+- name: Create CR FS  KVM
+  filesystem:
+    fstype: ext4
+    dev: /dev/vdb
+  when: sw_container_fs == True and ansible_facts.devices.vdb is defined
+    
+- name: Create mount point  KVM
+  file:
+    path: /var/lib/containerd
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+  when: sw_container_fs == True and ansible_facts.devices.vdb is defined
+
+- name: Mount up device by /dev/vdb  KVM
+  mount:
+    path: /var/lib/containerd
+    src:  /dev/vdb
+    fstype: ext4
+    state: mounted
+  when: sw_container_fs == True and ansible_facts.devices.vdb is defined
 
 

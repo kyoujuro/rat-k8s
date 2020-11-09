@@ -226,7 +226,6 @@ if __FILE__ == $0
     
     printf("\n\nVM %s の起動中\n", x['name'])
     create_netplan_from_config(x['name'])
-    
     configure_os_vdisk(x['name'])
     
     ## OSテンプレートのイメージをコピー    
@@ -240,10 +239,12 @@ if __FILE__ == $0
     cmd << sprintf("  --network network=%s --network network=%s", "private","public")    
     cmd << sprintf(" --import --graphics none --noautoconsole")
     cmd << sprintf(" --disk /home/images/%s.qcow2", x['name'])
+    x['storage'].each_with_index do |val,idx|
+      cmd << sprintf(" --disk path=/home/images/%s-%d.qcow2,size=%d",x['name'],idx.to_i,val)
+    end
     value = %x( #{cmd} )
     puts value
     step_end(0)
-    
   end
 end # END OF MAIN   
   

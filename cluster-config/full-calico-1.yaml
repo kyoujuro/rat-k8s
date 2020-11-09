@@ -56,13 +56,13 @@ ka_backup_frontend_host: elb2
 
 
 ### extra addons
-sw_rook_ceph:  False
-sw_promethus:  False
-sw_grafana:    False
-sw_elk:        False
-sw_istio:      False
-sw_knative:    False
-sw_use_sdc_cr: True
+sw_rook_ceph:    False
+sw_promethus:    False
+sw_grafana:      False
+sw_elk:          False
+sw_istio:        False
+sw_knative:      False
+sw_container_fs: True
 
 ### DOMAIN
 domain: labs.local
