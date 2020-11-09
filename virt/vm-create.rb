@@ -12,6 +12,21 @@ require '../libruby/util_defs.rb'
 
 $config_yaml = nil
 
+
+##
+## sudoer
+##  
+##
+def write_sudoers(path, admin_name)
+  ofn = path + "/etc/sudoers.d/" + admin_name
+  File.open(ofn, "w") do |w|
+    w.write sprintf("Defaults:%s !requiretty\n", admin_name)
+    w.write sprintf("%s ALL = (ALL) NOPASSWD:ALL\n", admin_name)
+  end
+  FileUtils.chown_R("root","root", ofn)
+  FileUtils.chmod(0440, ofn)
+end
+
 ##
 ## Ubuntu netplan の設定ファイル作成
 ## 
@@ -26,19 +41,27 @@ def create_netplan_from_config(vm_name)
         w.write sprintf("  version: 2\n")
         w.write sprintf("  renderer: networkd\n")
         w.write sprintf("  ethernets:\n")
-        w.write sprintf("    enp1s0:\n")
-        w.write sprintf("      dhcp4: true\n")
-        #w.write sprintf("      nameservers:\n")
-        #w.write sprintf("        addresses: [8.8.8.8]\n")
+        #w.write sprintf("    enp1s0:\n")
+        #w.write sprintf("      dhcp4: true\n")
         if ! x['private_ip'].nil?
-          w.write sprintf("    enp2s0:\n")
+          #w.write sprintf("    enp2s0:\n")
+          w.write sprintf("    enp1s0:\n")          
           w.write sprintf("      addresses:\n")
           w.write sprintf("      - %s\n", x['private_ip']+"/24")
         end
         if ! x['public_ip'].nil?
-          w.write sprintf("    enp3s0:\n")
+          #w.write sprintf("    enp3s0:\n")
+          w.write sprintf("    enp2s0:\n")          
           w.write sprintf("      addresses:\n")
           w.write sprintf("      - %s\n", x['public_ip']+"/24")
+          w.write sprintf("      gateway4: 192.168.1.1\n")
+          w.write sprintf("      nameservers:\n")
+          w.write sprintf("        addresses:\n")
+          w.write sprintf("        - 192.168.1.1\n")
+        else
+          #w.write sprintf("    enp3s0:\n")
+          w.write sprintf("    enp2s0:\n")          
+          w.write sprintf("      dhcp4: true\n")
         end
       end
     end
@@ -127,6 +150,7 @@ def configure_os_vdisk(vm_name)
     ## 仮想ディスクの設定変更
     ##
     setup_os_vdisk(path,vm_name)
+    write_sudoers(path,"ubuntu")
     
     ## アンマウント
     cmd = sprintf("umount _%s", vm_name)    
@@ -212,7 +236,8 @@ if __FILE__ == $0
     cmd << sprintf(" --memory %s", x['memory'])
     cmd << sprintf(" --vcpus %s", x['cpu'])
     cmd << sprintf(" --os-variant %s", "ubuntu18.04")
-    cmd << sprintf(" --network network=%s --network network=%s --network network=%s", "default","private","public")
+    #cmd << sprintf(" --network network=%s --network network=%s --network network=%s", "default","private","public")
+    cmd << sprintf("  --network network=%s --network network=%s", "private","public")    
     cmd << sprintf(" --import --graphics none --noautoconsole")
     cmd << sprintf(" --disk /home/images/%s.qcow2", x['name'])
     value = %x( #{cmd} )
