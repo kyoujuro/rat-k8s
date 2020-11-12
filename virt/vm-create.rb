@@ -10,8 +10,47 @@ require 'fileutils'
 require '../libruby/read_yaml.rb'
 require '../libruby/util_defs.rb'
 
-$config_yaml = nil
+$config_yaml = nil   # コンフィグファイル名
+$target_host = nil   # 対象ホスト名
 
+##
+## 仮想マシンの作成と起動
+##
+##
+def create_vm(node)
+  printf("\n\nVM %s の起動中\n", node['name'])
+  create_netplan_from_config(node['name'])
+  configure_os_vdisk(node['name'])
+    
+  ## OSテンプレートのイメージをコピー    
+  step_start("仮想マシンの起動")
+  cmd = "virt-install "
+  cmd << sprintf(" --name %s", node['name'])
+  cmd << sprintf(" --memory %s", node['memory'])
+  cmd << sprintf(" --vcpus %s", node['cpu'])
+  cmd << sprintf(" --os-variant %s", "ubuntu18.04")
+  #cmd << sprintf(" --network network=%s --network network=%s --network network=%s", "default","private","public")
+  cmd << sprintf("  --network network=%s --network network=%s", "private","public")    
+  cmd << sprintf(" --import --graphics none --noautoconsole")
+  cmd << sprintf(" --disk /home/images/%s.qcow2", node['name'])
+
+  if ! node['storage'].nil?
+    node['storage'].each_with_index do |val,idx|
+      cmd << sprintf(" --disk path=/home/images/%s-%d.qcow2,size=%d",node['name'],idx.to_i,val)
+    end   
+  end
+  
+  value = %x( #{cmd} )
+  puts value
+
+  ### 仮想化ホストの再起動後も自動起動に設定
+  cmd = sprintf("virsh autostart %s", node['name'])
+  value = %x( #{cmd} )  
+  puts value
+  
+  step_end(0)
+  
+end
 
 ##
 ## sudoer
@@ -45,13 +84,15 @@ def create_netplan_from_config(vm_name)
         #w.write sprintf("      dhcp4: true\n")
         if ! x['private_ip'].nil?
           #w.write sprintf("    enp2s0:\n")
-          w.write sprintf("    enp1s0:\n")          
+          #w.write sprintf("    enp1s0:\n")
+          w.write sprintf("    ens2:\n")          
           w.write sprintf("      addresses:\n")
           w.write sprintf("      - %s\n", x['private_ip']+"/24")
         end
         if ! x['public_ip'].nil?
           #w.write sprintf("    enp3s0:\n")
-          w.write sprintf("    enp2s0:\n")          
+          #w.write sprintf("    enp2s0:\n")
+          w.write sprintf("    ens3:\n")          
           w.write sprintf("      addresses:\n")
           w.write sprintf("      - %s\n", x['public_ip']+"/24")
           w.write sprintf("      gateway4: 192.168.1.1\n")
@@ -60,7 +101,8 @@ def create_netplan_from_config(vm_name)
           w.write sprintf("        - 192.168.1.1\n")
         else
           #w.write sprintf("    enp3s0:\n")
-          w.write sprintf("    enp2s0:\n")          
+          #w.write sprintf("    enp2s0:\n")
+          w.write sprintf("    ens3:\n")          
           w.write sprintf("      dhcp4: true\n")
         end
       end
@@ -124,7 +166,7 @@ end
 def configure_os_vdisk(vm_name)
     ## OSテンプレートのイメージをコピー
     step_start("OSイメージのコピー")
-    cmd = sprintf("cp /home/images/%s /home/images/%s.qcow2","ubuntu18.04.qcow2", vm_name)
+    cmd = sprintf("cp /home/images/%s /home/images/%s.qcow2","ubuntu18.04-amd.qcow2", vm_name)
     value = %x( #{cmd} )
     puts value
     step_end(0)
@@ -142,10 +184,18 @@ def configure_os_vdisk(vm_name)
     %x( #{cmd} )
 
     ## 仮想ストレージのマウント
+    %x( sync && sync )
     path = sprintf("./_%s", vm_name)
     cmd = sprintf("mount %sp2 %s", nbd_dev, path)
+    puts cmd
     %x( #{cmd} )
-
+    if $?.exitstatus == 0
+      puts "mount successfuly complete"
+    else
+      puts "mount failed"
+      !exit
+    end
+    
     ##
     ## 仮想ディスクの設定変更
     ##
@@ -183,6 +233,9 @@ if __FILE__ == $0
       if arg_state == "-f"
         $config_yaml = arg
       end
+      if arg_state == "-n"
+        $target_host = arg
+      end
       arg_state = nil
     end
   end
@@ -216,38 +269,21 @@ if __FILE__ == $0
   end
   step_end(0)
 
-
   
   ##
   ## コンフィグに従って仮想マシンを起動
   ##
   $vm_config_array.each do |val|
-    x = eval(val)
-    
-    printf("\n\nVM %s の起動中\n", x['name'])
-    create_netplan_from_config(x['name'])
-    configure_os_vdisk(x['name'])
-    
-    ## OSテンプレートのイメージをコピー    
-    step_start("仮想マシンの起動")
-    cmd = "virt-install "
-    cmd << sprintf(" --name %s", x['name'])
-    cmd << sprintf(" --memory %s", x['memory'])
-    cmd << sprintf(" --vcpus %s", x['cpu'])
-    cmd << sprintf(" --os-variant %s", "ubuntu18.04")
-    #cmd << sprintf(" --network network=%s --network network=%s --network network=%s", "default","private","public")
-    cmd << sprintf("  --network network=%s --network network=%s", "private","public")    
-    cmd << sprintf(" --import --graphics none --noautoconsole")
-    cmd << sprintf(" --disk /home/images/%s.qcow2", x['name'])
+    node = eval(val)
+    if $target_host.nil?
+      create_vm(node)
+    else
+      if $target_host == node['name']
+        create_vm(node)
+      end
+    end
+  end # END OF NODE    
 
-    if ! x['storage'].nil?
-        x['storage'].each_with_index do |val,idx|
-          cmd << sprintf(" --disk path=/home/images/%s-%d.qcow2,size=%d",x['name'],idx.to_i,val)
-        end   
-    end   
-    value = %x( #{cmd} )
-    puts value
-    step_end(0)
-  end
+  
 end # END OF MAIN   
   

@@ -9,8 +9,36 @@ require 'json'
 require '../libruby/read_yaml.rb'
 require '../libruby/util_defs.rb'
 
-$config_yaml = nil
+$config_yaml = nil   # コンフィグファイル名
+$target_host = nil   # 対象ホスト名
 
+##
+## 仮想マシンの削除
+##
+def destroy_vm(node)
+  
+  printf("\n\nVM %s の削除中\n", node['name'])
+  step_start("OSの削除中")
+
+  cmd = sprintf("virsh shutdown %s", node['name'])
+  value = %x( #{cmd} )
+  puts value
+
+  cmd = sprintf("virsh domstate %s", node['name'])
+  loop do
+    value = %x( #{cmd} )
+    if value.start_with?("shut off") or $?.exitstatus == 1
+      break
+    end
+    sleep 1
+  end
+  
+  cmd = sprintf("virsh undefine %s --remove-all-storage", node['name'])
+  value = %x( #{cmd} )
+  puts value
+
+  step_end(0)
+end
 
 ##
 ## メイン処理
@@ -25,6 +53,9 @@ if __FILE__ == $0
     else
       if arg_state == "-f"
         $config_yaml = arg
+      end
+      if arg_state == "-n"
+        $target_host = arg
       end
       arg_state = nil
     end
@@ -41,28 +72,14 @@ if __FILE__ == $0
   ## コンフィグに従って仮想マシンを起動
   ##
   $vm_config_array.each do |val|
-    x = eval(val)
-
-    printf("\n\nVM %s の削除中\n", x['name'])
-    step_start("OSの削除中")
-
-    cmd = sprintf("virsh shutdown %s", x['name'])
-    value = %x( #{cmd} )
-    puts value
-
-    cmd = sprintf("virsh domstate %s", x['name'])
-    loop do
-      value = %x( #{cmd} )
-      if value.start_with?("shut off") or $?.exitstatus == 1
-        break
+    node = eval(val)
+    if $target_host.nil?
+      destroy_vm(node)
+    else
+      if $target_host == node['name']
+        destroy_vm(node)
       end
-      sleep 1
     end
-    
-    cmd = sprintf("virsh undefine %s --remove-all-storage", x['name'])
-    value = %x( #{cmd} )
-    puts value
+  end # END OF NODE    
 
-    step_end(0)
-  end
 end
