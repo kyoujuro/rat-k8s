@@ -56,5 +56,6 @@ hosts_hv
 hosts_kvm
 EOF
 
+git checkout playbook/cert_setup/vars/main.yaml
 
 echo "# dummy for keep directory on git" > playbook/vars/main.yaml
