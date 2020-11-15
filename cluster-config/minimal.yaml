@@ -29,11 +29,11 @@ pod_network: flannel
 flannel_version: v0.12.0
 
 ### Cluster Network
-private_ip_subnet: 172.16.1.0/24
+private_ip_subnet: 172.16.10.0/24
 public_ip_subnet:  192.168.1.0/24
 
 ## マスターか内部LBのIPをセットする
-kube_apiserver_vip: 172.16.1.11
+kube_apiserver_vip: 172.16.1.41
 
 
 ### Virtual Machine Spec
@@ -42,7 +42,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.1.11"
+    private_ip: "172.16.10.41"
     public_ip: "192.168.1.41"    
     storage:
     playbook: "setup_linux.yaml"
@@ -52,7 +52,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.1.12"
+    private_ip: "172.16.1.71"
     storage:
     playbook: "setup_linux.yaml"
     pod_network: "10.244.1.0/24"
@@ -63,7 +63,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"    
-    private_ip: "172.16.1.10"
+    private_ip: "172.16.1.40"
     playbook: "setup_linux.yaml"
     comment: "Bootstap node" 
 

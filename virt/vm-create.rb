@@ -39,7 +39,8 @@ def create_vm(node)
       cmd << sprintf(" --disk path=/home/images/%s-%d.qcow2,size=%d",node['name'],idx.to_i,val)
     end   
   end
-  
+
+  puts "\n", cmd
   value = %x( #{cmd} )
   puts value
 

@@ -29,9 +29,9 @@ pod_network: calico
 
 
 ### Cluster Network
-private_ip_subnet: 172.16.40.0/24
+private_ip_subnet: 172.16.10.0/24
 public_ip_subnet:  192.168.1.0/24
-kube_apiserver_vip: 172.16.40.21
+kube_apiserver_vip: 172.16.10.41
 
 ### extra addons
 sw_rook_ceph:  False
@@ -50,8 +50,8 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.40.21"
-    public_ip: "192.168.1.91"
+    private_ip: "172.16.10.41"
+    public_ip: "192.168.1.41"
     role: "master"
     playbook: "setup_linux.yaml"
     comment: "Master node #1"
@@ -60,8 +60,8 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.40.31"
-    public_ip: "192.168.1.92"    
+    private_ip: "172.16.10.71"
+    public_ip: "192.168.1.71"    
     playbook: "setup_linux.yaml"
     role: "worker"
     comment:  "Worker node #1"
@@ -70,8 +70,8 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.40.32"
-    public_ip: "192.168.1.93"    
+    private_ip: "172.16.10.72"
+    public_ip: "192.168.1.72"    
     playbook: "setup_linux.yaml"
     role: "worker"
     comment:  "Worker node #2"
@@ -80,8 +80,8 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"    
-    private_ip: "172.16.40.10"
-    public_ip: "192.168.1.94"    
+    private_ip: "172.16.10.40"
+    public_ip: "192.168.1.40"    
     playbook: "setup_linux.yaml"
     comment: "Bootstap node" 
 

@@ -30,16 +30,16 @@ pod_network: flannel
 flannel_version: v0.12.0
 
 ### Cluster Network
-private_ip_subnet: 172.16.7.0/24
+private_ip_subnet: 172.16.10.0/24
 public_ip_subnet:  192.168.1.0/24
 
 ### Internal Load Balancer
-kube_apiserver_vip: 172.16.7.23
+kube_apiserver_vip: 172.16.10.41
 ka_primary_internal_host: mlb1
 ka_backup_internal_host: mlb2
 
 ### Frontend Load Balancer
-front_proxy_vip: 192.168.1.107
+front_proxy_vip: 192.168.1.63
 ka_primary_frontend_host: elb1
 ka_backup_frontend_host: elb2
 
@@ -51,7 +51,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.11"
+    private_ip: "172.16.10.41"
     storage:
     playbook: "setup_linux.yaml"
     comment: "Master node #1"
@@ -60,7 +60,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.12"
+    private_ip: "172.16.10.42"
     storage:
     playbook: "setup_linux.yaml"
     comment: "Master node #2"
@@ -69,7 +69,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.13"
+    private_ip: "172.16.10.43"
     storage:
     playbook: "setup_linux.yaml"
     comment: "Master node #3"
@@ -78,7 +78,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.21"
+    private_ip: "172.16.10.51"
     storage:
     playbook: "setup_linux.yaml"
     comment: "Internal Master Loadbalancer #1"
@@ -87,7 +87,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.22"
+    private_ip: "172.16.10.52"
     storage:
     playbook: "setup_linux.yaml"
     comment: "Internal Master Loadbalancer #2"
@@ -96,9 +96,8 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.26"
-    public_ip: "192.168.1.98"
-    pod_network: "10.244.241.0/24"    
+    private_ip: "172.16.10.61"
+    public_ip: "192.168.1.61"
     storage:
     role: "proxy"      
     playbook: "setup_linux.yaml"
@@ -108,9 +107,8 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.27"
-    public_ip: "192.168.1.99"
-    pod_network: "10.244.242.0/24"    
+    private_ip: "172.16.10.62"
+    public_ip: "192.168.1.62"
     storage:
     role: "proxy"      
     playbook: "setup_linux.yaml"
@@ -121,10 +119,9 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.31"
+    private_ip: "172.16.10.71"
     storage:
     playbook: "setup_linux.yaml"
-    pod_network: "10.244.1.0/24"
     role: "worker"
     comment:  "Worker node #1"
     
@@ -132,10 +129,9 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.32"
+    private_ip: "172.16.10.72"
     storage:
     playbook: "setup_linux.yaml"
-    pod_network: "10.244.2.0/24"
     role: "worker"    
     comment: "Worker node #2"
     
@@ -143,10 +139,9 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.33"
+    private_ip: "172.16.10.73"
     storage:
     playbook: "setup_linux.yaml"
-    pod_network: "10.244.3.0/24"
     role: "worker"
     comment: "Worker node #3"
 
@@ -154,10 +149,9 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.34"
+    private_ip: "172.16.10.74"
     storage:
     playbook: "setup_linux.yaml"
-    pod_network: "10.244.4.0/24"
     role: "worker"
     comment: "Worker node #4"
 
@@ -165,7 +159,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.7.10"
+    private_ip: "172.16.10.40"
     playbook: "setup_linux.yaml"
     comment: "Bootstap node"
 
