@@ -42,7 +42,7 @@ kubernetes_dashborad_ver: v2.0.0
 
 
 ### Cluster Network
-private_ip_subnet: 172.16.10.0/24
+private_ip_subnet: 172.16.20.0/24
 public_ip_subnet:  192.168.1.0/24
 
 
@@ -50,7 +50,7 @@ public_ip_subnet:  192.168.1.0/24
 keepalived_version: 2.0.15
 
 ### Internal Load Balancer
-kube_apiserver_vip: 172.16.10.53
+kube_apiserver_vip: 172.16.20.53
 ka_primary_internal_host: mlb1
 ka_backup_internal_host: mlb2
 
@@ -80,7 +80,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.41"
+    private_ip: "172.16.20.41"
     public_ip: "192.168.1.41"
     storage:
     - 16
@@ -91,7 +91,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.42"
+    private_ip: "172.16.20.42"
     public_ip: "192.168.1.42"
     storage:
     - 16
@@ -102,7 +102,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.43"
+    private_ip: "172.16.20.43"
     public_ip: "192.168.1.43"
     storage:
     - 16      
@@ -113,7 +113,7 @@ vm_spec:
     cpu: 1
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.51"
+    private_ip: "172.16.20.51"
     public_ip: "192.168.1.51"
     storage:
     playbook: "setup_linux.yaml"
@@ -123,7 +123,7 @@ vm_spec:
     cpu: 1
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.52"
+    private_ip: "172.16.20.52"
     public_ip: "192.168.1.52"
     storage:
     playbook: "setup_linux.yaml"
@@ -133,7 +133,7 @@ vm_spec:
     cpu: 1
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.61"
+    private_ip: "172.16.20.61"
     public_ip: "192.168.1.61"
     storage:
     - 8
@@ -145,7 +145,7 @@ vm_spec:
     cpu: 1
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.62"
+    private_ip: "172.16.20.62"
     public_ip: "192.168.1.62"
     storage:
     - 8
@@ -158,7 +158,7 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.71"
+    private_ip: "172.16.20.71"
     public_ip: "192.168.1.71"    
     storage:
     - 16
@@ -170,7 +170,7 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.72"
+    private_ip: "172.16.20.72"
     public_ip: "192.168.1.72"
     storage:
     - 16
@@ -182,7 +182,7 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.73"
+    private_ip: "172.16.20.73"
     public_ip: "192.168.1.73"
     storage:
     - 16
@@ -194,7 +194,7 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.74"
+    private_ip: "172.16.20.74"
     public_ip: "192.168.1.74"
     storage:
     - 16
@@ -206,7 +206,7 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.81"
+    private_ip: "172.16.20.81"
     public_ip: "192.168.1.81"
     storage:
     - 16
@@ -221,7 +221,7 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.82"
+    private_ip: "172.16.20.82"
     public_ip: "192.168.1.82"
     storage:
     - 16
@@ -236,7 +236,7 @@ vm_spec:
     cpu: 2
     memory: 8192
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.83"
+    private_ip: "172.16.20.83"
     public_ip: "192.168.1.83"
     storage:
     - 16
@@ -250,7 +250,7 @@ vm_spec:
   - name: "bootnode"
     cpu: 2
     memory: 2048
-    private_ip: "172.16.10.40"
+    private_ip: "172.16.20.40"
     public_ip: "192.168.1.40"    
     box: "ubuntu/bionic64"
     playbook: "setup_linux.yaml"    

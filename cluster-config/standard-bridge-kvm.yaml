@@ -33,10 +33,10 @@ pod_network: bridge
 flannel_version: v0.12.0
 
 ### Cluster Network
-private_ip_subnet: 172.16.10.0/24
+private_ip_subnet: 172.16.20.0/24
 public_ip_subnet:  192.168.1.0/24
 
-kube_apiserver_vip: 172.16.10.41
+kube_apiserver_vip: 172.16.20.41
 domain: labs.local
 
 
@@ -46,7 +46,7 @@ vm_spec:
     cpu: 2
     memory: 2048
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.41"
+    private_ip: "172.16.20.41"
     public_ip: "192.168.10.41"    
     role: "master"
     playbook: "setup_linux.yaml"
@@ -56,7 +56,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.71"
+    private_ip: "172.16.20.71"
     playbook: "setup_linux.yaml"
     pod_network: "10.244.1.0/24"
     role: "worker"
@@ -66,7 +66,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"
-    private_ip: "172.16.10.72"
+    private_ip: "172.16.20.72"
     playbook: "setup_linux.yaml"
     pod_network: "10.244.2.0/24"
     role: "worker"
@@ -76,7 +76,7 @@ vm_spec:
     cpu: 1
     memory: 1024
     box: "ubuntu/bionic64"    
-    private_ip: "172.16.10.40"
+    private_ip: "172.16.20.40"
     playbook: "setup_linux.yaml"
     comment: "Bootstap node" 
 
