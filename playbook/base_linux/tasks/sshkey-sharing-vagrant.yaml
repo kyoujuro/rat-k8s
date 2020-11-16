@@ -5,7 +5,7 @@
     path: "{{ shared_fs }}"
   register: regi_shared_fs
     
-- debug: msg="{{ regi_shared_fs }}"
+- debug: msg="regi_shared_fs.stat.exists = {{ regi_shared_fs.stat.exists }}"
 
 - name: mkdir for keys
   file:
@@ -14,7 +14,7 @@
     owner: root
     group: root
     mode: '0775'
-  when: regi_shared_fs.stat.exists == False
+  when: regi_shared_fs.stat.exists == false
 
 
 - name: check ssh-key existing
@@ -22,7 +22,7 @@
     path: "{{ shared_fs }}/keys/id_rsa.pub"
   register: regi_ssh_key
     
-- debug: msg="{{ regi_ssh_key }}"
+- debug: msg="regi_ssh_key.stat.exists = {{ regi_ssh_key.stat.exists }}"
 
 
 - name: create ssh-key
@@ -30,7 +30,7 @@
   args:
     executable: /bin/bash
     chdir: "{{ shared_fs }}/keys"
-  when: regi_ssh_key.stat.exists == False
+  when: regi_ssh_key.stat.exists == false
 
 
 #############################

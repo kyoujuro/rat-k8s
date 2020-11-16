@@ -125,6 +125,7 @@ git clone したディレクトリで、以下にノードを追加する。
 * hosts_vagrant にノード追加
 * hosts_k8s にノード追加
 * playbook/vars/main.yaml にノード追加
+* playbook/base_linux/templatesにノード追加
 * vagrant up node2
 
 ブートノードにログインして、以下を実行する

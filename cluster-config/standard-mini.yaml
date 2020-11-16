@@ -35,13 +35,6 @@ public_ip_subnet:  192.168.1.0/24
 kube_apiserver_vip: 172.16.10.41
 domain: labs.local
 
-##
-## select hypervisor type
-##  kvm : CentOS8 virsh
-##  vv  : VirtualBox + Vagrant
-#hypervisor: kvm
-hypervisor: vv
-
 
 ### Master, Worker, Internal/Frontend Loadbalancer and bootnode
 vm_spec:
